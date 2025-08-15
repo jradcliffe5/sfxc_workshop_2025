@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SFXC workshop 2025 • wide-field VLBI</title>
+  <meta name="description" content="A polished, responsive tutorial template with Prism.js syntax highlighting, line numbers, and a clean layout." />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
+  <link id="prism-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" disabled />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site">
+    <div class="container site-inner">
+      <div class="brand">
+        <span class="brand-main">SFXC workshop 2025</span>
+        <span class="brand-sub">Wide-field VLBI</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content area (row 2 fills remaining viewport height) -->
+  <div class="container grid viewport-area">
+    <aside class="toc card" aria-label="On this page">
+      <h2>On this page</h2>
+      <ol>
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#download">Data download</a></li>
+        <li><a href="#setup">Project setup</a></li>
+        <li><a href="#steps">Walkthrough</a></li>
+        <li><a href="#resources">Resources</a></li>
+      </ol>
+    </aside>
+
+    <main>
+      <h1>Wide-field VLBI</h1>
+      <p class="lede">
+        This page outlines the wide-field VLBI correlation that was presented as part of the first SFXC workshop which was held on the 21-23 September 2025 at the Joint Institute for VLBI in Europe (<a target="_blank" href="https://jive.eu">JIVE</a>). For more information and resources regarding the workshop, please consult the <a target="_blank" href="https://indico.astron.nl/event/410">workshop webpage</a>.
+      </p>
+
+      <section id="intro">
+        <h2>Introduction</h2>
+        <p>
+            Wide-field VLBI is a specialised correlation mode that 
+        </p>
+
+        <div class="card">
+          <div class="code-header"><span>Folder structure</span><span class="badge">text</span></div>
+          <pre class="line-numbers language-markup"><code>tutorial/
+├─ index.html
+└─ (images, assets, etc.)
+</code></pre>
+        </div>
+      </section>
+
+      <section id="download">
+        <h2>Data download</h2>
+      </section>
+
+      <section id="setup">
+        <h2>Project Setup</h2>
+        <div class="callout"><strong>Tip</strong> Move the inline <code>&lt;style&gt;</code> to <code>styles.css</code> if you prefer. Prism files can be loaded from a CDN as shown below.</div>
+
+        <div class="card">
+          <div class="code-header"><span>Include Prism (core, Python, line numbers)</span><button class="copy-btn" data-copy="#snippet-prism">Copy</button></div>
+          <pre id="snippet-prism" class="line-numbers language-markup"><code>&lt;!-- Prism core &amp; theme --&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css&quot; /&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css&quot; /&gt;
+&lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+        </div>
+      </section>
+
+      <section id="steps" class="steps">
+        <h2>Walkthrough</h2>
+
+        <article class="step" id="step-1">
+          <h3>Create the HTML file</h3>
+          <p>Start with <code>index.html</code> and paste this template. Update the header brand and sections to match your tutorial.</p>
+        </article>
+
+        <article class="step" id="step-2">
+          <h3>Add a Python code block</h3>
+          <p>Wrap your code with <code>&lt;pre class=&quot;line-numbers language-python&quot;&gt;&lt;code&gt;</code>…<code>&lt;/code&gt;&lt;/pre&gt;</code>. Use an optional header for labels and a copy button.</p>
+
+          <div class="card">
+            <div class="code-header"><span>Hello, Python</span><span class="badge">python</span><button class="copy-btn" data-copy="#py-hello">Copy</button></div>
+            <pre id="py-hello" class="line-numbers language-python"><code>from __future__ import annotations
+from dataclasses import dataclass
+
+@dataclass
+class Greeter:
+    prefix: str = "Hello"
+
+    def greet(self, name: str) -> str:
+        return f"{self.prefix}, {name}!"
+
+if __name__ == "__main__":
+    g = Greeter()
+    for who in ("Alice", "Bob", "Charlie"):
+        print(g.greet(who))
+</code></pre>
+          </div>
+        </article>
+
+        <article class="step" id="step-3">
+          <h3>Style callouts and resources</h3>
+          <p>Use callouts for tips or warnings. Keep links concise and descriptive.</p>
+          <div class="callout"><strong>Note</strong> Prefer short, runnable examples. Long lines wrap automatically and avoid horizontal scrolling.</div>
+        </article>
+
+        <article class="step" id="step-4">
+          <h3>Polish for print</h3>
+          <p>Print styles hide the header, TOC, and copy buttons, while keeping code readable.</p>
+        </article>
+      </section>
+
+      <section id="resources">
+        <h2>Resources</h2>
+        <p><a href="#intro">Back to top</a></p>
+      </section>
+
+      <footer>
+        Built with ♥ — HTML + CSS + Prism.js + a bit of AI. &copy; Jack Radcliffe (2025)
+      </footer>
+    </main>
+  </div>
+
+  <!-- Prism scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  <!-- Copy to clipboard (vanilla, no deps) -->
+  <script>
+    const copy = (el) => {
+      const pre = document.querySelector(el);
+      if (!pre) return;
+      const code = pre.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector(`[data-copy="${el}"]`);
+        if (!btn) return;
+        const old = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => (btn.textContent = old), 1500);
+      });
+    };
+    document.addEventListener('click', (e) => {
+      const t = e.target;
+      if (t.matches('.copy-btn')) {
+        const target = t.getAttribute('data-copy');
+        copy(target);
+      }
+    });
+
+    // Auto-enable dark Prism theme when user prefers dark
+    const darkLink = document.getElementById('prism-dark');
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.matches) darkLink.disabled = false;
+    mq.addEventListener?.('change', (ev) => { darkLink.disabled = !ev.matches; });
+  </script>
+</body>
+</html>
