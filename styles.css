@@ -1,4 +1,3 @@
-  <style>
     *, *::before, *::after { box-sizing: border-box; }
     html, body { height: 100%; }
     :root {
@@ -97,10 +96,15 @@
     p { margin: .5rem 0 1rem; text-align: justify}
     .lede { color: var(--muted); font-size: 1.06rem; }
 
-    .steps { counter-reset: step; }
+     .steps { counter-reset: step; }
     .step { position: relative; padding: 1.2rem 1.2rem 1.2rem 3.6rem; border: 1px solid var(--border); border-radius: var(--radius); background: linear-gradient(180deg, color-mix(in oklab, var(--card) 88%, transparent), color-mix(in oklab, var(--bg-soft) 75%, transparent)); box-shadow: var(--shadow); }
     .step + .step { margin-top: 1rem; }
-    .step::before { counter-increment: step; content: counter(step); position: absolute; left: .8rem; top: 1rem; width: 2.2rem; height: 2.2rem; border-radius: 999px; display: grid; place-items: center; font-weight: 800; color: var(--accent-ink); background: var(--accent); box-shadow: var(--shadow); }
+    .step::before {
+      counter-increment: step;
+      content: var(--step-prefix) counter(step);
+      position: absolute; left: .8rem; top: 1rem;
+      width: 2.2rem; height: 2.2rem; border-radius: 999px; display: grid; place-items: center; font-weight: 800; color: var(--accent-ink); background: var(--accent); box-shadow: var(--shadow);
+    }
 
     .callout { border: 1px solid var(--border); border-radius: var(--radius); padding: .9rem 1rem; background: color-mix(in oklab, var(--bg-soft) 90%, transparent); }
     .callout strong { color: var(--muted); text-transform: uppercase; font-size: .78rem; letter-spacing: .06em; }
@@ -119,4 +123,3 @@
 
     footer { color: var(--muted); font-size: .95rem; border-top: 1px solid var(--border); margin-top: 3rem; padding-top: 1rem; }
     @media print { header.site, .toc, .copy-btn { display: none !important; } body { background: #fff; } .container { padding: 0; } }
-  </style>
