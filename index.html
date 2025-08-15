@@ -10,6 +10,17 @@
   <link id="prism-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" disabled />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
   <link rel="stylesheet" href="styles.css" />
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      jax: ["input/TeX", "output/HTML-CSS"],
+      extensions: ["tex2jax.js"],
+      "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] },
+      tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], displayMath: [ ["$$","$$"], ["\\[", "\\]"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno" },
+      TeX: { noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } } },
+      messageStyle: "none"
+    });
+    </script>    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
 </head>
 <body>
   <header class="site">
@@ -38,6 +49,10 @@
       <h1>Wide-field VLBI</h1>
       <p class="lede">
         This page outlines the wide-field VLBI correlation that was presented as part of the first SFXC workshop which was held on the 21-23 September 2025 at the Joint Institute for VLBI in Europe (<a target="_blank" href="https://jive.eu">JIVE</a>). For more information and resources regarding the workshop, please consult the <a target="_blank" href="https://indico.astron.nl/event/410">workshop webpage</a>.
+      </p>
+      <p>
+        The definition of the Euler-Mascheroni constant is
+     $$\gamma=\lim_{n\to\infty}\left(\sum_{k=1}^n\frac1k-ln(n)\right) $$
       </p>
 
       <section id="intro">
