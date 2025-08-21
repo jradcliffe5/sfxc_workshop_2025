@@ -76,7 +76,7 @@
       </section>
 
       <section id="setup">
-        <h2>Project Setup</h2>
+        <h2>Project setup</h2>
         <div class="callout"><strong>Tip</strong> tip box example</div>
 
         <div class="card">
@@ -90,9 +90,57 @@
       <section id="corr_prep">
         <h2>Correlator preparation</h2>
         <main class="steps" style="--step-prefix:'A';">
-        <article class="step" id="step-1">
-          <h3>Create the HTML file</h3>
-          <p>Start with <code>index.html</code> and paste this template. Update the header brand and sections to match your tutorial.</p>
+          <article class="step" id="step-1">
+          <h3>Calculate wide-field correlation parameters</h3>
+          <p>
+            The use of multiple phase centre observing mode of the correlator requires a bit of work to get going.
+          </p>
+          <p>
+            We then need to set two parameters properly, $\texttt{fft_size_correlation}$ (the number of frequency points, $N_\mathrm{FFT}$ -- must be a power of 2) and $\texttt{sub_integr_time}$ (the sub integration time, $t_\mathrm{int,sub}$, in microseconds). These are required as the multiple-phase centre observing technique uses an initial wide-field correlation (IWFC) and then shifts and averages the data afterwards. The values of these parameters need to satisfy the following conditions,</p>
+          <p>
+            <ul>
+              <li><b>Time and bandwidth smearing</b> so that the farthest phase centre position is kept below an acceptable level. Typically a 1\% value is used at JIVE. The calculation of this value in SFXC comes from the document presented in Appendix~\ref{a:fov_sfxc}. This needs to be coded up as a helper script as soon as possible.</li>
+            </ul>
+          </p>
+        </article>
+        <article class="step" id="step-2">
+          <h3>Edit the control (ctrl) file</h3>
+          <p>The use of multiple phase centre observing mode of the correlator requires a bit of work to get going. There are a three parameters in the ctrl file that needs to be set correctly. The first of these is simple and the $\texttt{multi_phase_center}$ parameter needs to be set to true. </p>
+        </article>
+
+        <article class="step" id="step-a3">
+          <h3></h3>
+          <p>
+            Once these have been set, we need to do some editing of the vix file of the experiment to include the sources that need to be targeted with separate phase centres. Two areas need to be edited which are as follows:
+            <ul>
+              <li>The \texttt{\$SOURCE} section requires each phase centre position to be defined here in the following example format,
+              <div class="card">
+              <div class="code-header"><span>Folder structure</span><span class="badge">text</span></div>
+              <pre class="line-numbers language-markup"><code>def RFC1;
+        source_name = RFC1;
+        ra = 12h26m22.5068s; 
+        dec = 64d06'22.046"; 
+        ref_coord_frame = J2000;
+enddef;</code></pre>
+              </div>
+              Each must have a unique name (e.g., \texttt{RFC1} in this case). For a given catalogue, the wide-field VLBI scheduling software can be used to generate the </li>
+              <li>The \texttt{\$SCHED} section then requires the source names to be included in all the scans where multiple phase centre correlation is required. An example for EK050E is given below,
+              <div class="card">
+              <div class="code-header"><span>Folder structure</span><span class="badge">text</span></div>
+              <pre class="line-numbers language-markup"><code>scan No0005;
+  start=2022y108d15h50m09s; mode=EFF_BAND_32; source=J1229+6335;source=RFC1;
+  station=Ef:    0 sec:  132 sec:      0.000000000 GB:   : &cw   : 1;
+  station=O8:    0 sec:  132 sec:      0.000000000 GB:   :       : 1;
+  station=Tr:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
+  station=Mc:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
+  station=Nt:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
+endscan;
+              </code></pre></div>    
+              </li>
+            </ul>
+%
+This should now be sufficient to permit multi-phase centre correlation.
+          </p>
         </article>
 
         <article class="step" id="step-2">
@@ -157,6 +205,10 @@ if __name__ == "__main__":
 
       <section id="resources">
         <h2>Resources</h2>
+        <h3>Technical papers/memos on wide field correlation</h3>
+
+        <h3>Science articles using wide-field correlation</h3>
+
         <p><a href="#"><font size="-2">&larr; back to top</font></a></p>
       </section>
 
