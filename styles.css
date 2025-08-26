@@ -40,6 +40,9 @@
       display: grid;
       grid-template-rows: auto 1fr;
     }
+    ul {text-align: justify;}
+    ol {text-align: justify;}
+
     ::selection { background: color-mix(in oklab, var(--accent) 25%, transparent); }
     a { color: var(--accent); text-underline-offset: 3px; }
 

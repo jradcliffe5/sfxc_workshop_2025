@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SFXC workshop 2025 • wide-field VLBI</title>
+  <meta name="description" content="A polished, responsive tutorial template with Prism.js syntax highlighting, line numbers, and a clean layout." />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
+  <link id="prism-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" disabled />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      jax: ["input/TeX", "output/HTML-CSS"],
+      extensions: ["tex2jax.js"],
+      "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] },
+      tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], displayMath: [ ["$$","$$"], ["\\[", "\\]"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno" },
+      TeX: { noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } } },
+      messageStyle: "none"
+    });
+    </script>    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
+</head>
+<body>
+  <header class="site">
+    <div class="container site-inner">
+      <div class="brand">
+        <span class="brand-main">SFXC workshop 2025</span>
+        <span class="brand-sub">Wide-field VLBI</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content area (row 2 fills remaining viewport height) -->
+  <div class="container grid viewport-area">
+    <aside class="toc card" aria-label="On this page">
+      <h2>On this page</h2>
+      <ol>
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#download">Data download</a></li>
+        <li><a href="#setup">Project setup</a></li>
+        <li><a href="#steps">Walkthrough</a></li>
+        <li><a href="#resources">Resources</a></li>
+      </ol>
+    </aside>
+
+    <main>
+      <h1>Wide-field VLBI</h1>
+      <p class="lede">
+        This page outlines the wide-field VLBI correlation that was presented as part of the first SFXC workshop which was held on the 21-23 September 2025 at the Joint Institute for VLBI in Europe (<a target="_blank" href="https://jive.eu">JIVE</a>). For more information and resources regarding the workshop, please consult the <a target="_blank" href="https://indico.astron.nl/event/410">workshop webpage</a>.
+      </p>
+      <p>
+        The definition of the Euler-Mascheroni constant is
+     $$\gamma=\lim_{n\to\infty}\left(\sum_{k=1}^n\frac1k-ln(n)\right) $$
+      </p>
+
+      <section id="intro">
+        <h2>Introduction</h2>
+        <p>
+            Wide-field VLBI is a specialised correlation mode that 
+        </p>
+
+        <div class="card">
+          <div class="code-header"><span>Folder structure</span><span class="badge">text</span></div>
+          <pre class="line-numbers language-markup"><code>tutorial/
+├─ index.html
+└─ (images, assets, etc.)
+</code></pre>
+        </div>
+      </section>
+
+      <section id="download">
+        <h2>Data download</h2>
+        <p><a href="#"><font size="-2">&larr; back to top</font></a></p>
+      </section>
+
+      <section id="setup">
+        <h2>Project setup</h2>
+        <div class="callout"><strong>Tip</strong> tip box example</div>
+
+        <div class="card">
+          <div class="code-header"><span>Include Prism (core, Python, line numbers)</span><button class="copy-btn" data-copy="#snippet-prism">Copy</button></div>
+          <pre id="snippet-prism" class="line-numbers language-markup"><code>&lt;!-- Prism core &amp; theme --&gt;
+</code></pre>
+        </div>
+        <p><a href="#"><font size="-2">&larr; back to top</font></a></p>
+      </section>
+
+      <section id="corr_prep">
+        <h2>Correlator preparation</h2>
+        <main class="steps" style="--step-prefix:'A';">
+          <article class="step" id="step-1">
+          <h3>Calculate wide-field correlation parameters</h3>
+          <p>
+            The use of multiple phase centre observing mode of the correlator requires a bit of work to get going.
+          </p>
+          <p>
+            We then need to set two parameters properly, $\texttt{fft_size_correlation}$ (the number of frequency points, $N_\mathrm{FFT}$ -- must be a power of 2) and $\texttt{sub_integr_time}$ (the sub integration time, $t_\mathrm{int,sub}$, in microseconds). These are required as the multiple-phase centre observing technique uses an initial wide-field correlation (IWFC) and then shifts and averages the data afterwards. The values of these parameters need to satisfy the following conditions,</p>
+          <p>
+            <ul>
+              <li><b>Time and bandwidth smearing</b> so that the farthest phase centre position is kept below an acceptable level. Typically a 1\% value is used at JIVE. The calculation of this value in SFXC comes from the document presented in Appendix~\ref{a:fov_sfxc}. This needs to be coded up as a helper script as soon as possible.</li>
+            </ul>
+          </p>
+        </article>
+        <article class="step" id="step-2">
+          <h3>Edit the control (ctrl) file</h3>
+          <p>The use of multiple phase centre observing mode of the correlator requires a bit of work to get going. There are a three parameters in the ctrl file that needs to be set correctly. The first of these is simple and the $\texttt{multi_phase_center}$ parameter needs to be set to true. </p>
+        </article>
+
+        <article class="step" id="step-a3">
+          <h3></h3>
+          <p>
+            Once these have been set, we need to do some editing of the vix file of the experiment to include the sources that need to be targeted with separate phase centres. Two areas need to be edited which are as follows:
+            <ul>
+              <li>The \texttt{\$SOURCE} section requires each phase centre position to be defined here in the following example format,
+              <div class="card">
+              <div class="code-header"><span>Folder structure</span><span class="badge">text</span></div>
+              <pre class="line-numbers language-markup"><code>def RFC1;
+        source_name = RFC1;
+        ra = 12h26m22.5068s; 
+        dec = 64d06'22.046"; 
+        ref_coord_frame = J2000;
+enddef;</code></pre>
+              </div>
+              Each must have a unique name (e.g., \texttt{RFC1} in this case). For a given catalogue, the wide-field VLBI scheduling software can be used to generate the </li>
+              <li>The \texttt{\$SCHED} section then requires the source names to be included in all the scans where multiple phase centre correlation is required. An example for EK050E is given below,
+              <div class="card">
+              <div class="code-header"><span>Folder structure</span><span class="badge">text</span></div>
+              <pre class="line-numbers language-markup"><code>scan No0005;
+  start=2022y108d15h50m09s; mode=EFF_BAND_32; source=J1229+6335;source=RFC1;
+  station=Ef:    0 sec:  132 sec:      0.000000000 GB:   : &cw   : 1;
+  station=O8:    0 sec:  132 sec:      0.000000000 GB:   :       : 1;
+  station=Tr:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
+  station=Mc:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
+  station=Nt:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
+endscan;
+              </code></pre></div>    
+              </li>
+            </ul>
+%
+This should now be sufficient to permit multi-phase centre correlation.
+          </p>
+        </article>
+
+        <article class="step" id="step-2">
+          <h3>Add a Python code block</h3>
+          <p>Wrap your code with <code>&lt;pre class=&quot;line-numbers language-python&quot;&gt;&lt;code&gt;</code>…<code>&lt;/code&gt;&lt;/pre&gt;</code>. Use an optional header for labels and a copy button.</p>
+
+          <div class="card">
+            <div class="code-header"><span>Hello, Python</span><span class="badge">python</span><button class="copy-btn" data-copy="#py-hello">Copy</button></div>
+            <pre id="py-hello" class="line-numbers language-python"><code>from __future__ import annotations
+from dataclasses import dataclass
+
+@dataclass
+class Greeter:
+    prefix: str = "Hello"
+
+    def greet(self, name: str) -> str:
+        return f"{self.prefix}, {name}!"
+
+if __name__ == "__main__":
+    g = Greeter()
+    for who in ("Alice", "Bob", "Charlie"):
+        print(g.greet(who))
+</code></pre>
+          </div>
+        </article>
+
+        <article class="step" id="step-3">
+          <h3>Style callouts and resources</h3>
+          <p>Use callouts for tips or warnings. Keep links concise and descriptive.</p>
+          <div class="callout"><strong>Note</strong> Prefer short, runnable examples. Long lines wrap automatically and avoid horizontal scrolling.</div>
+        </article>
+
+        <article class="step" id="step-4">
+          <h3>Polish for print</h3>
+          <p>Print styles hide the header, TOC, and copy buttons, while keeping code readable.</p>
+        </article>
+        <p><a href="#"><font size="-2">&larr; back to top</font></a></p>
+      </main>
+      </section>
+
+      <section id="corr">
+        <h2>Running the correlator</h2>
+        <main class="steps" style="--step-prefix:'B';">
+          <article class="step" id="step-1">
+            <h3>Execute the correlator</h3>
+            <p>Blah blah</p>
+          </article>
+        </main>
+        <p><a href="#"><font size="-2">&larr; back to top</font></a></p>
+      </section>
+
+      <section id="corr_post">
+        <h2>Post processing</h2>
+        <main class="steps" style="--step-prefix:'C';">
+          <article class="step" id="step-1">
+            <h3>XXX</h3>
+            <p></p>
+          </article>
+        </main>
+        <p><a href="#"><font size="-2">&larr; back to top</font></a></p>
+      </section>
+
+      <section id="resources">
+        <h2>Resources</h2>
+        <h3>Technical papers/memos on wide field correlation</h3>
+
+        <h3>Science articles using wide-field correlation</h3>
+
+        <p><a href="#"><font size="-2">&larr; back to top</font></a></p>
+      </section>
+
+      <footer>
+        Built with ♥ — HTML + CSS + Prism.js + a bit of AI. &copy; Jack Radcliffe (2025)
+      </footer>
+    </main>
+  </div>
+
+  <!-- Prism scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="funcs.js"></script>
+</body>
+</html>

@@ -50,10 +50,6 @@
       <p class="lede">
         This page outlines the wide-field VLBI correlation that was presented as part of the first SFXC workshop which was held on the 21-23 September 2025 at the Joint Institute for VLBI in Europe (<a target="_blank" href="https://jive.eu">JIVE</a>). For more information and resources regarding the workshop, please consult the <a target="_blank" href="https://indico.astron.nl/event/410">workshop webpage</a>.
       </p>
-      <p>
-        The definition of the Euler-Mascheroni constant is
-     $$\gamma=\lim_{n\to\infty}\left(\sum_{k=1}^n\frac1k-ln(n)\right) $$
-      </p>
 
       <section id="intro">
         <h2>Introduction</h2>
@@ -91,94 +87,57 @@
         <h2>Correlator preparation</h2>
         <main class="steps" style="--step-prefix:'A';">
           <article class="step" id="step-1">
-          <h3>Calculate wide-field correlation parameters</h3>
-          <p>
-            The use of multiple phase centre observing mode of the correlator requires a bit of work to get going.
-          </p>
-          <p>
-            We then need to set two parameters properly, $\texttt{fft_size_correlation}$ (the number of frequency points, $N_\mathrm{FFT}$ -- must be a power of 2) and $\texttt{sub_integr_time}$ (the sub integration time, $t_\mathrm{int,sub}$, in microseconds). These are required as the multiple-phase centre observing technique uses an initial wide-field correlation (IWFC) and then shifts and averages the data afterwards. The values of these parameters need to satisfy the following conditions,</p>
-          <p>
-            <ul>
-              <li><b>Time and bandwidth smearing</b> so that the farthest phase centre position is kept below an acceptable level. Typically a 1\% value is used at JIVE. The calculation of this value in SFXC comes from the document presented in Appendix~\ref{a:fov_sfxc}. This needs to be coded up as a helper script as soon as possible.</li>
-            </ul>
-          </p>
-        </article>
-        <article class="step" id="step-2">
-          <h3>Edit the control (ctrl) file</h3>
-          <p>The use of multiple phase centre observing mode of the correlator requires a bit of work to get going. There are a three parameters in the ctrl file that needs to be set correctly. The first of these is simple and the $\texttt{multi_phase_center}$ parameter needs to be set to true. </p>
-        </article>
+            <h3>Calculate wide-field correlation parameters</h3>
+            <p>
+              The use of multiple phase centre observing mode of the correlator requires a bit of work to get going.
+            </p>
+            <p>
+              We then need to set two parameters properly, $\texttt{fft_size_correlation}$ (the number of frequency points, $N_\mathrm{FFT}$ -- must be a power of 2) and $\texttt{sub_integr_time}$ (the sub integration time, $t_\mathrm{int,sub}$, in microseconds). These are required as the multiple-phase centre observing technique uses an initial wide-field correlation (IWFC) and then shifts and averages the data afterwards. The values of these parameters need to satisfy the following conditions,</p>
+            <p>
+              <ul>
+                <li><b>Time and bandwidth smearing</b> so that the farthest phase centre position is kept below an acceptable level. Typically a 1\% value is used at JIVE. The calculation of this value in SFXC comes from the document presented in Appendix~\ref{a:fov_sfxc}. This needs to be coded up as a helper script as soon as possible.</li>
+              </ul>
+            </p>
+          </article>
 
-        <article class="step" id="step-a3">
-          <h3></h3>
-          <p>
-            Once these have been set, we need to do some editing of the vix file of the experiment to include the sources that need to be targeted with separate phase centres. Two areas need to be edited which are as follows:
-            <ul>
-              <li>The \texttt{\$SOURCE} section requires each phase centre position to be defined here in the following example format,
-              <div class="card">
-              <div class="code-header"><span>Folder structure</span><span class="badge">text</span></div>
-              <pre class="line-numbers language-markup"><code>def RFC1;
-        source_name = RFC1;
-        ra = 12h26m22.5068s; 
-        dec = 64d06'22.046"; 
-        ref_coord_frame = J2000;
-enddef;</code></pre>
-              </div>
-              Each must have a unique name (e.g., \texttt{RFC1} in this case). For a given catalogue, the wide-field VLBI scheduling software can be used to generate the </li>
-              <li>The \texttt{\$SCHED} section then requires the source names to be included in all the scans where multiple phase centre correlation is required. An example for EK050E is given below,
-              <div class="card">
-              <div class="code-header"><span>Folder structure</span><span class="badge">text</span></div>
-              <pre class="line-numbers language-markup"><code>scan No0005;
-  start=2022y108d15h50m09s; mode=EFF_BAND_32; source=J1229+6335;source=RFC1;
-  station=Ef:    0 sec:  132 sec:      0.000000000 GB:   : &cw   : 1;
-  station=O8:    0 sec:  132 sec:      0.000000000 GB:   :       : 1;
-  station=Tr:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
-  station=Mc:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
-  station=Nt:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
-endscan;
-              </code></pre></div>    
-              </li>
-            </ul>
-%
-This should now be sufficient to permit multi-phase centre correlation.
-          </p>
-        </article>
+          <article class="step" id="step-2">
+            <h3>Edit the control (ctrl) file</h3>
+            <p>The use of multiple phase centre observing mode of the correlator requires a bit of work to get going. There are a three parameters in the ctrl file that needs to be set correctly. The first of these is simple and the $\texttt{multi_phase_center}$ parameter needs to be set to true. </p>
+          </article>
 
-        <article class="step" id="step-2">
-          <h3>Add a Python code block</h3>
-          <p>Wrap your code with <code>&lt;pre class=&quot;line-numbers language-python&quot;&gt;&lt;code&gt;</code>…<code>&lt;/code&gt;&lt;/pre&gt;</code>. Use an optional header for labels and a copy button.</p>
-
-          <div class="card">
-            <div class="code-header"><span>Hello, Python</span><span class="badge">python</span><button class="copy-btn" data-copy="#py-hello">Copy</button></div>
-            <pre id="py-hello" class="line-numbers language-python"><code>from __future__ import annotations
-from dataclasses import dataclass
-
-@dataclass
-class Greeter:
-    prefix: str = "Hello"
-
-    def greet(self, name: str) -> str:
-        return f"{self.prefix}, {name}!"
-
-if __name__ == "__main__":
-    g = Greeter()
-    for who in ("Alice", "Bob", "Charlie"):
-        print(g.greet(who))
-</code></pre>
-          </div>
-        </article>
-
-        <article class="step" id="step-3">
-          <h3>Style callouts and resources</h3>
-          <p>Use callouts for tips or warnings. Keep links concise and descriptive.</p>
-          <div class="callout"><strong>Note</strong> Prefer short, runnable examples. Long lines wrap automatically and avoid horizontal scrolling.</div>
-        </article>
-
-        <article class="step" id="step-4">
-          <h3>Polish for print</h3>
-          <p>Print styles hide the header, TOC, and copy buttons, while keeping code readable.</p>
-        </article>
-        <p><a href="#"><font size="-2">&larr; back to top</font></a></p>
-      </main>
+          <article class="step" id="step-a3">
+            <h3>dsssd</h3>
+            <p>
+              Once these have been set, we need to do some editing of the vix file of the experiment to include the sources that need to be targeted with separate phase centres. Two areas need to be edited which are as follows:
+              <ul>
+                <li>The \texttt{\$SOURCE} section requires each phase centre position to be defined here in the following example format,
+                <div class="card">
+                <div class="code-header"><span>Folder structure</span><span class="badge">text</span></div>
+                <pre class="line-numbers language-markup"><code>def RFC1;
+          source_name = RFC1;
+          ra = 12h26m22.5068s; 
+          dec = 64d06'22.046"; 
+          ref_coord_frame = J2000;
+  enddef;</code></pre>
+                </div>
+                Each must have a unique name (e.g., \texttt{RFC1} in this case). For a given catalogue, the wide-field VLBI scheduling software can be used to generate the </li>
+                <li>The \texttt{\$SCHED} section then requires the source names to be included in all the scans where multiple phase centre correlation is required. An example for EK050E is given below,
+                <div class="card">
+                <div class="code-header"><span>Folder structure</span><span class="badge">text</span></div>
+                <pre class="line-numbers language-markup"><code>scan No0005;
+    start=2022y108d15h50m09s; mode=EFF_BAND_32; source=J1229+6335;source=RFC1;
+    station=Ef:    0 sec:  132 sec:      0.000000000 GB:   : &cw   : 1;
+    station=O8:    0 sec:  132 sec:      0.000000000 GB:   :       : 1;
+    station=Tr:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
+    station=Mc:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
+    station=Nt:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
+  endscan;
+                </code></pre></div>    
+                </li>
+              </ul>
+            </p>
+          </article>
+        </main>
       </section>
 
       <section id="corr">
@@ -197,15 +156,50 @@ if __name__ == "__main__":
         <main class="steps" style="--step-prefix:'C';">
           <article class="step" id="step-1">
             <h3>XXX</h3>
-            <p>Blah blah</p>
+            <p>The output of the correlator produces a custom format file (\texttt{.cor}) that then needs to be converted into formats that can be processed by standard interferometric data reduction software, plus extra post-correlation steps also need to be performed. Lots of this post-processing workflow is based upon the JIVE support scientist 
+
+This typically uses a bunch of helper software that comes from the \href{https://code.jive.eu/verkout/jive-casa}{https://code.jive.eu/verkout/jive-casa} repository. This was built into a singularity image that is located at \texttt{/SOFTWARE/jive-casa/jive-casa.img} at the Astro server.
+
+To convert the correlator output, to a useable format, we use the \texttt{j2ms2} code. This is finicky in that it was designed to work in the JIVE architecture therefore the correlator output needs to be in a folder that matches the vix file prefix and that vix file is also in the same folder. If you set up the folder structure in the same way as specified at the start of this section then you should be fine. The code can then be run with the following command,
+%
+\begin{verbatim}
+    singularity run --app j2ms2 /SOFTWARE/jive-casa/jive-casa.img \&langle;correlator_outputs\&rangle;.corr
+\end{verbatim} 
+%
+This will produce an output measurement set that is named $\texttt{\&langle;vix\_prefix\&rangle;.ms}$. If the correlator produces multiple output files, then this can just be presented as multiple arguments to \texttt{j2ms2}. This measurement set was tested to see if it was of the right format and was not. Should we wish to reduce the number of steps in this workflow then we may want to make this step the final one.
+
+The measurement set can be converted to a fitsidi file using the \texttt{tConvert} software using the following command,
+%
+\begin{verbatim}
+singularity run --app tConvert /SOFTWARE/jive-casa/jive-casa.img <measurement_set.ms <output_idi>.IDI
+\end{verbatim}
+%
+If the output IDI files are larger than 2GB each these will be split into 1.9GB chunks as is done on the EVN archive (with each IDI file appended an integer).</p>
           </article>
         </main>
         <p><a href="#"><font size="-2">&larr; back to top</font></a></p>
       </section>
 
+      <section id="future">
+        <h2>Current & future developments</h2>
+        <h3>Containerised software</h3>
+        <h3>Automated wide-field correlation software</h3>
+        <h3>End-to-end correlation & calibration</h3>
+        <p>
+            Wide-field VLBI is a specialised correlation mode that 
+        </p>
+      </section>
+
       <section id="resources">
         <h2>Resources</h2>
         <h3>Technical papers/memos on wide field correlation</h3>
+        <p>
+          <ol>
+            <li>Deller, A. T., et al., “DiFX-2: A More Flexible, Efficient, Robust, and Powerful Software Correlator”, <i>Publications of the Astronomical Society of the Pacific</i>, vol. 123, no. 901, p. 275, 2011. doi:<a target="_blank" href="https://ui.adsabs.harvard.edu/abs/2011PASP..123..275D/abstract">10.1086/658907.</a></li>
+            <li>Morgan, J. S., et al., “VLBI imaging throughout the primary beam using accurate UV shifting”, <i>Astronomy and Astrophysics</i>, vol. 526, Art. no. A140, 2011. doi:<a target="_blank" href="https://ui.adsabs.harvard.edu/abs/2011A%26A...526A.140M/abstract">10.1051/0004-6361/201015775</a>.</li>
+            <li>Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, <i>Experimental Astronomy</i>, vol. 39, no. 2, pp. 259–279, 2015. doi:<a target="_blank" href="https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract">10.1007/s10686-015-9446-1.</a></li>
+          </ol>
+        </p>
 
         <h3>Science articles using wide-field correlation</h3>
 
