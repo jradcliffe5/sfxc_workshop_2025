@@ -23,9 +23,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 
 [Return to the homepage](index.md)
-# SFXC workshop 2025 • Wide-field VLBI
+# SFXC workshop 2025 • Wide-field processing
 
-This page outlines the wide-field VLBI correlation tutorial that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu){:target="_blank"}). For more information and resources regarding the workshop, see the [workshop webpage](https://indico.astron.nl/event/410) or return to the [homepage](index.md).
+This page outlines the wide-field correlation tutorial that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu){:target="_blank"}). For more information and resources regarding the workshop, see the [workshop webpage](https://indico.astron.nl/event/410) or return to the [homepage](index.md).
 
 ## On this page
 1. [Introduction](#introduction)
@@ -37,8 +37,74 @@ This page outlines the wide-field VLBI correlation tutorial that was presented a
 7. [Current & future developments](#current--future-developments)
 8. [Resources](#resources)
 
-## Introduction
-Wide-field VLBI is a specialised correlation mode that 
+## Introduction & theory
+[Return to the homepage](index.md)
+# SFXC workshop 2025 • Wide-field processing
+
+This page outlines the wide-field correlation tutorial that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu){:target="_blank"}). For more information and resources regarding the workshop, see the [workshop webpage](https://indico.astron.nl/event/410) or return to the [homepage](index.md).
+
+## On this page
+1. [Introduction](#introduction)
+2. [Data download](#data-download)
+3. [Project setup](#project-setup)
+4. [Correlator preparation](#correlator-preparation)
+5. [Running the correlator](#running-the-correlator)
+6. [Post processing](#post-processing)
+7. [Current & future developments](#current--future-developments)
+8. [Resources](#resources)
+
+## Introduction & theory
+Wide-field VLBI is a specialised observing mode which correlates multiple sources within a single observation which are scattered across the primary beam of the interferometer. Wide-field VLBI correlation faced a fundamental challenge: to image a large fraction of the primary beam, the correlator must use **ultra-fine temporal and frequency resolution** to avoid:
+
+- **Time smearing** — caused by averaging visibilities over long time intervals.
+- **Bandwidth smearing** — caused by averaging over wide frequency channels.
+
+Doing this for the **entire primary beam** produces **huge datasets** (often terabytes) and demands extreme computational resources, which is increasingly impractical with modern VLBI arrays’ higher bit rates.
+
+Instead of correlating the whole beam at full resolution, **software correlators** implement the *multiple phase centre observing* mode:
+
+1. **Initial correlation at high resolution**  
+   The correlator internally processes the data with very fine time and frequency steps.
+
+2. **Define phase centres**  
+   The observer specifies multiple positions within the primary beam:  
+   - **Sources of interest** (e.g., calibrator + targets).  
+   - Or a **grid** to cover the field.
+
+3. **For each phase centre**:  
+   - Apply a **phase rotation** to shift the data to that direction.  
+   - **Average** to a manageable smearing (e.g., 30–60″ field of view).
+
+4. **Output**  
+   Produces **small (∼GB) datasets** per phase centre instead of a single massive file.  
+   Each dataset can be calibrated and imaged independently and in parallel.
+
+---
+
+### Conceptual Diagram
+
+```mermaid
+graph TD
+    A[Primary Beam] --> B[Phase Centre 1]
+    A --> C[Phase Centre 2]
+    A --> D[Phase Centre 3]
+    B --> E[Small Dataset]
+    C --> F[Small Dataset]
+    D --> G[Small Dataset]
+```
+---
+
+### Conceptual Diagram
+
+```mermaid
+graph TD
+    A[Primary Beam] --> B[Phase Centre 1]
+    A --> C[Phase Centre 2]
+    A --> D[Phase Centre 3]
+    B --> E[Small Dataset]
+    C --> F[Small Dataset]
+    D --> G[Small Dataset]
+```
 
 ## Data download
 _Add links and instructions for obtaining the relevant datasets here._
