@@ -29,12 +29,6 @@ _Built with ♥ — HTML + CSS + Prism.js + a bit of AI. © Jack Radcliffe (2025
 
 This page outlines the wide-field VLBI correlation that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu)). For more information and resources regarding the workshop, see the [workshop webpage](https://indico.astron.nl/event/410).
 
-The definition of the Euler–Mascheroni constant is:
-
-$\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)$
-
-$$\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)$$
-
 ## On this page
 1. [Introduction](#introduction)
 2. [Data download](#data-download)
@@ -46,7 +40,7 @@ $$\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)$$
 8. [Resources](#resources)
 
 ## Introduction
-Wide-field VLBI is a specialised correlation mode that …
+Wide-field VLBI is a specialised correlation mode that
 
 **Folder structure**
 ```text
@@ -60,14 +54,6 @@ _Add links and instructions for obtaining the relevant datasets here._
 
 ## Project setup
 > **Tip**: Use Prism for syntax highlighting and line numbers.
-
-**Include Prism (core, Python, line numbers):**
-```html
-<!-- Prism core & theme -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
-<link id="prism-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" disabled />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
-```
 
 ## Correlator preparation
 ### A1. Calculate wide-field correlation parameters
