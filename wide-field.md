@@ -106,6 +106,7 @@ $t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
 
 
 **Bandwidth smearing**
+
 | $\mathrm{BW_{SB}}$<br/>(MHz) |       $N_\nu$        | FoV (B = 2,500 km)<br/>(arcsec) | FoV (B = 10,000 km)<br/>(arcsec) |
 |--------------------|--------------------|--------------------|-----------------------|
 | 32     | 2048         | 1267.20          | 316.80             |
@@ -119,6 +120,7 @@ $t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
 | 2      | 32           | 316.80           | 79.20              |
 
 **Time smearing**
+
 | $\lambda$<br/>(cm)|$t_\mathrm{int}$<br/>(s)|FoV (B = 2,500 km)<br/>(arcsec)|FoV (B = 10,000 km)<br/>(arcsec)|
 |--------------------|--------------------|--------------------|-----------------------|
 | 18.0       | 1.00  | 133.20           | 33.30              |
