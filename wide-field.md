@@ -160,7 +160,7 @@ wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*"
 
   <div class="fov-sep"></div>
 
-  <div class="steps" style="--step-prefix:'· ';">
+  <div class="steps" style="--step-prefix:'';">
     <div class="step">
       <h4 class="tight">Bandwidth smearing</h4>
       <div class="fov-row"><span class="fov-value" id="fovBW1">—</span><span class="fov-unit">arcsec</span></div>
@@ -172,14 +172,6 @@ wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*"
       <h4 class="tight">Time smearing</h4>
       <div class="fov-row"><span class="fov-value" id="fovTime">—</span><span class="fov-unit">arcsec</span></div>
       <p class="soft fov-small">18.56″ · (λ/B) · (1/t<sub>int</sub>) → implemented as 18.56″ · (λ<sub>cm</sub> / (B<sub>km</sub>/1000)) · (1/t) i.e. 18.56″ · (100000·λ<sub>m</sub> / B<sub>km</sub>) · (1/t)</p>
-    </div>
-
-    <div class="step">
-      <h4 class="tight">Quick check vs. table</h4>
-      <p class="soft fov-small">
-        BW M1 @ B=2500 km, Nν=2048, BW<sub>SB</sub>=32 MHz ⇒ 1267.20″. Computed: <span class="fov-pill" id="tableCheck">—</span><br/>
-        Time @ B=2500 km, λ=0.18 m, t=1.0 s ⇒ 133.20″. Computed: <span class="fov-pill" id="tableTimeCheck">—</span>
-      </p>
     </div>
   </div>
 </div>
