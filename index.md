@@ -22,146 +22,36 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 
-# SFXC workshop 2025 • Wide-field VLBI
+# SFXC Workshop 2025
 
-_Built with ♥ — HTML + CSS + Prism.js + a bit of AI. © Jack Radcliffe (2025)_
+Welcome! This page hosts the **tutorial materials** and **guides** from the first **SFXC Workshop**, held at **JIVE** (Joint Institute for VLBI in Europe) on **21–23 September 2025**.
 
-This page outlines the wide-field VLBI correlation that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu)). For more information and resources regarding the workshop, see the [workshop webpage](https://indico.astron.nl/event/410).
+---
 
-The definition of the Euler–Mascheroni constant is:
+## About the workshop
 
-$\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)$
+The SFXC Workshop is designed for **VLBI users, correlator operators, and developers** interested in **software correlation** with SFXC. It combines **theory sessions** with **hands-on exercises**, covering:
 
-$$
-\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)
-$$
+- Fundamentals of **SFXC**.
+- Advanced modes such as **wide-field correlation** and **FRB workflows**.
+- Technical developments: **GPU-based correlation** and **future roadmap**.
+- Open discussions on community needs and pipeline automation.
 
-## On this page
-1. [Introduction](#introduction)
-2. [Data download](#data-download)
-3. [Project setup](#project-setup)
-4. [Correlator preparation](#correlator-preparation)
-5. [Running the correlator](#running-the-correlator)
-6. [Post processing](#post-processing)
-7. [Current & future developments](#current--future-developments)
-8. [Resources](#resources)
+This site serves as the central hub for **tutorial content** and **step-by-step guides** prepared for the workshop. For logistical information and timetables please consult the [Indico page](https://indico.astron.nl/event/410/)
 
-## Introduction
-Wide-field VLBI is a specialised correlation mode that …
+---
 
-**Folder structure**
-```text
-tutorial/
-├─ index.html
-└─ (images, assets, etc.)
-```
+## Tutorials
 
-## Data download
-_Add links and instructions for obtaining the relevant datasets here._
+- [Correlation](correlation.md)
+- [Post-correlation processing](correlation_post.md)
+- [Pulse processing](pulse.md)
+- [Wide-field processing](wide-field.md)
+- [Geodesy](geodesy.md)
 
-## Project setup
-> **Tip**: Use Prism for syntax highlighting and line numbers.
+---
 
-**Include Prism (core, Python, line numbers):**
-```html
-<!-- Prism core & theme -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
-<link id="prism-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" disabled />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
-```
-
-## Correlator preparation
-### A1. Calculate wide-field correlation parameters
-The multiple phase centre observing mode of the correlator requires two parameters to be set correctly:
-
-- `fft_size_correlation` — number of frequency points $N_\mathrm{FFT}$ (power of 2).
-- `sub_integr_time` — sub integration time $t_{\mathrm{int,sub}}$ in microseconds.
-
-Typical constraints include **time and bandwidth smearing** so that the farthest phase centre position is kept below an acceptable level (often **1%** at JIVE).
-
-### A2. Edit the control (ctrl) file
-Ensure multi-phase centre correlation is enabled:
-
-```text
-multi_phase_center = true
-```
-
-### A3. Edit the VEX file
-Define each phase centre in the `$SOURCE` section (example):
-```text
-def RFC1;
-  source_name = RFC1;
-  ra = 12h26m22.5068s;
-  dec = 64d06'22.046";
-  ref_coord_frame = J2000;
-enddef;
-```
-
-Include the new source names in all relevant scans in `$SCHED` (example):
-```text
-scan No0005;
-  start=2022y108d15h50m09s; mode=EFF_BAND_32; source=J1229+6335;source=RFC1;
-  station=Ef:    0 sec:  132 sec:      0.000000000 GB:   : &cw   : 1;
-  station=O8:    0 sec:  132 sec:      0.000000000 GB:   :       : 1;
-  station=Tr:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
-  station=Mc:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
-  station=Nt:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
-endscan;
-```
-
-### Example Python block (from the tutorial)
-```python
-from __future__ import annotations
-from dataclasses import dataclass
-
-@dataclass
-class Greeter:
-    prefix: str = "Hello"
-
-    def greet(self, name: str) -> str:
-        return f"{self.prefix}, {name}!"
-
-if __name__ == "__main__":
-    g = Greeter()
-    for who in ("Alice", "Bob", "Charlie"):
-        print(g.greet(who))
-```
-
-## Running the correlator
-### B1. Execute the correlator
-_Add concrete run commands and environment details here._
-
-## Post processing
-The correlator produces a custom `.cor` format that you can convert to standard interferometric formats.
-
-Conversion generally uses helper software from the **jive-casa** repository: <https://code.jive.eu/verkout/jive-casa>.
-A Singularity image may be available at `/SOFTWARE/jive-casa/jive-casa.img`.
-
-**Convert to Measurement Set with `j2ms2`:**
-```bash
-singularity run --app j2ms2 /SOFTWARE/jive-casa/jive-casa.img <correlator_outputs>.corr
-```
-
-This produces `<vix_prefix>.ms`. If multiple correlator outputs exist, pass them all as arguments to `j2ms2`.
-
-**Convert MS to FITS-IDI with `tConvert`:**
-```bash
-singularity run --app tConvert /SOFTWARE/jive-casa/jive-casa.img <measurement_set.ms> <output_idi>.IDI
-```
-
-If IDI files exceed 2 GB, they may be split into ~1.9 GB chunks (as on the EVN archive).
-
-## Current & future developments
-- Containerised software
-- Automated wide-field correlation software
-- End-to-end correlation & calibration
-
-## Resources
-### Technical papers/memos on wide-field correlation
-1. Deller, A. T., et al., “DiFX-2: A More Flexible, Efficient, Robust, and Powerful Software Correlator”, *PASP*, 123(901), 275 (2011). doi: <https://ui.adsabs.harvard.edu/abs/2011PASP..123..275D/abstract>
-2. Morgan, J. S., et al., “VLBI imaging throughout the primary beam using accurate UV shifting”, *A&A*, 526, A140 (2011). doi: <https://ui.adsabs.harvard.edu/abs/2011A%26A...526A.140M/abstract>
-3. Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, *Experimental Astronomy*, 39(2), 259–279 (2015). doi: <https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract>
-
+_Built with ♥ — Markdown + HTML + CSS + Prism.js + a bit of AI. © Jack Radcliffe (2025)_
 
 <!-- Custom Script: funcs.js -->
 <script>
