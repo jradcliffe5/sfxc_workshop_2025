@@ -107,17 +107,27 @@ $t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
 
 **Bandwidth smearing**
 
-| $\mathrm{BW_{SB}}$<br/>(MHz) |       $N_\nu$        | FoV (B = 2,500 km)<br/>(arcsec) | FoV (B = 10,000 km)<br/>(arcsec) |
-|--------------------|--------------------|--------------------|-----------------------|
-| 32     | 2048         | 1267.20          | 316.80             |
-| 32     | 512          | 316.80           | 79.20              |
-| 32     | 32           | 19.80            | 4.95               |
-| 16     | 2048         | 2534.40          | 633.60             |
-| 16     | 512          | 633.60           | 158.40             |
-| 16     | 32           | 39.60            | 9.90               |
-| 2      | 2048         | 20275.20         | 5068.80            |
-| 2      | 512          | 5068.80          | 1267.20            |
-| 2      | 32           | 316.80           | 79.20              |
+<table>
+  <thead>
+    <tr>
+      <th>BW<sub>SB</sub><br>(MHz)</th>
+      <th>N<sub>&nu;</sub></th>
+      <th>FoV (B = 2,500 km)<br>(arcsec)</th>
+      <th>FoV (B = 10,000 km)<br>(arcsec)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>32</td><td>2048</td><td>1267.20</td><td>316.80</td></tr>
+    <tr><td>32</td><td>512</td><td>316.80</td><td>79.20</td></tr>
+    <tr><td>32</td><td>32</td><td>19.80</td><td>4.95</td></tr>
+    <tr><td>16</td><td>2048</td><td>2534.40</td><td>633.60</td></tr>
+    <tr><td>16</td><td>512</td><td>633.60</td><td>158.40</td></tr>
+    <tr><td>16</td><td>32</td><td>39.60</td><td>9.90</td></tr>
+    <tr><td>2</td><td>2048</td><td>20275.20</td><td>5068.80</td></tr>
+    <tr><td>2</td><td>512</td><td>5068.80</td><td>1267.20</td></tr>
+    <tr><td>2</td><td>32</td><td>316.80</td><td>79.20</td></tr>
+  </tbody>
+</table>
 
 **Time smearing**
 
