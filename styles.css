@@ -119,7 +119,7 @@
     pre.line-numbers { padding-left: 3.2em; }
     .line-numbers .line-numbers-rows { border-right: 1px solid var(--border) !important; }
 
-    @media (prefers-color-scheme: dark) { #prism-dark[disabled] { display: none; } }
+    @media (prefers-color-scheme: light) { #prism-dark[disabled] { display: none; } }
 
     footer { color: var(--muted); font-size: .95rem; border-top: 1px solid var(--border); margin-top: 3rem; padding-top: 1rem; }
     @media print { header.site, .toc, .copy-btn { display: none !important; } body { background: #fff; } .container { padding: 0; } }
