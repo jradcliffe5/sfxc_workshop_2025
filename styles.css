@@ -126,3 +126,14 @@
 
     footer { color: var(--muted); font-size: .95rem; border-top: 1px solid var(--border); margin-top: 3rem; padding-top: 1rem; }
     @media print { header.site, .toc, .copy-btn { display: none !important; } body { background: #fff; } .container { padding: 0; } }
+
+/* Extra rules so the theme applies nicely to plain Markdown renderers */
+body { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
+main, article, section { all: unset; }
+h1, h2, h3 { scroll-margin-top: 5rem; }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+pre { padding: 1rem; border-radius: var(--radius); border: 1px solid var(--border); background: color-mix(in oklab, var(--bg-soft) 90%, transparent); }
+blockquote { border-left: 4px solid var(--accent); padding-left: 1rem; color: var(--muted); }
+hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+a { text-decoration: underline; }
+ul, ol { padding-left: 1.3rem; }
