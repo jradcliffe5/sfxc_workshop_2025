@@ -175,9 +175,9 @@ This page outlines the wide-field VLBI correlation that was presented as part of
 
 The definition of the Euler–Mascheroni constant is:
 
-$$
+$
 \gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)
-$$
+$
 
 ## On this page
 1. [Introduction](#introduction)
