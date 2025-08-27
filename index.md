@@ -37,7 +37,7 @@ The SFXC Workshop is designed for **VLBI users, correlator operators, and develo
 - Technical developments: **GPU-based correlation** and **future roadmap**.
 - Open discussions on community needs and pipeline automation.
 
-This site serves as the central hub for **tutorial content** and **step-by-step guides** prepared for the workshop. For logistical information and timetables please consult the [Indico page](https://indico.astron.nl/event/410/)
+This site serves as the central hub for **tutorial content** and **step-by-step guides** prepared for the workshop. For logistical information and timetables please consult the [Indico page](https://indico.astron.nl/event/410/){:target="_blank"}.
 
 ---
 
