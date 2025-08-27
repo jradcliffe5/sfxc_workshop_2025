@@ -37,23 +37,7 @@ This page outlines the wide-field correlation tutorial that was presented as par
 7. [Current & future developments](#current--future-developments)
 8. [Resources](#resources)
 
-## Introduction & theory
-[Return to the homepage](index.md)
-# SFXC workshop 2025 • Wide-field processing
-
-This page outlines the wide-field correlation tutorial that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu){:target="_blank"}). For more information and resources regarding the workshop, see the [workshop webpage](https://indico.astron.nl/event/410) or return to the [homepage](index.md).
-
-## On this page
-1. [Introduction](#introduction)
-2. [Data download](#data-download)
-3. [Project setup](#project-setup)
-4. [Correlator preparation](#correlator-preparation)
-5. [Running the correlator](#running-the-correlator)
-6. [Post processing](#post-processing)
-7. [Current & future developments](#current--future-developments)
-8. [Resources](#resources)
-
-## Introduction & theory
+## Introduction
 Wide-field VLBI is a specialised observing mode which correlates multiple sources within a single observation which are scattered across the primary beam of the interferometer. Wide-field VLBI correlation faced a fundamental challenge: to image a large fraction of the primary beam, the correlator must use **ultra-fine temporal and frequency resolution** to avoid:
 
 - **Time smearing** — caused by averaging visibilities over long time intervals.
@@ -81,33 +65,17 @@ Instead of correlating the whole beam at full resolution, **software correlators
 
 ---
 
-### Conceptual Diagram
-
-```mermaid
-graph TD
-    A[Primary Beam] --> B[Phase Centre 1]
-    A --> C[Phase Centre 2]
-    A --> D[Phase Centre 3]
-    B --> E[Small Dataset]
-    C --> F[Small Dataset]
-    D --> G[Small Dataset]
-```
----
-
-### Conceptual Diagram
-
-```mermaid
-graph TD
-    A[Primary Beam] --> B[Phase Centre 1]
-    A --> C[Phase Centre 2]
-    A --> D[Phase Centre 3]
-    B --> E[Small Dataset]
-    C --> F[Small Dataset]
-    D --> G[Small Dataset]
-```
-
 ## Data download
-_Add links and instructions for obtaining the relevant datasets here._
+For this tutorial, you will need the following data and scripts: 
+1. Raw baseband data and vix files from the original correlation tutorial. This can be found at the [N24L2 data download page](https://archive.jive.nl/sfxc-workshop/n24l2/){:target="_blank"}. This can also be downloaded using the command line:
+
+```bash
+wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*"
+```
+
+2. The standard SFXC control (.ctrl) file for this observation. This can be downloaded using the following link.
+
+3. CASA calibration tables. 
 
 ## Project setup
 
