@@ -162,26 +162,24 @@ wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*"
 
   <div class="steps" style="--step-prefix:'· ';">
     <div class="step">
-      <h4 class="tight">Bandwidth smearing (Method 1)</h4>
+      <h4 class="tight">Bandwidth smearing</h4>
       <div class="fov-row"><span class="fov-value" id="fovBW1">—</span><span class="fov-unit">arcsec</span></div>
       <p class="soft fov-small">49.5″ · (1000/B<sub>km</sub>) · (N<sub>ν</sub>/BW<sub>SB</sub>)</p>
     </div>
 
-    <div class="step">
-      <h4 class="tight">Bandwidth smearing (Method 2)</h4>
-      <div class="fov-row"><span class="fov-value" id="fovBW2">—</span><span class="fov-unit">arcsec</span></div>
-      <p class="soft fov-small">49.5″ · (1000/B<sub>km</sub>) · (N<sub>SB</sub>N<sub>ν</sub>/BW<sub>tot</sub>)</p>
-    </div>
 
     <div class="step">
       <h4 class="tight">Time smearing</h4>
       <div class="fov-row"><span class="fov-value" id="fovTime">—</span><span class="fov-unit">arcsec</span></div>
-      <p class="soft fov-small">18.56″ · (λ/B) · (1/t<sub>int</sub>) → implemented as 18.56″ · (λ / (B<sub>km</sub>·1000)) · (1/t)</p>
+      <p class="soft fov-small">18.56″ · (λ/B) · (1/t<sub>int</sub>) → implemented as 18.56″ · (λ<sub>cm</sub> / (B<sub>km</sub>/1000)) · (1/t) i.e. 18.56″ · (100000·λ<sub>m</sub> / B<sub>km</sub>) · (1/t)</p>
     </div>
 
     <div class="step">
       <h4 class="tight">Quick check vs. table</h4>
-      <p class="soft fov-small">With B=2500 km, Nν=2048, BW<sub>SB</sub>=32 MHz ⇒ Method 1 should be 1267.20″. Computed: <span class="fov-pill" id="tableCheck">—</span></p>
+      <p class="soft fov-small">
+        BW M1 @ B=2500 km, Nν=2048, BW<sub>SB</sub>=32 MHz ⇒ 1267.20″. Computed: <span class="fov-pill" id="tableCheck">—</span><br/>
+        Time @ B=2500 km, λ=0.18 m, t=1.0 s ⇒ 133.20″. Computed: <span class="fov-pill" id="tableTimeCheck">—</span>
+      </p>
     </div>
   </div>
 </div>
@@ -209,22 +207,24 @@ wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*"
 
     const valid = [B_km,lambda,Nnu,BW_SB,NSB,BWtot,tint].every(v => isFinite(v) && v > 0);
     if(!valid){
-      ["fovBW1","fovBW2","fovTime","tableCheck"].forEach(id => $(id).textContent = "—");
+      ["fovBW1","fovTime","tableCheck"].forEach(id => $(id).textContent = "—");
       return;
     }
 
     const factorB = 49.5 * (1000.0 / B_km);
     const fovBW1 = factorB * (Nnu / BW_SB);
-    const fovBW2 = factorB * ((NSB * Nnu) / BWtot);
+    // Removed fovBW2 calculation and output
 
-    const fovTime = 18.56 * (lambda / (B_km * 1000.0)) * (1.0 / tint);
+    const fovTime = 18.56 * ((lambda * 100000.0) / B_km) * (1.0 / tint); // lambda in m -> cm; B in 1000 km units
 
     $("fovBW1").textContent = fmt(fovBW1);
-    $("fovBW2").textContent = fmt(fovBW2);
     $("fovTime").textContent = fmt(fovTime);
 
     const check = 49.5 * (1000.0 / 2500.0) * (2048 / 32.0);
     $("tableCheck").textContent = fmt(check);
+    const timeCheck = 18.56 * ((0.18 * 100000.0) / 2500.0) * (1.0 / 1.0); // expected ≈ 133.20″
+    const timeCheckEl = document.getElementById("tableTimeCheck");
+    if (timeCheckEl) timeCheckEl.textContent = fmt(timeCheck);
   }
 
   $("resetFov").addEventListener("click", () => {
