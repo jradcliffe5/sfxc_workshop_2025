@@ -41,7 +41,7 @@ This site serves as the central hub for **tutorial content** and **step-by-step 
 
 ## Timetable
 
-The timetable can be found on the [timetables page](timetable.md). The slides for the theory sessions can be found on this page. 
+The timetable can be found on the [timetables page](timetable.md). The slides for the theory sessions are available on this page, while the hands-on sessions are listed below.
 
 ## Tutorials
 
