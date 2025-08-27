@@ -35,6 +35,10 @@ The definition of the Euler–Mascheroni constant is:
 
 $\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)$
 
+```math
+\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)
+```
+
 ## On this page
 1. [Introduction](#introduction)
 2. [Data download](#data-download)
