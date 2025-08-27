@@ -1,3 +1,29 @@
+
+<!-- Prism CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
+<link id="prism-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" disabled />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+<!-- Prism JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    jax: ["input/TeX", "output/HTML-CSS"],
+    extensions: ["tex2jax.js"],
+    "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] },
+    tex2jax: { inlineMath: [ ["$","$"], ["\\(","\\)"] ], displayMath: [ ["$$","$$"], ["\\[","\\]"] ], processEscapes: true },
+    TeX: { noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } } },
+    messageStyle: "none"
+  });
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
+
+
 <style>
     *, *::before, *::after { box-sizing: border-box; }
     html, body { height: 100%; }
@@ -279,3 +305,32 @@ If IDI files exceed 2 GB, they may be split into ~1.9 GB chunks (as on the E
 2. Morgan, J. S., et al., “VLBI imaging throughout the primary beam using accurate UV shifting”, *A&A*, 526, A140 (2011). doi: <https://ui.adsabs.harvard.edu/abs/2011A%26A...526A.140M/abstract>
 3. Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, *Experimental Astronomy*, 39(2), 259–279 (2015). doi: <https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract>
 
+
+<!-- Custom Script: funcs.js -->
+<script>
+    const copy = (el) => {
+      const pre = document.querySelector(el);
+      if (!pre) return;
+      const code = pre.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector(`[data-copy="${el}"]`);
+        if (!btn) return;
+        const old = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => (btn.textContent = old), 1500);
+      });
+    };
+    document.addEventListener('click', (e) => {
+      const t = e.target;
+      if (t.matches('.copy-btn')) {
+        const target = t.getAttribute('data-copy');
+        copy(target);
+      }
+    });
+
+    // Auto-enable dark Prism theme when user prefers dark
+    const darkLink = document.getElementById('prism-dark');
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.matches) darkLink.disabled = false;
+    mq.addEventListener?.('change', (ev) => { darkLink.disabled = !ev.matches; });
+</script>
