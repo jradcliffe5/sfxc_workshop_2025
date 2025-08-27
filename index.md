@@ -24,7 +24,7 @@
 
 # SFXC workshop 2025
 
-Welcome! This page hosts the **tutorial materials** and **guides** from the first **SFXC Workshop**, held at **JIVE** (Joint Institute for VLBI in Europe) on **21–23 September 2025**.
+Welcome! This page hosts the **tutorial materials** and **guides** from the first **SFXC Workshop**, held at **JIVE** (Joint Institute for VLBI in Europe; [JIVE](https://jive.eu){:target="_blank"}) on **21–23 September 2025**.
 
 ---
 
