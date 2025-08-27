@@ -15,14 +15,15 @@
     MathJax.Hub.Config({
       tex2jax: {
         skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-        inlineMath: [['$','$']]
+        inlineMath: [['$','$']],
+        displayMath: [ ["$$","$$"]
       }
     });
   </script>
   <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script> 
 
 
-<link href="styles.css" rel="stylesheet"></link>
+<link href="styles.css" rel="stylesheet" />
 
 # SFXC workshop 2025 • Wide-field VLBI
 
@@ -32,9 +33,9 @@ This page outlines the wide-field VLBI correlation that was presented as part of
 
 The definition of the Euler–Mascheroni constant is:
 
-$
+$$
 \gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)
-$
+$$
 
 ## On this page
 1. [Introduction](#introduction)
