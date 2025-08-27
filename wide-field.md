@@ -45,25 +45,23 @@ Wide-field VLBI is a specialised observing mode which correlates multiple source
 
 Doing this for the **entire primary beam** produces **huge datasets** (often terabytes) and demands extreme computational resources, which is increasingly impractical with modern VLBI arrays’ higher bit rates.
 
-Instead of correlating the whole beam at full resolution, **software correlators** implement the *multiple phase centre observing* mode:
+Instead of correlating the whole beam at full resolution, **software correlators** implement the *multiple phase centre observing* mode (Deller et al. 2011). This process has three distinct steps which are as follows (and shown in the Figure below):
 
 1. **Initial correlation at high resolution**  
-   The correlator internally processes the data with very fine time and frequency steps.
+   The correlator internally processes the data with a fine time and frequency resolution. This retains the large field-of-view as smearing is kept to a minimum.
 
-2. **Define phase centres**  
-   The observer specifies multiple positions within the primary beam:  
+2. **Make copies & phase rotate to different positions within the primary beam**
+   The observer specifies multiple positions within the primary beam. These could be:  
    - **Sources of interest** (e.g., calibrator + targets).  
    - Or a **grid** to cover the field.
+   We then phase rotate the delay tracking centre to these positions.
 
-3. **For each phase centre**:  
-   - Apply a **phase rotation** to shift the data to that direction.  
+3. **Average the phase rotated data sets**:  
    - **Average** to a manageable smearing (e.g., 30–60″ field of view).
+   - Produces **small (∼GB) datasets** per phase centre instead of a single massive file.  
+   - Each dataset can be calibrated and imaged independently and in parallel.
 
-4. **Output**  
-   Produces **small (∼GB) datasets** per phase centre instead of a single massive file.  
-   Each dataset can be calibrated and imaged independently and in parallel.
-
-<img src="figures/wf_vlbi_cor_diagram.png" alt="drawing" style="width: 50%;height: auto;"/>
+<img src="figures/wf_vlbi_cor_diagram.png" alt="drawing" style="width: 60%;height: auto;"/>
 
 ---
 
