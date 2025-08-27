@@ -25,15 +25,7 @@
 [Return to the homepage](index.md)
 # SFXC workshop 2025 • Wide-field VLBI
 
-This page outlines the wide-field VLBI correlation that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu){:target="_blank"}). For more information and resources regarding the workshop, see the [workshop webpage](https://indico.astron.nl/event/410).
-
-The definition of the Euler–Mascheroni constant is:
-
-$\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)$
-
-$$
-\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)
-$$
+This page outlines the wide-field VLBI correlation tutorial that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu){:target="_blank"}). For more information and resources regarding the workshop, see the [workshop webpage](https://indico.astron.nl/event/410) or return to the [homepage](index.md).
 
 ## On this page
 1. [Introduction](#introduction)
@@ -46,28 +38,13 @@ $$
 8. [Resources](#resources)
 
 ## Introduction
-Wide-field VLBI is a specialised correlation mode that …
-
-**Folder structure**
-```text
-tutorial/
-├─ index.html
-└─ (images, assets, etc.)
-```
+Wide-field VLBI is a specialised correlation mode that 
 
 ## Data download
 _Add links and instructions for obtaining the relevant datasets here._
 
 ## Project setup
-> **Tip**: Use Prism for syntax highlighting and line numbers.
 
-**Include Prism (core, Python, line numbers):**
-```html
-<!-- Prism core & theme -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
-<link id="prism-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" disabled />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
-```
 
 ## Correlator preparation
 ### A1. Calculate wide-field correlation parameters
@@ -108,23 +85,6 @@ scan No0005;
 endscan;
 ```
 
-### Example Python block (from the tutorial)
-```python
-from __future__ import annotations
-from dataclasses import dataclass
-
-@dataclass
-class Greeter:
-    prefix: str = "Hello"
-
-    def greet(self, name: str) -> str:
-        return f"{self.prefix}, {name}!"
-
-if __name__ == "__main__":
-    g = Greeter()
-    for who in ("Alice", "Bob", "Charlie"):
-        print(g.greet(who))
-```
 
 ## Running the correlator
 ### B1. Execute the correlator
@@ -161,6 +121,43 @@ If IDI files exceed 2 GB, they may be split into ~1.9 GB chunks (as on the E
 2. Morgan, J. S., et al., “VLBI imaging throughout the primary beam using accurate UV shifting”, *A&A*, 526, A140 (2011). doi: <https://ui.adsabs.harvard.edu/abs/2011A%26A...526A.140M/abstract>
 3. Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, *Experimental Astronomy*, 39(2), 259–279 (2015). doi: <https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract>
 
+# Moved template rubbish
+
+**Folder structure**
+```text
+tutorial/
+├─ index.html
+└─ (images, assets, etc.)
+```
+
+> **Tip**: Use Prism for syntax highlighting and line numbers.
+
+**Include Prism (core, Python, line numbers):**
+```html
+<!-- Prism core & theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
+<link id="prism-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" disabled />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+```
+### Example Python block (from the tutorial)
+```python
+from __future__ import annotations
+from dataclasses import dataclass
+
+@dataclass
+class Greeter:
+    prefix: str = "Hello"
+
+    def greet(self, name: str) -> str:
+        return f"{self.prefix}, {name}!"
+
+if __name__ == "__main__":
+    g = Greeter()
+    for who in ("Alice", "Bob", "Charlie"):
+        print(g.greet(who))
+```
+
+---
 _Built with ♥ — Markdown + HTML + CSS + Prism.js + a bit of AI. © Jack Radcliffe (2025)_
 
 <!-- Custom Script: funcs.js -->
