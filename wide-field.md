@@ -63,16 +63,16 @@ Instead of correlating the whole beam at full resolution, **software correlators
    Produces **small (∼GB) datasets** per phase centre instead of a single massive file.  
    Each dataset can be calibrated and imaged independently and in parallel.
 
+<img src="figures/wf_vlbi_cor_diagram.png" alt="drawing" style="width: 50%;height: auto;"/>
+
 ---
 
 ## Data download
 For this tutorial, you will need the following data and scripts: 
 1. Raw baseband data and vix files from the original correlation tutorial. This can be found at the [N24L2 data download page](https://archive.jive.nl/sfxc-workshop/n24l2/){:target="_blank"}. This can also be downloaded using the command line:
-
 ```bash
 wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*"
 ```
-
 2. The standard SFXC control (.ctrl) file for this observation. This can be downloaded using the following link.
 
 3. CASA calibration tables. 
@@ -82,12 +82,53 @@ wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*"
 
 ## Correlator preparation
 ### A1. Calculate wide-field correlation parameters
-The multiple phase centre observing mode of the correlator requires two parameters to be set correctly:
 
+As was described in the [introduction](#introduction), the wide-field correlation technique uses a two step process where 
+
+The multiple phase centre observing mode of the correlator requires four parameters to be set correctly:
+
+
+"integr_time": 2.0, "number_channels": 64,
 - `fft_size_correlation` — number of frequency points $N_\mathrm{FFT}$ (power of 2).
 - `sub_integr_time` — sub integration time $t_{\mathrm{int,sub}}$ in microseconds.
 
 Typical constraints include **time and bandwidth smearing** so that the farthest phase centre position is kept below an acceptable level (often **1%** at JIVE).
+
+$t_{\mathrm{int}} \geq N_\nu / B W_{\mathrm{SB}}$
+
+$t_{\mathrm{int}, \mathrm{sub}}=\frac{N}{2 \Delta v_{\mathrm{SB}}} \cdot N_{\mathrm{FFT}}$
+
+Bandwidth : $FoV \lesssim 49.^{\prime \prime}5 \frac{1}{B} \frac{N_\nu}{B W_{\mathrm{SB}}}$ or $\lesssim 49 .^{\prime \prime} 5 \frac{1}{B} \frac{N_{\mathrm{SB}} N_\nu}{B W_{\mathrm{tot}}}$
+
+Time : $FoV \lesssim 18.^{\prime \prime}56 \frac{\lambda}{B} \frac{1}{t_{\mathrm{int}}}$
+
+$t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
+
+
+**Bandwidth smearing**
+| $\mathrm{BW_{SB}}$<br/>(MHz) |       $N_\nu$        | FoV (B = 2,500 km)<br/>(arcsec) | FoV (B = 10,000 km)<br/>(arcsec) |
+|--------------------|--------------------|--------------------|-----------------------|
+| 32     | 2048         | 1267.20          | 316.80             |
+| 32     | 512          | 316.80           | 79.20              |
+| 32     | 32           | 19.80            | 4.95               |
+| 16     | 2048         | 2534.40          | 633.60             |
+| 16     | 512          | 633.60           | 158.40             |
+| 16     | 32           | 39.60            | 9.90               |
+| 2      | 2048         | 20275.20         | 5068.80            |
+| 2      | 512          | 5068.80          | 1267.20            |
+| 2      | 32           | 316.80           | 79.20              |
+
+**Time smearing**
+| $\lambda$<br/>(cm)|$t_\mathrm{int}$<br/>(s)|FoV (B = 2,500 km)<br/>(arcsec)|FoV (B = 10,000 km)<br/>(arcsec)|
+|--------------------|--------------------|--------------------|-----------------------|
+| 18.0       | 1.00  | 133.20           | 33.30              |
+| 18.0       | 0.25  | 532.80           | 133.20             |
+| 6.0        | 1.00  | 44.40            | 11.10              |
+| 6.0        | 0.25  | 177.60           | 44.40              |
+| 1.3        | 1.00  | 9.62             | 2.40               |
+| 1.3        | 0.25  | 38.48            | 9.62               |
+
+$\mathrm{BW_{SB}}$ = Bandwidth per subband (MHz), $N_\nu$ = Number of frequency channels per subband (FFT size), FoV = field-of-view (arcseconds) at a given baseline, B = baseline length (km), $\lambda$ = wavelength (cm), $t_\mathrm{int}$ = integration time (seconds)
 
 ### A2. Edit the control (ctrl) file
 Ensure multi-phase centre correlation is enabled:
