@@ -26,7 +26,6 @@
 
 Welcome! This page hosts the **tutorial materials** and **guides** from the first **SFXC Workshop**, held at **JIVE** (Joint Institute for VLBI in Europe; [JIVE](https://jive.eu){:target="_blank"}) on **21–23 September 2025**.
 
----
 
 ## About the workshop
 
@@ -34,12 +33,15 @@ The SFXC Workshop is designed for **VLBI users, correlator operators, and develo
 
 - Fundamentals of **SFXC**.
 - Advanced modes such as **wide-field correlation** and **FRB workflows**.
-- Technical developments: **GPU-based correlation** and **future roadmap**.
+- Technical developments such as **GPU-based correlation** and **future roadmap**.
 - Open discussions on community needs and pipeline automation.
 
-This site serves as the central hub for **tutorial content** and **step-by-step guides** prepared for the workshop. For logistical information and timetables please consult the [Indico page](https://indico.astron.nl/event/410/){:target="_blank"}.
+This site serves as the central hub for **tutorial content** and **step-by-step guides** prepared for the workshop. For logistical information please consult the [Indico page](https://indico.astron.nl/event/410/){:target="_blank"}.
 
----
+
+## Timetable
+
+The timetable can be found on the [timetables page](timetable.md). The slides for the theory sessions can be found on this page. 
 
 ## Tutorials
 

@@ -25,7 +25,7 @@
 [Return to the homepage](index.md)
 # SFXC workshop 2025 • Wide-field VLBI
 
-This page outlines the wide-field VLBI correlation that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu)). For more information and resources regarding the workshop, see the [workshop webpage](https://indico.astron.nl/event/410).
+This page outlines the wide-field VLBI correlation that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu){:target="_blank"}). For more information and resources regarding the workshop, see the [workshop webpage](https://indico.astron.nl/event/410).
 
 The definition of the Euler–Mascheroni constant is:
 
