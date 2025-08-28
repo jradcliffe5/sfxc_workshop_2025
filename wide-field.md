@@ -109,7 +109,7 @@ We therefore need to determine the values of **four** parameters which control t
 
 Given these considerations, you should have an idea of what field-of-view you want for your observation and individual phase centres. We can now determine the frequency and time resolutions that correspond to these fields-of-views. The formulae described by Wrobel et al., (1995) for the max FoV corresponding to 10\% smearing are:
 
-Bandwidth smearing: $\text{FoV} \lesssim 49.^{\prime \prime}5 \frac{1}{B} \frac{N_\nu}{\mathrm{BW}_{\mathrm{SB}}}$ or $\lesssim 49 .^{\prime \prime} 5 \frac{1}{B} \frac{N_{\mathrm{SB}} N_\nu}{\mathrm{BW}_{\mathrm{tot}}}$
+Bandwidth smearing: $\text{FoV} \lesssim 49.^{\prime \prime}5 \frac{1}{B} \frac{N_\nu}{\mathrm{BW_{SB}}}$ or $\lesssim 49 .^{\prime \prime} 5 \frac{1}{B} \frac{N_{\mathrm{SB}} N_\nu}{\mathrm{BW_{tot}}}$
 
 Time smearing: $\text{FoV} \lesssim 18.^{\prime \prime}56 \frac{\lambda}{B} \frac{1}{t_{\mathrm{int}}}$
 
