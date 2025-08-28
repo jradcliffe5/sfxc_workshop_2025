@@ -134,18 +134,16 @@ $\simeq \frac{N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right) N_{\mathrm{SB}} N_
   </style>
   <form id="fov-form" class="fov-form" autocomplete="off">
     <div class="fov-field">
-      <label for="B_km">Baseline length B <span class="fov-pill">km</span></label>
+      <label for="B_km">Projected max baseline length B <span class="fov-pill">km</span></label>
       <input type="number" id="B_km" step="500" min="0" value="2500" />
-      <div class="fov-hint">Projected baseline length.</div>
     </div>
     <div class="fov-field">
       <label for="lambda_m">Wavelength λ <span class="fov-pill">m</span></label>
       <input type="number" id="lambda_m" step="0.01" min="0" value="0.18" />
-      <div class="fov-hint">Example: 0.18 m (≈ 1.6 GHz)</div>
     </div>
     <div class="fov-sep"></div>
     <div class="fov-field">
-      <label for="Nnu">Number of channels per sub-band N<sub>ν</sub></label>
+      <label for="Nnu">Number of channels per sub-band N<sub>ν</sub> <span class="fov-pill">#</span></label>
       <input type="number" id="Nnu" step="512" min="0" value="2048" />
     </div>
     <div class="fov-field">
@@ -153,7 +151,7 @@ $\simeq \frac{N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right) N_{\mathrm{SB}} N_
       <input type="number" id="BW_SB" step="8" min="0" value="32" />
     </div>
     <div class="fov-field">
-      <label for="NSB">Number of sub-bands N<sub>SB</sub></label>
+      <label for="NSB">Number of sub-bands N<sub>SB</sub> <span class="fov-pill">#</span></label>
       <input type="number" id="NSB" step="1" min="1" value="1" />
     </div>
     <div class="fov-field">
@@ -167,8 +165,8 @@ $\simeq \frac{N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right) N_{\mathrm{SB}} N_
       <input type="number" id="tint" step="0.5" min="0" value="1.0" />
     </div>
     <div class="fov-field" style="align-self:end">
-      <button type="button" id="resetFov" class="fov-btn">Reset to example</button>
       <span class="fov-hint">B=2500 km, Nν=2048, BW<sub>SB</sub>=32 MHz, t<sub>int</sub>=1 s, λ=0.18 m</span>
+      <button type="button" id="resetFov" class="fov-btn">Reset to example</button>
     </div>
   </form>
   <div class="fov-sep"></div>
