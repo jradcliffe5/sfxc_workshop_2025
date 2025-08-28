@@ -94,12 +94,24 @@ wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*"
 ## D. Correlator preparation
 ### D1. Calculate wide-field correlation parameters
 
-As was shown in the Figure above, a key step in wide-field correlation is:
+As was shown in Figure A2, a key step in wide-field correlation is:
 
 1. Deciding what constitutes the acceptable smearing-constrained field-of-view for the internal wide-field correlation step — which determines how far you can extend from the original delay tracking centre (often the primary beam maximum). This is controlled by the `fft_size_correlation` and `sub_integr_time` parameters in the SFXC control file for bandwidth and time smearing, respectively.
 2. Deciding what is the acceptable smearing-constrained field of view for the phase-rotated data sets involves determining how far you can go from the phase-rotated data set before smearing starts to affect the images. This is governed by the `number_channels` and `integr_time` parameters in the SFXC control file for bandwidth and time smearing, respectively.
 
-$\simeq \frac{N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right) N_{\mathrm{SB}} N_\nu N_{\mathrm{pol}} \cdot f}{74565.4 \cdot t_{\mathrm{int}}} \text { GB per hour observing. }$
+We therefore need to determine the values of **four** parameters which control the smearing. Some key considerations before we determine these values.
+
+1. Are the positions selected to be targeted clustered within a single area (e.g., close to the primary beam maximum)? If so, consider reducing the FoV for the initial wide-field correlation to decrease the computational overhead. You might also want to move the delay tracking centre if they are systematically clustered in a specific direction.
+2. Do the positions selected have large uncertainties associated with them? If so you may want to reduce the averaging of the phase shifted data-sets so that you can search a larger area around the positions.
+3. Consider the output file sizes which can get very large very quickly. An estimate for the output file size is given by  $\simeq \frac{N_\mathrm{pc}\cdot N_\mathrm{hr}\cdot N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right)\cdot N_{\mathrm{SB}}\cdot N_\nu\cdot N_{\mathrm{pol}} \cdot f}{74565.4 \cdot t_{\mathrm{int}}} \text { GB. }$, where $N_\mathrm{pc}$ = number of phase centres, $N_\mathrm{hr}$ = number of hours observing, $N_{\mathrm{sta}}$ = number of stations participating, $N_{\mathrm{SB}}$ = number of subbands, $N_\nu$ = number of channels per subband, $N_{\mathrm{pol}}$ = number of output polarisation products, $t_\mathrm{int}$ = integration time and $f$ is a scaling factor that empirically has been seen to be  $\sim 1.4$ for $N_\nu \geq 1024$ and 1 otherwise. This size includes both the baselines and auto-correlations (Campbell et al. 2019).
+
+#### Calculate the smearing values
+
+Given these considerations, you will have an idea of what field-of-view you want for your observation so we now can determine the frequency and time resolution 
+
+Bandwidth smearing : $\text{FoV} \lesssim 49.^{\prime \prime}5 \frac{1}{B} \frac{N_\nu}{B W_{\mathrm{SB}}}$ or $\lesssim 49 .^{\prime \prime} 5 \frac{1}{B} \frac{N_{\mathrm{SB}} N_\nu}{B W_{\mathrm{tot}}}$
+
+Time smearing : $FoV \lesssim 18.^{\prime \prime}56 \frac{\lambda}{B} \frac{1}{t_{\mathrm{int}}}$
 
 <!-- Interactive FoV Calculator -->
 <div class="card" id="fov-calc" style="padding:1rem; margin-top:1rem;">
@@ -259,12 +271,10 @@ $t_{\mathrm{int}, \mathrm{sub}}=\frac{N}{2 \Delta v_{\mathrm{SB}}} \cdot N_{\mat
 
 Bandwidth : $FoV \lesssim 49.^{\prime \prime}5 \frac{1}{B} \frac{N_\nu}{B W_{\mathrm{SB}}}$ or $\lesssim 49 .^{\prime \prime} 5 \frac{1}{B} \frac{N_{\mathrm{SB}} N_\nu}{B W_{\mathrm{tot}}}$
 
-Time : $FoV \lesssim 18.^{\prime \prime}56 \frac{\lambda}{B} \frac{1}{t_{\mathrm{int}}}$
 
 $t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
 
 <div style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
-
   <div style="flex: 1; min-width: 300px;">
     <strong>Bandwidth smearing</strong>
     <table>
@@ -272,8 +282,8 @@ $t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
         <tr>
           <th>BW<sub>SB</sub><br/>(MHz)</th>
           <th>N<sub>ν</sub></th>
-          <th>FoV (B=2,500 km)<br/>(arcsec)</th>
-          <th>FoV (B=10,000 km)<br/>(arcsec)</th>
+          <th>FoV<br/>(B=2,500 km)<br/>(arcsec)</th>
+          <th>FoV<br/>(B=10,000 km)<br/>(arcsec)</th>
         </tr>
       </thead>
       <tbody>
@@ -289,7 +299,6 @@ $t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
       </tbody>
     </table>
   </div>
-
   <div style="flex: 1; min-width: 300px;">
     <strong>Time smearing</strong>
     <table>
@@ -297,8 +306,8 @@ $t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
         <tr>
           <th>λ<br/>(cm)</th>
           <th>t<sub>int</sub><br/>(s)</th>
-          <th>FoV (B=2,500 km)<br/>(arcsec)</th>
-          <th>FoV (B=10,000 km)<br/>(arcsec)</th>
+          <th>FoV<br/>(B=2,500 km)<br/>(arcsec)</th>
+          <th>FoV<br/>(B=10,000 km)<br/>(arcsec)</th>
         </tr>
       </thead>
       <tbody>
@@ -373,6 +382,7 @@ If IDI files exceed 2 GB, they may be split into ~1.9 GB chunks (as on the E
 ## G. Current & future developments
 - Containerised software
 - Automated wide-field correlation software
+- Smearing corrections
 - End-to-end correlation & calibration
 
 ## H. Resources
