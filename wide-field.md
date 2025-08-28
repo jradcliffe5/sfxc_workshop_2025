@@ -27,24 +27,33 @@
 This page outlines the wide-field correlation tutorial that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu){:target="_blank"}). For more information and resources regarding the workshop, see the [workshop webpage](https://indico.astron.nl/event/410) or return to the [homepage](index.md).
 
 ## On this page
-1. [Introduction](#introduction)
-2. [Data download](#data-download)
-3. [Project setup](#project-setup)
-4. [Correlator preparation](#correlator-preparation)
-5. [Running the correlator](#running-the-correlator)
-6. [Post processing](#post-processing)
-7. [Current & future developments](#current--future-developments)
-8. [Resources](#resources)
+<ol type="A">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#data-download">Data download</a></li>
+  <li><a href="#project-setup">Project setup</a></li>
+  <li><a href="#correlator-preparation">Correlator preparation</a></li>
+  <li><a href="#running-the-correlator">Running the correlator</a></li>
+  <li><a href="#post-processing">Post processing</a></li>
+  <li><a href="#current--future-developments">Current &amp; future developments</a></li>
+  <li><a href="#resources">Resources</a></li>
+</ol>
 
-## Introduction
-Wide-field VLBI is a specialised observing mode which correlates multiple sources within a single observation which are scattered across the primary beam of the interferometer. Wide-field VLBI correlation faced a fundamental challenge: to image a large fraction of the primary beam, the correlator must use **ultra-fine temporal and frequency resolution** to avoid:
+## A. Introduction
+### A1. Smearing
+Wide-field VLBI is a specialised observing mode which correlates multiple positions across the primary beam of the interferometer. Wide-field VLBI correlation faced a fundamental challenge: to image a large fraction of the primary beam, the correlator must use **ultra-fine temporal and frequency resolution** to avoid:
 
 - **Time smearing** — caused by averaging visibilities over long time intervals.
 - **Bandwidth smearing** — caused by averaging over wide frequency channels.
 
-Doing this for the **entire primary beam** produces **huge datasets** (often terabytes) and demands extreme computational resources, which is increasingly impractical with modern VLBI arrays’ higher bit rates.
+Smearing is proportional to the baseline length (as shown in Figure A1), therefore doing this for the **entire primary beam** of a VLBI array produces **huge datasets** (often many 10s of terabytes) and demands extreme computational resources, which is increasingly impractical with modern VLBI arrays’ higher bit rates.
 
-Instead of correlating the whole beam at full resolution, **software correlators** implement the *multiple phase centre observing* mode (Deller et al. 2011). This process has three distinct steps which are as follows (and shown in the Figure below):
+<img src="figures/smearing_ex.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
+
+**Figure A1** - *Example image illustrating the effects of smearing on the imaging of extragalactic sources. The background image is from the short baselines of MeerKAT which shows no smearing in the image. However, when looking at higher resolution (as with e-MERLIN) smearing affects the source which is far from the delay tracking centre.*
+
+### A2. Multiple phase centre observing
+
+Instead of correlating the whole beam at full resolution, **software correlators** implement the *multiple phase centre observing* mode (Deller et al. 2011). This process has three distinct steps which are as follows (and shown in the Figure A2):
 
 1. **Initial correlation at high resolution**  
    The correlator internally processes the data with a fine time and frequency resolution. This retains the large field-of-view as smearing is kept to a minimum.
@@ -60,11 +69,16 @@ Instead of correlating the whole beam at full resolution, **software correlators
    - Produces **small (∼GB) datasets** per phase centre instead of a single massive file.  
    - Each dataset can be calibrated and imaged independently and in parallel.
 
-<img src="figures/wf_vlbi_cor_diagram.png" alt="drawing" style="width: 60%;height: auto;"/>
+> **Important** - if you wish to use SFXC to perform wide-field correlations of interferometric arrays with shorter baselines (e.g., e-MERLIN), it may be simpler to carry out a standard correlation with higher time and frequency resolution to prevent smearing from affecting sources near the edge of the primary beam.
+
+<img src="figures/wf_vlbi_cor_diagram.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
+
+**Figure A2** - *Diagram illustrating the wide-field correlation process when using the multiple phase centre observing technique, including the field-of-views defined by smearing after internal wide-field correlation, along with the shift and averaging steps involved.*
+
 
 ---
 
-## Data download
+## B. Data download
 For this tutorial, you will need the following data and scripts: 
 1. Raw baseband data and vix files from the original correlation tutorial. This can be found at the [N24L2 data download page](https://archive.jive.nl/sfxc-workshop/n24l2/){:target="_blank"}. This can also be downloaded using the command line:
 ```bash
@@ -74,16 +88,16 @@ wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*"
 
 3. CASA calibration tables. 
 
-## Project setup
+## C. Project setup
 
 
-## Correlator preparation
-### A1. Calculate wide-field correlation parameters
+## D. Correlator preparation
+### D1. Calculate wide-field correlation parameters
 
 As was shown in the Figure above, a key step in wide-field correlation is:
 
-1. Deciding what is the acceptable smearing-constrained field-of-view is for internal wide-field correlation step -- which determines how far you can go from the original delay tracking centre (often the primary beam maximum)
-2. Deciding what is the acceptable smearing-constrained field-of-view is for the phase-rotated 
+1. Deciding what constitutes the acceptable smearing-constrained field-of-view for the internal wide-field correlation step — which determines how far you can extend from the original delay tracking centre (often the primary beam maximum). This is controlled by the `fft_size_correlation` and `sub_integr_time` parameters in the SFXC control file for bandwidth and time smearing, respectively.
+2. Deciding what is the acceptable smearing-constrained field of view for the phase-rotated data sets involves determining how far you can go from the phase-rotated data set before smearing starts to affect the images. This is governed by the `number_channels` and `integr_time` parameters in the SFXC control file for bandwidth and time smearing, respectively.
 
 $\simeq \frac{N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right) N_{\mathrm{SB}} N_\nu N_{\mathrm{pol}} \cdot f}{74565.4 \cdot t_{\mathrm{int}}} \text { GB per hour observing. }$
 
@@ -162,13 +176,13 @@ $\simeq \frac{N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right) N_{\mathrm{SB}} N_
     <div class="step">
       <h4 class="tight">Bandwidth smearing</h4>
       <div class="fov-row"><span class="fov-value" id="fovBW1">—</span><span class="fov-unit">arcsec</span></div>
-      <div class="fov-row"><span class="fov-value-sm" id="fovBW1min">—</span><span class="fov-unit">arcmin</span></div>
+      <div class="fov-row"><span class="fov-value" id="fovBW1min">—</span><span class="fov-unit">arcmin</span></div>
       <p class="soft fov-small">49.5″ · (1000/B<sub>km</sub>) · (N<sub>ν</sub>/BW<sub>SB</sub>)</p>
     </div>
     <div class="step">
       <h4 class="tight">Time smearing</h4>
       <div class="fov-row"><span class="fov-value" id="fovTime">—</span><span class="fov-unit">arcsec</span></div>
-      <div class="fov-row"><span class="fov-value-sm" id="fovTimeMin">—</span><span class="fov-unit">arcmin</span></div>
+      <div class="fov-row"><span class="fov-value" id="fovTimeMin">—</span><span class="fov-unit">arcmin</span></div>
       <p class="soft fov-small">18.56″ · (λ/B) · (1/t<sub>int</sub>) → implemented as 18.56″ · (λ<sub>cm</sub> / (B<sub>km</sub>/1000)) · (1/t), i.e. 18.56″ · (100000·λ<sub>m</sub> / B<sub>km</sub>) · (1/t)</p>
     </div>
   </div>
@@ -251,42 +265,66 @@ Time : $FoV \lesssim 18.^{\prime \prime}56 \frac{\lambda}{B} \frac{1}{t_{\mathrm
 
 $t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
 
+<div style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
 
-**Bandwidth smearing**
+  <div style="flex: 1; min-width: 300px;">
+    <strong>Bandwidth smearing</strong>
+    <table>
+      <thead>
+        <tr>
+          <th>BW<sub>SB</sub><br/>(MHz)</th>
+          <th>N<sub>ν</sub></th>
+          <th>FoV (B=2,500 km)<br/>(arcsec)</th>
+          <th>FoV (B=10,000 km)<br/>(arcsec)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>32</td><td>2048</td><td>1267.20</td><td>316.80</td></tr>
+        <tr><td>32</td><td>512</td><td>316.80</td><td>79.20</td></tr>
+        <tr><td>32</td><td>32</td><td>19.80</td><td>4.95</td></tr>
+        <tr><td>16</td><td>2048</td><td>2534.40</td><td>633.60</td></tr>
+        <tr><td>16</td><td>512</td><td>633.60</td><td>158.40</td></tr>
+        <tr><td>16</td><td>32</td><td>39.60</td><td>9.90</td></tr>
+        <tr><td>2</td><td>2048</td><td>20275.20</td><td>5068.80</td></tr>
+        <tr><td>2</td><td>512</td><td>5068.80</td><td>1267.20</td></tr>
+        <tr><td>2</td><td>32</td><td>316.80</td><td>79.20</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-| $\mathrm{BW_{SB}}$<br/>(MHz) |       $N_\nu$        | FoV (B = 2,500 km)<br/>(arcsec) | FoV (B = 10,000 km)<br/>(arcsec) |
-|--------------------|--------------------|--------------------|-----------------------|
-| 32     | 2048         | 1267.20          | 316.80             |
-| 32     | 512          | 316.80           | 79.20              |
-| 32     | 32           | 19.80            | 4.95               |
-| 16     | 2048         | 2534.40          | 633.60             |
-| 16     | 512          | 633.60           | 158.40             |
-| 16     | 32           | 39.60            | 9.90               |
-| 2      | 2048         | 20275.20         | 5068.80            |
-| 2      | 512          | 5068.80          | 1267.20            |
-| 2      | 32           | 316.80           | 79.20              |
-
-**Time smearing**
-
-| $\lambda$<br/>(cm)|$t_\mathrm{int}$<br/>(s)|FoV (B = 2,500 km)<br/>(arcsec)|FoV (B = 10,000 km)<br/>(arcsec)|
-|--------------------|--------------------|--------------------|-----------------------|
-| 18.0       | 1.00  | 133.20           | 33.30              |
-| 18.0       | 0.25  | 532.80           | 133.20             |
-| 6.0        | 1.00  | 44.40            | 11.10              |
-| 6.0        | 0.25  | 177.60           | 44.40              |
-| 1.3        | 1.00  | 9.62             | 2.40               |
-| 1.3        | 0.25  | 38.48            | 9.62               |
+  <div style="flex: 1; min-width: 300px;">
+    <strong>Time smearing</strong>
+    <table>
+      <thead>
+        <tr>
+          <th>λ<br/>(cm)</th>
+          <th>t<sub>int</sub><br/>(s)</th>
+          <th>FoV (B=2,500 km)<br/>(arcsec)</th>
+          <th>FoV (B=10,000 km)<br/>(arcsec)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>18.0</td><td>1.00</td><td>133.20</td><td>33.30</td></tr>
+        <tr><td>18.0</td><td>0.25</td><td>532.80</td><td>133.20</td></tr>
+        <tr><td>6.0</td><td>1.00</td><td>44.40</td><td>11.10</td></tr>
+        <tr><td>6.0</td><td>0.25</td><td>177.60</td><td>44.40</td></tr>
+        <tr><td>1.3</td><td>1.00</td><td>9.62</td><td>2.40</td></tr>
+        <tr><td>1.3</td><td>0.25</td><td>38.48</td><td>9.62</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
 $\mathrm{BW_{SB}}$ = Bandwidth per subband (MHz), $N_\nu$ = Number of frequency channels per subband (FFT size), FoV = field-of-view (arcseconds) at a given baseline, B = baseline length (km), $\lambda$ = wavelength (cm), $t_\mathrm{int}$ = integration time (seconds)
 
-### A2. Edit the control (ctrl) file
+### D2. Edit the control (ctrl) file
 Ensure multi-phase centre correlation is enabled:
 
 ```text
 multi_phase_center = true
 ```
 
-### A3. Edit the VEX file
+### D3. Edit the VEX file
 Define each phase centre in the `$SOURCE` section (example):
 ```text
 def RFC1;
@@ -310,11 +348,11 @@ endscan;
 ```
 
 
-## Running the correlator
-### B1. Execute the correlator
+## E. Running the correlator
+### E1. Execute the correlator
 _Add concrete run commands and environment details here._
 
-## Post processing
+## F. Post processing
 The correlator produces a custom `.cor` format that you can convert to standard interferometric formats.
 
 Conversion generally uses helper software from the **jive-casa** repository: <https://code.jive.eu/verkout/jive-casa>.
@@ -334,16 +372,17 @@ singularity run --app tConvert /SOFTWARE/jive-casa/jive-casa.img <measurement_se
 
 If IDI files exceed 2 GB, they may be split into ~1.9 GB chunks (as on the EVN archive).
 
-## Current & future developments
+## G. Current & future developments
 - Containerised software
 - Automated wide-field correlation software
 - End-to-end correlation & calibration
 
-## Resources
+## H. Resources
 ### Technical papers/memos on wide-field correlation
-1. Deller, A. T., et al., “DiFX-2: A More Flexible, Efficient, Robust, and Powerful Software Correlator”, *PASP*, 123(901), 275 (2011). doi: <https://ui.adsabs.harvard.edu/abs/2011PASP..123..275D/abstract>
-2. Morgan, J. S., et al., “VLBI imaging throughout the primary beam using accurate UV shifting”, *A&A*, 526, A140 (2011). doi: <https://ui.adsabs.harvard.edu/abs/2011A%26A...526A.140M/abstract>
-3. Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, *Experimental Astronomy*, 39(2), 259–279 (2015). doi: <https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract>
+1. Deller, A. T., et al., “DiFX-2: A More Flexible, Efficient, Robust, and Powerful Software Correlator”, *PASP*, 123(901), 275 (2011). DOI: [10.1086/658907](https://ui.adsabs.harvard.edu/abs/2011PASP..123..275D/abstract)  
+2. Morgan, J. S., et al., “VLBI imaging throughout the primary beam using accurate UV shifting”, *A&A*, 526, A140 (2011). DOI: [10.1051/0004-6361/201015138](https://ui.adsabs.harvard.edu/abs/2011A%26A...526A.140M/abstract)  
+3. Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, *Experimental Astronomy*, 39(2), 259–279 (2015). DOI: [10.1007/s10686-015-9462-z](https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract)  
+4. Wrobel, J. M., “VLBI Observing Strategies”, *Very Long Baseline Interferometry and the VLBA*, ASP Conf. Ser., 82, 411 (1995). DOI: [1995ASPC...82..411W](https://ui.adsabs.harvard.edu/abs/1995ASPC...82..411W/abstract)
 
 # Moved template rubbish
 
