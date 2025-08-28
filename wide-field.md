@@ -80,14 +80,17 @@ wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*"
 ## Correlator preparation
 ### A1. Calculate wide-field correlation parameters
 
-As was shown in the Figure above, a key step is deciding what is the acceptable smearing-constrained field-of-view is for internal wide-field correlation step -- which determines how far you can go from the original delay tracking centre (often the primary beam maximum)
+As was shown in the Figure above, a key step in wide-field correlation is:
+
+1. Deciding what is the acceptable smearing-constrained field-of-view is for internal wide-field correlation step -- which determines how far you can go from the original delay tracking centre (often the primary beam maximum)
+2. Deciding what is the acceptable smearing-constrained field-of-view is for the phase-rotated 
 
 $\simeq \frac{N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right) N_{\mathrm{SB}} N_\nu N_{\mathrm{pol}} \cdot f}{74565.4 \cdot t_{\mathrm{int}}} \text { GB per hour observing. }$
 
 <!-- Interactive FoV Calculator -->
 <div class="card" id="fov-calc" style="padding:1rem; margin-top:1rem;">
   <h3 class="tight">Interactive smearing FoV calculator</h3>
-  <p class="soft">Computes upper-limit FoVs (arcsec) due to (10%) bandwidth and time smearing.</p>
+  <p class="soft">Computes upper-limit FoVs (arcsec &amp; arcmin) due to (10%) bandwidth and time smearing.</p>
   <style>
     .fov-form { display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .fov-field { display:flex; flex-direction:column; gap:.35rem; }
@@ -106,6 +109,7 @@ $\simeq \frac{N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right) N_{\mathrm{SB}} N_
     .fov-sep { height:1px; background: var(--border); margin:.6rem 0; grid-column:1/-1; }
     .fov-row { display:flex; align-items:baseline; gap:.35rem; flex-wrap:wrap; }
     .fov-value { font-variant-numeric: tabular-nums; font-weight:800; font-size:1.6rem; }
+    .fov-value-sm { font-variant-numeric: tabular-nums; font-weight:700; font-size:1.1rem; }
     .fov-unit { color: var(--muted); }
     .fov-btn {
       appearance:none; border:1px solid var(--border); background: color-mix(in oklab, var(--bg-soft) 85%, transparent);
@@ -127,12 +131,12 @@ $\simeq \frac{N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right) N_{\mathrm{SB}} N_
     </div>
     <div class="fov-sep"></div>
     <div class="fov-field">
-      <label for="Nnu">Number of channels N<sub>ν</sub></label>
-      <input type="number" id="Nnu" step="512" min="1" value="2048" />
+      <label for="Nnu">Number of channels per sub-band N<sub>ν</sub></label>
+      <input type="number" id="Nnu" step="512" min="0" value="2048" />
     </div>
     <div class="fov-field">
       <label for="BW_SB">Sub-bandwidth BW<sub>SB</sub> <span class="fov-pill">MHz</span></label>
-      <input type="number" id="BW_SB" step="8" min="0.001" value="32" />
+      <input type="number" id="BW_SB" step="8" min="0" value="32" />
     </div>
     <div class="fov-field">
       <label for="NSB">Number of sub-bands N<sub>SB</sub></label>
@@ -140,17 +144,17 @@ $\simeq \frac{N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right) N_{\mathrm{SB}} N_
     </div>
     <div class="fov-field">
       <label for="BW_tot">Total bandwidth BW<sub>tot</sub> <span class="fov-pill">MHz</span></label>
-      <input type="number" id="BW_tot" step="8" min="0.001" value="32" />
+      <input type="number" id="BW_tot" step="8" min="0" value="32" />
       <div class="fov-hint">If BW<sub>tot</sub> = N<sub>SB</sub> · BW<sub>SB</sub>, both bandwidth forms match.</div>
     </div>
     <div class="fov-sep"></div>
     <div class="fov-field">
       <label for="tint">Integration time t<sub>int</sub> <span class="fov-pill">s</span></label>
-      <input type="number" id="tint" step="0.5" min="0.00001" value="1.0" />
+      <input type="number" id="tint" step="0.5" min="0" value="1.0" />
     </div>
     <div class="fov-field" style="align-self:end">
       <button type="button" id="resetFov" class="fov-btn">Reset to example</button>
-      <span class="fov-hint">B=2500 km, Nν=2048, BW<sub>SB</sub>=32 MHz, t<sub>int</sub>=1 s, λ=0.18 m </span>
+      <span class="fov-hint">B=2500 km, Nν=2048, BW<sub>SB</sub>=32 MHz, t<sub>int</sub>=1 s, λ=0.18 m</span>
     </div>
   </form>
   <div class="fov-sep"></div>
@@ -158,12 +162,14 @@ $\simeq \frac{N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right) N_{\mathrm{SB}} N_
     <div class="step">
       <h4 class="tight">Bandwidth smearing</h4>
       <div class="fov-row"><span class="fov-value" id="fovBW1">—</span><span class="fov-unit">arcsec</span></div>
+      <div class="fov-row"><span class="fov-value-sm" id="fovBW1min">—</span><span class="fov-unit">arcmin</span></div>
       <p class="soft fov-small">49.5″ · (1000/B<sub>km</sub>) · (N<sub>ν</sub>/BW<sub>SB</sub>)</p>
     </div>
     <div class="step">
       <h4 class="tight">Time smearing</h4>
       <div class="fov-row"><span class="fov-value" id="fovTime">—</span><span class="fov-unit">arcsec</span></div>
-      <p class="soft fov-small">18.56″ · (λ/B) · (1/t<sub>int</sub>) → implemented as 18.56″ · (λ<sub>cm</sub> / (B<sub>km</sub>/1000)) · (1/t) i.e. 18.56″ · (100000·λ<sub>m</sub> / B<sub>km</sub>) · (1/t)</p>
+      <div class="fov-row"><span class="fov-value-sm" id="fovTimeMin">—</span><span class="fov-unit">arcmin</span></div>
+      <p class="soft fov-small">18.56″ · (λ/B) · (1/t<sub>int</sub>) → implemented as 18.56″ · (λ<sub>cm</sub> / (B<sub>km</sub>/1000)) · (1/t), i.e. 18.56″ · (100000·λ<sub>m</sub> / B<sub>km</sub>) · (1/t)</p>
     </div>
   </div>
 </div>
@@ -187,20 +193,28 @@ $\simeq \frac{N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right) N_{\mathrm{SB}} N_
     const tint   = parseFloat($("tint").value);
     const valid = [B_km,lambda,Nnu,BW_SB,NSB,BWtot,tint].every(v => isFinite(v) && v > 0);
     if(!valid){
-      ["fovBW1","fovTime","tableCheck"].forEach(id => $(id).textContent = "—");
+      ["fovBW1","fovBW1min","fovTime","fovTimeMin","tableCheck","tableTimeCheck"].forEach(id => {
+        const el = $(id);
+        if (el) el.textContent = "—";
+      });
       return;
     }
+    // Bandwidth smearing (B in units of 1000 km)
     const factorB = 49.5 * (1000.0 / B_km);
-    const fovBW1 = factorB * (Nnu / BW_SB);
-    // Removed fovBW2 calculation and output
-    const fovTime = 18.56 * ((lambda * 100000.0) / B_km) * (1.0 / tint); // lambda in m -> cm; B in 1000 km units
-    $("fovBW1").textContent = fmt(fovBW1);
-    $("fovTime").textContent = fmt(fovTime);
-    const check = 49.5 * (1000.0 / 2500.0) * (2048 / 32.0);
-    $("tableCheck").textContent = fmt(check);
-    const timeCheck = 18.56 * ((0.18 * 100000.0) / 2500.0) * (1.0 / 1.0); // expected ≈ 133.20″
-    const timeCheckEl = document.getElementById("tableTimeCheck");
-    if (timeCheckEl) timeCheckEl.textContent = fmt(timeCheck);
+    const fovBW1_sec = factorB * (Nnu / BW_SB);
+    const fovBW1_min = fovBW1_sec / 60.0;
+    // Time smearing (λ in m -> cm; B in 1000 km units)
+    const fovTime_sec = 18.56 * ((lambda * 100000.0) / B_km) * (1.0 / tint);
+    const fovTime_min = fovTime_sec / 60.0;
+    $("fovBW1").textContent = fmt(fovBW1_sec);
+    $("fovBW1min").textContent = fmt(fovBW1_min);
+    $("fovTime").textContent = fmt(fovTime_sec);
+    $("fovTimeMin").textContent = fmt(fovTime_min);
+    // Optional checks (guarded so missing elements won't error)
+    const bwCheckEl = $("tableCheck");
+    if (bwCheckEl) bwCheckEl.textContent = fmt(49.5 * (1000.0 / 2500.0) * (2048 / 32.0));
+    const timeCheckEl = $("tableTimeCheck");
+    if (timeCheckEl) timeCheckEl.textContent = fmt(18.56 * ((0.18 * 100000.0) / 2500.0) * (1.0 / 1.0));
   }
   $("resetFov").addEventListener("click", () => {
     $("B_km").value = 2500;
