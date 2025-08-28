@@ -107,11 +107,15 @@ We therefore need to determine the values of **four** parameters which control t
 
 #### Calculate the smearing values
 
-Given these considerations, you will have an idea of what field-of-view you want for your observation so we now can determine the frequency and time resolution 
+Given these considerations, you should have an idea of what field-of-view you want for your observation and individual phase centres. We can now determine the frequency and time resolutions that correspond to these fields-of-views. The formulae described by Wrobel et al., (1995) for the max FoV corresponding to 10\% smearing are:
 
-Bandwidth smearing : $\text{FoV} \lesssim 49.^{\prime \prime}5 \frac{1}{B} \frac{N_\nu}{B W_{\mathrm{SB}}}$ or $\lesssim 49 .^{\prime \prime} 5 \frac{1}{B} \frac{N_{\mathrm{SB}} N_\nu}{B W_{\mathrm{tot}}}$
+Bandwidth smearing: $\text{FoV} \lesssim 49.^{\prime \prime}5 \frac{1}{B} \frac{N_\nu}{\mathrm{BW}_{\mathrm{SB}}}$ or $\lesssim 49 .^{\prime \prime} 5 \frac{1}{B} \frac{N_{\mathrm{SB}} N_\nu}{\mathrm{BW}_{\mathrm{tot}}}$
 
-Time smearing : $FoV \lesssim 18.^{\prime \prime}56 \frac{\lambda}{B} \frac{1}{t_{\mathrm{int}}}$
+Time smearing: $\text{FoV} \lesssim 18.^{\prime \prime}56 \frac{\lambda}{B} \frac{1}{t_{\mathrm{int}}}$
+
+where $\mathrm{BW_{SB}}$ = bandwidth per subband (MHz), $\mathrm{BW_{tot}}$ = total bandwidth (MHz), $N_\mathrm{SB}$ = Number of subbands,  $N_\nu$ = number of frequency channels per subband (FFT size), $\text{FoV}$ = field-of-view (arcseconds) at a given baseline, $B$ = baseline length (km), $\lambda$ = wavelength (cm) and $t_\mathrm{int}$ = integration time (seconds).
+
+To help you calculate these values, there is a widget below which calculates the smearing FoV values for different channelisation, observing frequencies and integration times together with a table containing values corresponding to short (Western European) baselines and global VLBI. These values are from Campbell et al. (2019).
 
 <!-- Interactive FoV Calculator -->
 <div class="card" id="fov-calc" style="padding:1rem; margin-top:1rem;">
@@ -255,25 +259,6 @@ Time smearing : $FoV \lesssim 18.^{\prime \prime}56 \frac{\lambda}{B} \frac{1}{t
 })();
 </script>
 
-
-The multiple phase centre observing mode of the correlator requires four parameters to be set correctly:
-
-
-"integr_time": 2.0, "number_channels": 64,
-- `fft_size_correlation` — number of frequency points $N_\mathrm{FFT}$ (power of 2).
-- `sub_integr_time` — sub integration time $t_{\mathrm{int,sub}}$ in microseconds.
-
-Typical constraints include **time and bandwidth smearing** so that the farthest phase centre position is kept below an acceptable level (often **1%** at JIVE).
-
-$t_{\mathrm{int}} \geq N_\nu / B W_{\mathrm{SB}}$
-
-$t_{\mathrm{int}, \mathrm{sub}}=\frac{N}{2 \Delta v_{\mathrm{SB}}} \cdot N_{\mathrm{FFT}}$
-
-Bandwidth : $FoV \lesssim 49.^{\prime \prime}5 \frac{1}{B} \frac{N_\nu}{B W_{\mathrm{SB}}}$ or $\lesssim 49 .^{\prime \prime} 5 \frac{1}{B} \frac{N_{\mathrm{SB}} N_\nu}{B W_{\mathrm{tot}}}$
-
-
-$t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
-
 <div style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
   <div style="flex: 1; min-width: 300px;">
     <strong>Bandwidth smearing</strong>
@@ -322,27 +307,39 @@ $t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
   </div>
 </div>
 
-$\mathrm{BW_{SB}}$ = Bandwidth per subband (MHz), $N_\nu$ = Number of frequency channels per subband (FFT size), FoV = field-of-view (arcseconds) at a given baseline, B = baseline length (km), $\lambda$ = wavelength (cm), $t_\mathrm{int}$ = integration time (seconds)
 
 ### D2. Edit the control (ctrl) file
-Ensure multi-phase centre correlation is enabled:
+
+Now that you have some approximate numbers for the time and bandwidth averaging needed for both steps of the correlation, we can edit the control file to set the four parameters that control the smearing.
+
+The internal wide-field correlation is governed by:
+- `fft_size_correlation` — number of frequency points/channels per subband $N_\mathrm{FFT}$ (power of 2).
+- `sub_integr_time` — sub integration time $t_{\mathrm{int,sub}}$ in microseconds. Note that this needs to respect $t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
+
+And the averaging of the phase shifted data by:
+- `number_channels`, - number of frequency points/channels per subband.
+- `integr_time`, - integration time. This needs to satisfy the following: $t_{\mathrm{int}} \geq N_\nu / \mathrm{BW}_{\mathrm{SB}}$
+
+Finally we need to ensure that multi-phase centre correlation is enabled:
 
 ```text
 multi_phase_center = true
 ```
 
-### D3. Edit the VEX file
-Define each phase centre in the `$SOURCE` section (example):
+### D3. Edit the VIX file
+
+With the control file now ready, we need to edit the VIX file. First, search for the `$SOURCE` section of the VIX file and add in the locations of the new positions to be correlated on. This must be in the format that is specified below:
+
 ```text
-def RFC1;
-  source_name = RFC1;
+def off_SRC1;
+  source_name = off_SRC1;
   ra = 12h26m22.5068s;
   dec = 64d06'22.046";
   ref_coord_frame = J2000;
 enddef;
 ```
 
-Include the new source names in all relevant scans in `$SCHED` (example):
+Next we need to include the the new source names in all relevant scans in the `$SCHED` section as shown below:
 ```text
 scan No0005;
   start=2022y108d15h50m09s; mode=EFF_BAND_32; source=J1229+6335;source=RFC1;
