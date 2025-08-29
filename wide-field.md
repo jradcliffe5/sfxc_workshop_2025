@@ -356,25 +356,37 @@ endscan;
 ### E1. Execute the correlator
 _Add concrete run commands and environment details here._
 
+```bash
+singularity exec --env CALC_DIR=/home/azimuth/n24l2/sfxc/sfxc/lib/calc10/data --bind /home:/home sfxc_ipp.simg mpirun sfxc n24l2_mpcc.ctrl n24l2_mpcc.vix
+```
+
 ## F. Post processing
 The correlator produces a custom `.cor` format that you can convert to standard interferometric formats.
 
 Conversion generally uses helper software from the **jive-casa** repository: <https://code.jive.eu/verkout/jive-casa>.
-A Singularity image may be available at `/SOFTWARE/jive-casa/jive-casa.img`.
 
 **Convert to Measurement Set with `j2ms2`:**
 ```bash
-singularity run --app j2ms2 /SOFTWARE/jive-casa/jive-casa.img <correlator_outputs>.corr
+singularity run --app j2ms2 jive-casa.simg -o n24l2_1_1.ms N24L2.cor_J0854+2006
+singularity run --app j2ms2 jive-casa.simg -o n24l2_2_1.ms N24L2.cor_J0854_off
 ```
 
 This produces `<vix_prefix>.ms`. If multiple correlator outputs exist, pass them all as arguments to `j2ms2`.
 
-**Convert MS to FITS-IDI with `tConvert`:**
+**Flag low weight**
 ```bash
-singularity run --app tConvert /SOFTWARE/jive-casa/jive-casa.img <measurement_set.ms> <output_idi>.IDI
+casa-6.7.0-31-py3.10.el8/bin/casa --nologger --log2term -c flag_weights.py n24l2_1_1.ms 0.7 True
+casa-6.7.0-31-py3.10.el8/bin/casa --nologger --log2term -c flag_weights.py n24l2_2_1.ms 0.7 True
 ```
 
+**Convert MS to FITS-IDI with `tConvert`:**
+```bash
+singularity run --app tConvert jive-casa.simg n24l2_1_1.ms n24l2_1_1.IDI
+singularity run --app tConvert jive-casa.simg n24l2_2_1.ms n24l2_2_1.IDI
+```
 If IDI files exceed 2 GB, they may be split into ~1.9 GB chunks (as on the EVN archive).
+
+
 
 ## G. Current & future developments
 - Containerised software
