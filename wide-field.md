@@ -35,6 +35,7 @@ This page outlines the wide-field correlation tutorial that was presented as par
   <li><a href="#running-the-correlator">Running the correlator</a></li>
   <li><a href="#post-processing">Post processing</a></li>
   <li><a href="#current--future-developments">Current &amp; future developments</a></li>
+  <li><a href="#confirming-the-outcome">Confirming the outcome</a></li>
   <li><a href="#resources">Resources</a></li>
 </ol>
 
@@ -331,34 +332,48 @@ multi_phase_center = true
 With the control file now ready, we need to edit the VIX file. First, search for the `$SOURCE` section of the VIX file and add in the locations of the new positions to be correlated on. This must be in the format that is specified below:
 
 ```text
-def off_SRC1;
-  source_name = off_SRC1;
-  ra = 12h26m22.5068s;
-  dec = 64d06'22.046";
-  ref_coord_frame = J2000;
+def J0854_off;
+   source_name = J0854_off;
+   ra = 08h54m48.8749270s;
+   dec = 20d06'31.140851";
+   ref_coord_frame = J2000;
 enddef;
 ```
 
 Next we need to include the the new source names in all relevant scans in the `$SCHED` section as shown below:
 ```text
 scan No0005;
-  start=2022y108d15h50m09s; mode=EFF_BAND_32; source=J1229+6335;source=RFC1;
-  station=Ef:    0 sec:  132 sec:      0.000000000 GB:   : &cw   : 1;
-  station=O8:    0 sec:  132 sec:      0.000000000 GB:   :       : 1;
-  station=Tr:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
-  station=Mc:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
-  station=Nt:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
+     start=2024y144d12h47m00s; mode=sess224.L1024; source=J0854+2006; source=J0854_off;
+     station=Jb:   32 sec:  600 sec:  208.687 GB:   : &n    : 1;
+     station=Wb:    0 sec:  600 sec:  208.687 GB:   :       : 1;
+     station=Ef:    0 sec:  600 sec:  208.687 GB:   : &ccw  : 1;
+     station=Mc:    0 sec:  600 sec:  208.687 GB:   : &n    : 1;
+     station=Nt:    0 sec:  600 sec:  208.687 GB:   : &n    : 1;
+     station=O8:    0 sec:  600 sec:  208.687 GB:   :       : 1;
+     station=Tr:    0 sec:  600 sec:  208.687 GB:   : &n    : 1;
+     station=Hh:    0 sec:  600 sec:  208.687 GB:   :       : 1;
+     station=Ir:    0 sec:  600 sec:  208.687 GB:   : &ccw  : 1;
+     station=Cm:    0 sec:  600 sec:  104.344 GB:   : &n    : 1;
+     station=Da:    0 sec:  600 sec:  104.344 GB:   : &n    : 1;
+     station=Kn:    0 sec:  600 sec:  104.344 GB:   : &n    : 1;
+     station=Pi:    0 sec:  600 sec:  104.344 GB:   : &n    : 1;
+     station=De:    0 sec:  600 sec:  104.344 GB:   : &n    : 1;
 endscan;
 ```
 
-
 ## E. Running the correlator
-### E1. Execute the correlator
-_Add concrete run commands and environment details here._
+
+Next we can just run the correlator as before, giving it the new control file and the edited vix file. 
+
+```bash
+mpirun sfxc n24l2_mpcc.ctrl n24l2.vix
+```
 
 ```bash
 singularity exec --env CALC_DIR=/home/azimuth/n24l2/sfxc/sfxc/lib/calc10/data --bind /home:/home sfxc_ipp.simg mpirun sfxc n24l2_mpcc.ctrl n24l2_mpcc.vix
 ```
+
+This will produce two output files instead of one -- corresponding to each of the phase centres. The files are appended with the source name i.e., `N24L2.cor_J0854+2006` and `N24L2.cor_J0854_OFF`.
 
 ## F. Post processing
 The correlator produces a custom `.cor` format that you can convert to standard interferometric formats.
@@ -366,35 +381,55 @@ The correlator produces a custom `.cor` format that you can convert to standard 
 Conversion generally uses helper software from the **jive-casa** repository: <https://code.jive.eu/verkout/jive-casa>.
 
 **Convert to Measurement Set with `j2ms2`:**
+
+```bash
+j2ms2 -o n24l2_1_1.ms N24L2.cor_J0854+2006
+j2ms2 -o n24l2_2_1.ms N24L2.cor_J0854_off
+```
+
+
 ```bash
 singularity run --app j2ms2 jive-casa.simg -o n24l2_1_1.ms N24L2.cor_J0854+2006
 singularity run --app j2ms2 jive-casa.simg -o n24l2_2_1.ms N24L2.cor_J0854_off
 ```
 
-This produces `<vix_prefix>.ms`. If multiple correlator outputs exist, pass them all as arguments to `j2ms2`.
 
 **Flag low weight**
+
+```bash
+casa --nologger --log2term -c flag_weights.py n24l2_1_1.ms 0.7 True
+casa --nologger --log2term -c flag_weights.py n24l2_2_1.ms 0.7 True
+```
+
 ```bash
 casa-6.7.0-31-py3.10.el8/bin/casa --nologger --log2term -c flag_weights.py n24l2_1_1.ms 0.7 True
 casa-6.7.0-31-py3.10.el8/bin/casa --nologger --log2term -c flag_weights.py n24l2_2_1.ms 0.7 True
 ```
 
 **Convert MS to FITS-IDI with `tConvert`:**
+
+```bash
+tConvert n24l2_1_1.ms n24l2_1_1.IDI
+tConvert n24l2_2_1.ms n24l2_2_1.IDI
+```
+
 ```bash
 singularity run --app tConvert jive-casa.simg n24l2_1_1.ms n24l2_1_1.IDI
 singularity run --app tConvert jive-casa.simg n24l2_2_1.ms n24l2_2_1.IDI
 ```
 If IDI files exceed 2 GB, they may be split into ~1.9 GB chunks (as on the EVN archive).
 
+## G. Confirming the outcome
 
 
-## G. Current & future developments
+
+## H. Current & future developments
 - Containerised software
 - Automated wide-field correlation software
 - Smearing corrections
 - End-to-end correlation & calibration
 
-## H. Resources
+## I. Resources
 ### Technical papers/memos on wide-field correlation
 1. Deller, A. T., et al., “DiFX-2: A More Flexible, Efficient, Robust, and Powerful Software Correlator”, *PASP*, 123(901), 275 (2011). DOI: [10.1086/658907](https://ui.adsabs.harvard.edu/abs/2011PASP..123..275D/abstract)  
 2. Morgan, J. S., et al., “VLBI imaging throughout the primary beam using accurate UV shifting”, *A&A*, 526, A140 (2011). DOI: [10.1051/0004-6361/201015138](https://ui.adsabs.harvard.edu/abs/2011A%26A...526A.140M/abstract)  
