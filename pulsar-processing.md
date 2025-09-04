@@ -23,32 +23,50 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 
 [Return to the homepage](index.md)
-# SFXC workshop 2025 • Template
+# SFXC workshop 2025 • Pulsar processing
 
 
 
 ## On this page
 1. [Introduction](#introduction)
 2. [Data download](#data-download)
+3. [Singularity Images](#singularity-images)
+4. [Pulsar Gating](#pulsar-gating)
+5. [Producing filterbank format output + run PSR tools](#filterbank-psr-tools)
 
 ## Introduction
-Wide-field VLBI is a specialised correlation mode that …
+Pulsar processing is special in the sense that 
+- the signal is **dispersed** and that
+- the pulsar is "off" most of the time.
 
-**Folder structure**
-```text
-tutorial/
-├─ index.html
-└─ (images, assets, etc.)
-```
+Thus, in order to achieve the highest signal-to-noise possible, the data need to be
+de-dispersed that the correct dispersion measure and we can apply a technique called
+**gating** to only use data when the pulsar is "on".
 
-Only in-line math works on the Github-pages site:
+### Dispersion
+- add a nice plot of dispersion
+- and an illustration of what dedispersion does
+- ideally both with a dynamic spectrum and the frequency-collapsed time series on top
+- let's ignore scattering for now.
+- include definition of DM, maybe even a fancy movie?
 
-$\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)$
+### Pulsar timing
+- intro to pulsar timing and how to generate and use and ephemeris file
+
+[//]: # (Only in-line math works on the Github-pages site:)
+[//]: # ($\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)$)
 
 ## Data download
 _Add links and instructions for obtaining the relevant datasets here._
 
-## Project setup
+## Singularity Images
+_Need to find where to upload singularity containers that container pulsar software_
+
+## Pulsar Gating
+- pic of a pulse profile chopped into gates
+### Project setup
+
+
 > **Tip**: Use Prism for syntax highlighting and line numbers.
 
 **Include Prism (core, Python, line numbers):**
@@ -60,7 +78,7 @@ _Add links and instructions for obtaining the relevant datasets here._
 ```
 
 ## Correlator preparation
-### A1. Calculate wide-field correlation parameters
+### A1. Set 
 The multiple phase centre observing mode of the correlator requires two parameters to be set correctly:
 
 - `fft_size_correlation` — number of frequency points $N_\mathrm{FFT}$ (power of 2).
