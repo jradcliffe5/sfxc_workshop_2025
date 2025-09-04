@@ -29,8 +29,7 @@ This page outlines the wide-field correlation tutorial that was presented as par
 ## On this page
 <ol type="A">
   <li><a href="#introduction">Introduction</a></li>
-  <li><a href="#data-download">Data download</a></li>
-  <li><a href="#project-setup">Project setup</a></li>
+  <li><a href="#data-download">Project preparation and data download</a></li>
   <li><a href="#correlator-preparation">Correlator preparation</a></li>
   <li><a href="#running-the-correlator">Running the correlator</a></li>
   <li><a href="#post-processing">Post processing</a></li>
@@ -77,9 +76,39 @@ Instead of correlating the whole beam at full resolution, **software correlators
 **Figure A2** - *Diagram illustrating the wide-field correlation process when using the multiple phase centre observing technique, including the field-of-views defined by smearing after internal wide-field correlation, along with the shift and averaging steps involved.*
 
 
----
+## B. Project preparation and data download
 
-## B. Data download
+### Software required
+- sfxc + mpirun
+- j2ms2
+- tConvert
+- CASA
+
+### Folder structure
+```text
+└── n24l2_mpcc/
+    ├── calibration/
+    ├── N24L2_delays/
+    ├── raw_data/
+        ├── n24l2_cm_no0005.vdif
+        ├── n24l2_de_no0005.vdif
+        ├── n24l2_ef_no0005
+        └── n24l2_hh_no0005
+    ├── flag_weights.py
+    ├── n24l2_mpcc.ctrl
+    └── n24l2.vix
+```
+
+```bash
+mkdir -p n24l2_mpcc/calibration
+cd n24l2_mpcc
+wget XX
+mkdir N24L2_delays
+mkdir raw_data
+cd raw_data
+wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*no0005*"
+```
+
 For this tutorial, you will need the following data and scripts: 
 1. Raw baseband data and vix files from the original correlation tutorial. This can be found at the [N24L2 data download page](https://archive.jive.nl/sfxc-workshop/n24l2/){:target="_blank"}. This can also be downloaded using the command line:
 ```bash
@@ -89,11 +118,9 @@ wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*"
 
 3. CASA calibration tables. 
 
-## C. Project setup
 
-
-## D. Correlator preparation
-### D1. Calculate wide-field correlation parameters
+## C. Correlator preparation
+### C1. Calculate wide-field correlation parameters
 
 As was shown in Figure A2, a key step in wide-field correlation is:
 
@@ -259,7 +286,6 @@ To help you calculate these values, there is a widget below which calculates the
   calc();
 })();
 </script>
-
 <div style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
   <div style="flex: 1; min-width: 300px;">
     <strong>Bandwidth smearing</strong>
@@ -309,7 +335,7 @@ To help you calculate these values, there is a widget below which calculates the
 </div>
 
 
-### D2. Edit the control (ctrl) file
+### C2. Edit the control (ctrl) file
 
 Now that you have some approximate numbers for the time and bandwidth averaging needed for both steps of the correlation, we can edit the control file to set the four parameters that control the smearing.
 
@@ -323,45 +349,63 @@ And the averaging of the phase shifted data by:
 
 Finally we need to ensure that multi-phase centre correlation is enabled:
 
-```text
-multi_phase_center = true
+```json
+multi_phase_center: true
 ```
 
-### D3. Edit the VIX file
+### C3. Edit the VIX file
 
 With the control file now ready, we need to edit the VIX file. First, search for the `$SOURCE` section of the VIX file and add in the locations of the new positions to be correlated on. This must be in the format that is specified below:
 
 ```text
 def J0854_off;
-   source_name = J0854_off;
-   ra = 08h54m48.8749270s;
-   dec = 20d06'31.140851";
-   ref_coord_frame = J2000;
+  source_name = J0854_off;
+  ra = 08h54m48.8749270s;
+  dec = 20d06'31.140851";
+  ref_coord_frame = J2000;
 enddef;
 ```
 
 Next we need to include the the new source names in all relevant scans in the `$SCHED` section as shown below:
 ```text
 scan No0005;
-     start=2024y144d12h47m00s; mode=sess224.L1024; source=J0854+2006; source=J0854_off;
-     station=Jb:   32 sec:  600 sec:  208.687 GB:   : &n    : 1;
-     station=Wb:    0 sec:  600 sec:  208.687 GB:   :       : 1;
-     station=Ef:    0 sec:  600 sec:  208.687 GB:   : &ccw  : 1;
-     station=Mc:    0 sec:  600 sec:  208.687 GB:   : &n    : 1;
-     station=Nt:    0 sec:  600 sec:  208.687 GB:   : &n    : 1;
-     station=O8:    0 sec:  600 sec:  208.687 GB:   :       : 1;
-     station=Tr:    0 sec:  600 sec:  208.687 GB:   : &n    : 1;
-     station=Hh:    0 sec:  600 sec:  208.687 GB:   :       : 1;
-     station=Ir:    0 sec:  600 sec:  208.687 GB:   : &ccw  : 1;
-     station=Cm:    0 sec:  600 sec:  104.344 GB:   : &n    : 1;
-     station=Da:    0 sec:  600 sec:  104.344 GB:   : &n    : 1;
-     station=Kn:    0 sec:  600 sec:  104.344 GB:   : &n    : 1;
-     station=Pi:    0 sec:  600 sec:  104.344 GB:   : &n    : 1;
-     station=De:    0 sec:  600 sec:  104.344 GB:   : &n    : 1;
-endscan;
+   start = 2024y144d12h47m00s;
+   mode = sess224.L1024;
+   station = Cm : 0 sec : 600 sec : 0.000000000 GB :   : &n : 1;
+   station = Da : 0 sec : 600 sec : 0.000000000 GB :   : &n : 1;
+   station = De : 0 sec : 600 sec : 0.000000000 GB :   : &n : 1;
+   station = Ef : 0 sec : 600 sec : 0.000000000 GB :   : &ccw : 1;
+   station = Hh : 0 sec : 600 sec : 0.000000000 GB :   :   : 1;
+   station = Ir : 0 sec : 600 sec : 0.000000000 GB :   : &ccw : 1;
+   station = Jb : 0 sec : 600 sec : 0.000000000 GB :   : &n : 1;
+   station = Kn : 0 sec : 600 sec : 0.000000000 GB :   : &n : 1;
+   station = Mc : 0 sec : 600 sec : 0.000000000 GB :   : &n : 1;
+   station = Nt : 0 sec : 600 sec : 0.000000000 GB :   : &n : 1;
+   station = O8 : 0 sec : 600 sec : 0.000000000 GB :   :   : 1;
+   station = Pi : 0 sec : 600 sec : 0.000000000 GB :   : &n : 1;
+   station = Tr : 0 sec : 600 sec : 0.000000000 GB :   : &n : 1;
+   station = Wb : 0 sec : 600 sec : 0.000000000 GB :   :   : 1;
+source = J0854+2006; source = J0854_off;
 ```
 
-## E. Running the correlator
+>***Cheat script:*** 
+```bash
+ed -s n24l2.vix <<'ED'
+407a
+def J0854_off;
+source_name = J0854_off;
+ra = 08h54m48.8749270s;
+dec = 20d06'31.140851";
+ref_coord_frame = J2000;
+enddef;
+.
+wq
+ED
+
+sed -i.bak -E 's/^[[:space:]]*source[[:space:]]*=[[:space:]]*J0854\+2006;[[:space:]]*$/source = J0854+2006; source = J0854_off;/' n24l2.vix
+```
+
+## D. Running the correlator
 
 Next we can just run the correlator as before, giving it the new control file and the edited vix file. 
 
@@ -375,7 +419,7 @@ singularity exec --env CALC_DIR=/home/azimuth/n24l2/sfxc/sfxc/lib/calc10/data --
 
 This will produce two output files instead of one -- corresponding to each of the phase centres. The files are appended with the source name i.e., `N24L2.cor_J0854+2006` and `N24L2.cor_J0854_OFF`.
 
-## F. Post processing
+## E. Post processing
 The correlator produces a custom `.cor` format that you can convert to standard interferometric formats.
 
 Conversion generally uses helper software from the **jive-casa** repository: <https://code.jive.eu/verkout/jive-casa>.
@@ -419,19 +463,58 @@ singularity run --app tConvert jive-casa.simg n24l2_2_1.ms n24l2_2_1.IDI
 ```
 If IDI files exceed 2 GB, they may be split into ~1.9 GB chunks (as on the EVN archive).
 
-## G. Confirming the outcome
+## F. Confirming the outcome
+
+```python
+importfitsidi(fitsidifile='n24l2_1_1.IDI',
+              vis='n24l2_A.ms')
+importfitsidi(fitsidifile='n24l2_2_1.IDI',
+              vis='n24l2_B.ms')
+```
+
+```python
+applycal(vis='n24l2_A.ms',
+         gaintable=['n24l2.sbd'],
+         parang=True)
+applycal(vis='n24l2_B.ms',
+         gaintable=['n24l2.sbd'],
+         parang=True)
+```
+
+```python
+tclean(vis='n24l2_A.ms',
+       field='J0854+2006',
+       imagename='J0854+2006_IM_dirty',
+       imsize=2500,
+       cell='1mas',
+       niter=0)
+tclean(vis='n24l2_B.ms',
+       field='J0854_OFF',
+       imagename='J0854_OFF_IM_dirty',
+       imsize=2500,
+       cell='1mas',
+       niter=0)
+```
 
 <img src="figures/wide-field/dirty_y_cuts.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
+**Figure F1** - *.*
+
 <img src="figures/wide-field/clean_images.png" alt="drawing" style="width: 100%;height: auto;" class="center"/>
 
-## H. Current & future developments
+**Figure F2** - *.*
+
+>***Cheat script:***
+
+## G. Current & future developments
 - Containerised software
 - Automated wide-field correlation software
 - Smearing corrections
 - End-to-end correlation & calibration
 
-## I. Resources
+
+
+## H. Resources
 ### Technical papers/memos on wide-field correlation
 1. Deller, A. T., et al., “DiFX-2: A More Flexible, Efficient, Robust, and Powerful Software Correlator”, *PASP*, 123(901), 275 (2011). DOI: [10.1086/658907](https://ui.adsabs.harvard.edu/abs/2011PASP..123..275D/abstract)  
 2. Morgan, J. S., et al., “VLBI imaging throughout the primary beam using accurate UV shifting”, *A&A*, 526, A140 (2011). DOI: [10.1051/0004-6361/201015138](https://ui.adsabs.harvard.edu/abs/2011A%26A...526A.140M/abstract)  
