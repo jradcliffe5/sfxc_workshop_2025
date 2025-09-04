@@ -48,7 +48,7 @@ Wide-field VLBI is a specialised observing mode which correlates multiple positi
 
 Smearing is proportional to the baseline length (as shown in Figure A1), therefore doing this for the **entire primary beam** of a VLBI array produces **huge datasets** (often many 10s of terabytes) and demands extreme computational resources, which is increasingly impractical with modern VLBI arrays’ higher bit rates.
 
-<img src="figures/smearing_ex.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
+<img src="figures/wide-field/smearing_ex.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
 **Figure A1** - *Example image illustrating the effects of smearing on the imaging of extragalactic sources. The background image is from the short baselines of MeerKAT which shows no smearing in the image. However, when looking at higher resolution (as with e-MERLIN) smearing affects the source which is far from the delay tracking centre.*
 
@@ -72,7 +72,7 @@ Instead of correlating the whole beam at full resolution, **software correlators
 
 > **Important** - if you wish to use SFXC to perform wide-field correlations of interferometric arrays with shorter baselines (e.g., e-MERLIN), it may be simpler to carry out a standard correlation with higher time and frequency resolution to prevent smearing from affecting sources near the edge of the primary beam.
 
-<img src="figures/wf_vlbi_cor_diagram.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
+<img src="figures/wide-field/wf_vlbi_cor_diagram.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
 **Figure A2** - *Diagram illustrating the wide-field correlation process when using the multiple phase centre observing technique, including the field-of-views defined by smearing after internal wide-field correlation, along with the shift and averaging steps involved.*
 
@@ -421,7 +421,9 @@ If IDI files exceed 2 GB, they may be split into ~1.9 GB chunks (as on the E
 
 ## G. Confirming the outcome
 
+<img src="figures/wide-field/dirty_y_cuts.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
+<img src="figures/wide-field/clean_images.png" alt="drawing" style="width: 100%;height: auto;" class="center"/>
 
 ## H. Current & future developments
 - Containerised software
