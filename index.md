@@ -48,6 +48,7 @@ The timetable can be found on the [timetables page](timetable.md). The slides fo
 - [Correlation](correlation.md)
 - [Post-correlation processing](correlation_post.md)
 - [Pulse processing](pulse.md)
+- [Precise processing](precise.md)
 - [Wide-field processing](wide-field.md)
 - [Geodesy](geodesy.md)
 
