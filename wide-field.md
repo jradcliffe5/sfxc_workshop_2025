@@ -24,7 +24,13 @@
 [Return to the homepage](index.md)
 # SFXC workshop 2025 • Wide-field processing
 
-This page outlines the wide-field correlation tutorial that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu){:target="_blank"}). For more information and resources regarding the workshop, see the [workshop webpage](https://indico.astron.nl/event/410) or return to the [homepage](index.md).
+This page outlines the wide-field correlation tutorial that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu){:target="_blank"}). For more information and resources regarding the SFXC workshop, see the [workshop webpage](https://indico.astron.nl/event/410) or return to the [homepage](index.md).
+
+This tutorial is an introduction to the method of wide-field VLBI and the associated correlation implementation in SFXC. By the conclusion of this tutorial, you should be able to:
+- Understand the correlation methods usually used to enable VLBI imaging across large areas of the sky. 
+- Understand the considerations required to perform a successful wide-field correlation, especially with respect to the time/bandwidth smearing.
+- Know how to set up and run SFXC to produce multiple phase centres. 
+- Know how to post-process the correlator outputs to produce user-ready visibilities. 
 
 ## On this page
 <ol type="A">
@@ -78,46 +84,53 @@ Instead of correlating the whole beam at full resolution, **software correlators
 
 ## B. Project preparation and data download
 
+To prepare for the practical part of this tutorial, we need to ensure that you have the software and utilities available to execute all parts of the tutorial.
+
+### Utilities required
+- `curl`
+- `wget` 
+- `jq`
+- `sed`
+These are normally obtainable through your package manager (e.g., `apt` on Ubuntu) or are installed together with the OS.
+
 ### Software required
-- sfxc + mpirun
-- j2ms2
-- tConvert
-- CASA
+- `sfxc`
+- `j2ms2`
+- `tConvert`
+- `CASA`: download and install instructions can be found on the [CASA homepage](https://casa.nrao.edu)
 
 ### Folder structure
+
+With the software installed, we now wish to set up the data, supporting scripts and configuration files. We *recommend* making a new folder (called for example `n24l2_mpcc`) for this tutorial so that we do not inadvertently affect other tutorials. 
+
+ A recommended file structure and an accompanying set of command line entries which can produce this file structure can be found below. Note that the final `wget` command will re-download the baseband data, so you could copy the baseband data across to the `raw_data` folder to save time. Note that, we will be only using the `No0005` scan so we only require a sub-set of the baseband data.
+
 ```text
 └── n24l2_mpcc/
     ├── calibration/
     ├── N24L2_delays/
     ├── raw_data/
-        ├── n24l2_cm_no0005.vdif
-        ├── n24l2_de_no0005.vdif
-        ├── n24l2_ef_no0005
-        └── n24l2_hh_no0005
+    │   ├── n24l2_cm_no0005.vdif
+    │   ├── n24l2_de_no0005.vdif
+    │   ├── n24l2_ef_no0005
+    │   └── n24l2_hh_no0005
     ├── flag_weights.py
-    ├── n24l2_mpcc.ctrl
+    ├── n24l2_calibration.py
+    ├── n24l2.ctrl
     └── n24l2.vix
 ```
-
 ```bash
 mkdir -p n24l2_mpcc/calibration
 cd n24l2_mpcc
-wget XX
+wget https://www.jb.man.ac.uk/~radcliff/sfxc_workshop/n24l2.ctrl
+wget https://www.jb.man.ac.uk/~radcliff/sfxc_workshop/n24l2_calibration.py
+wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*vix"
 mkdir N24L2_delays
 mkdir raw_data
 cd raw_data
 wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*no0005*"
+cd ..
 ```
-
-For this tutorial, you will need the following data and scripts: 
-1. Raw baseband data and vix files from the original correlation tutorial. This can be found at the [N24L2 data download page](https://archive.jive.nl/sfxc-workshop/n24l2/){:target="_blank"}. This can also be downloaded using the command line:
-```bash
-wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*"
-```
-2. The standard SFXC control (.ctrl) file for this observation. This can be downloaded using the following link.
-
-3. CASA calibration tables. 
-
 
 ## C. Correlator preparation
 ### C1. Calculate wide-field correlation parameters
@@ -145,7 +158,7 @@ where $\mathrm{BW_{SB}}$ = bandwidth per subband (MHz), $\mathrm{BW_{tot}}$ = to
 
 To help you calculate these values, there is a widget below which calculates the smearing FoV values for different channelisation, observing frequencies and integration times together with a table containing values corresponding to short (Western European) baselines and global VLBI. These values are from Campbell et al. (2019).
 
-<!-- Interactive FoV Calculator -->
+<!-- Interactive smearing FoV Calculator -->
 <div class="card" id="fov-calc" style="padding:1rem; margin-top:1rem;">
   <h3 class="tight">Interactive smearing FoV calculator</h3>
   <p class="soft">Computes upper-limit FoVs (arcsec &amp; arcmin) due to (10%) bandwidth and time smearing.</p>
@@ -337,9 +350,21 @@ To help you calculate these values, there is a widget below which calculates the
 
 ### C2. Edit the control (ctrl) file
 
-Now that you have some approximate numbers for the time and bandwidth averaging needed for both steps of the correlation, we can edit the control file to set the four parameters that control the smearing.
+Now that you have some approximate numbers for the time and bandwidth averaging needed for both steps of the correlation, we can edit the control file to set the four parameters that control the smearing. 
 
-The internal wide-field correlation is governed by:
+If you inspect the `n24l2.ctrl` file, you can see that is set up already for standard correlation apart from the paths to the data and output files. Edit the file to replace `<path_to_tutorial>` parts with your real path. There is a command line entry below that you can use too. 
+
+>***Cheat script:***
+```bash 
+sed -i.bak 's|<path_to_tutorial>|/your/path/to/n24l2_mpcc|g' n24l2.ctrl
+```
+>Replace `/your/path/to/` with the real path to the `n24l2_mpcc` folder. 
+
+Next, we can convert the control file to do multiple phase centre correlation. We first specify this by entering:
+```json
+multi_phase_center: true
+```
+Then we use internal wide-field correlation is governed by:
 - `fft_size_correlation` — number of frequency points/channels per subband $N_\mathrm{FFT}$ (power of 2).
 - `sub_integr_time` — sub integration time $t_{\mathrm{int,sub}}$ in microseconds. Note that this needs to respect $t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
 
@@ -349,8 +374,9 @@ And the averaging of the phase shifted data by:
 
 Finally we need to ensure that multi-phase centre correlation is enabled:
 
-```json
-multi_phase_center: true
+>***Cheat script:***
+```bash 
+jq '.multi_phase_center = (.multi_phase_center // true) | .sub_integr_time = (.sub_integr_time // 13056) | .fft_size_correlation = (.fft_size_correlation // 16384)' n24l2.ctrl > n24l2.ctrl.tmp && mv n24l2.ctrl.tmp n24l2.ctrl
 ```
 
 ### C3. Edit the VIX file
