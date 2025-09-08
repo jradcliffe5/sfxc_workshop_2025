@@ -31,8 +31,8 @@
 1. [Introduction](#introduction)
 2. [Data download](#data-download)
 3. [Singularity Images](#singularity-images)
-4. [Pulsar Gating](#pulsar-gating)
-5. [Producing filterbank format output + run PSR tools](#filterbank-psr-tools)
+4. [Producing filterbank format output + run PSR tools](#filterbank-psr-tools)
+5. [Pulsar Gating](#pulsar-gating)
 
 ## Introduction
 Pulsar processing is special in the sense that 
@@ -40,7 +40,7 @@ Pulsar processing is special in the sense that
 - the pulsar is "off" most of the time.
 
 Thus, in order to achieve the highest signal-to-noise possible, the data need to be
-de-dispersed that the correct dispersion measure and we can apply a technique called
+de-dispersed at the correct dispersion measure and we can apply a technique called
 **gating** to only use data when the pulsar is "on".
 
 ### Dispersion
@@ -51,7 +51,7 @@ de-dispersed that the correct dispersion measure and we can apply a technique ca
 - include definition of DM, maybe even a fancy movie?
 
 ### Pulsar timing
-- intro to pulsar timing and how to generate and use and ephemeris file
+- intro to pulsar timing and how to generate and use an ephemeris file
 
 [//]: # (Only in-line math works on the Github-pages site:)
 [//]: # ($\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)$)
@@ -62,81 +62,52 @@ _Add links and instructions for obtaining the relevant datasets here._
 ## Singularity Images
 _Need to find where to upload singularity containers that container pulsar software_
 
+## Producing filterbank format output + run PSR tools
+What we'll do in this tutorial is to use SFXC to generate a filterbank file from the
+baseband data of one of the stations in our observations. We chose to use the data from
+Effelsberg as it is the most sensitive dish in the array.
+
+The aim of this exercise is to a) introduce the pulsar-related capabilities of SFXC and b)
+show some basics of pulsar analysis software. 
+### Prepare the ctrl file
+```yaml
+    "number_channels": 128, 
+    "cross_polarize": true, 
+    "integr_time": 2.048, 
+    "sub_integr_time": 128.0,
+    "start": "2021y66d20h43m15s", 
+    "stop": "2021y66d20h45m09s",
+    "output_file": "file:///data1/franz/pr143a/sfxc/pr143a_corr_no0082_b0355_128us_125kHz_FullPol_FullDedisp.cor", 
+    "filterbank": true, 
+```
+
 ## Pulsar Gating
 - pic of a pulse profile chopped into gates
-### Project setup
-
-
-> **Tip**: Use Prism for syntax highlighting and line numbers.
-
-**Include Prism (core, Python, line numbers):**
-```html
-<!-- Prism core & theme -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
-<link id="prism-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" disabled />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+### Prepare the ctrl file
+```yaml
+    "number_channels": 128, 
+    "cross_polarize": true, 
+    "integr_time": 2.048, 
+    "sub_integr_time": 128.0,
+    "start": "2021y66d20h43m15s", 
+    "stop": "2021y66d20h45m09s",
+    "output_file": "file:///data1/franz/pr143a/sfxc/pr143a_corr_no0082_b0355_128us_125kHz_FullPol_FullDedisp.cor", 
+    "pulsar_binning": true, 
+    "pulsars": {
+        "B1933+16_D": {
+            "nbins": 4, 
+            "polyco_file": "file:///scratch/m/mhvk/viswesh/GP052D/B1957+20/polycob1957+20_gpfit.dat", 
+            "no_intra_channel_dedispersion": true, 
+            "coherent_dedispersion": false,
+            "interval": [
+                0.8, 
+                0.9
+            ], 
+        },
+    } 
 ```
 
-## Correlator preparation
-### A1. Set 
-The multiple phase centre observing mode of the correlator requires two parameters to be set correctly:
 
-- `fft_size_correlation` — number of frequency points $N_\mathrm{FFT}$ (power of 2).
-- `sub_integr_time` — sub integration time $t_{\mathrm{int,sub}}$ in microseconds.
-
-Typical constraints include **time and bandwidth smearing** so that the farthest phase centre position is kept below an acceptable level (often **1%** at JIVE).
-
-### A2. Edit the control (ctrl) file
-Ensure multi-phase centre correlation is enabled:
-
-```text
-multi_phase_center = true
-```
-
-### A3. Edit the VEX file
-Define each phase centre in the `$SOURCE` section (example):
-```text
-def RFC1;
-  source_name = RFC1;
-  ra = 12h26m22.5068s;
-  dec = 64d06'22.046";
-  ref_coord_frame = J2000;
-enddef;
-```
-
-Include the new source names in all relevant scans in `$SCHED` (example):
-```text
-scan No0005;
-  start=2022y108d15h50m09s; mode=EFF_BAND_32; source=J1229+6335;source=RFC1;
-  station=Ef:    0 sec:  132 sec:      0.000000000 GB:   : &cw   : 1;
-  station=O8:    0 sec:  132 sec:      0.000000000 GB:   :       : 1;
-  station=Tr:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
-  station=Mc:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
-  station=Nt:    0 sec:  132 sec:      0.000000000 GB:   : &ccw  : 1;
-endscan;
-```
-
-### Example Python block (from the tutorial)
-```python
-from __future__ import annotations
-from dataclasses import dataclass
-
-@dataclass
-class Greeter:
-    prefix: str = "Hello"
-
-    def greet(self, name: str) -> str:
-        return f"{self.prefix}, {name}!"
-
-if __name__ == "__main__":
-    g = Greeter()
-    for who in ("Alice", "Bob", "Charlie"):
-        print(g.greet(who))
-```
-
-## Running the correlator
-### B1. Execute the correlator
-_Add concrete run commands and environment details here._
 
 ## Current & future developments
 
