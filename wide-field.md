@@ -12,6 +12,14 @@
 
 <link href="styles.css" rel="stylesheet" />
 
+<script type="text/javascript">
+var pcs = document.lastModified.split(" ")[0].split("/");
+var date = pcs[1] + '/' + pcs[0] + '/' + pcs[2];
+onload = function(){
+    document.getElementById("lastModified").innerHTML = "Page last modified: " + date;
+}
+		</script>
+
 <!-- Prism CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
@@ -24,7 +32,7 @@
 [Return to the homepage](index.md)
 # SFXC workshop 2025 • Wide-field processing
 
-This page outlines the wide-field correlation tutorial that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu){:target="_blank"}). For more information and resources regarding the SFXC workshop, see the [workshop webpage](https://indico.astron.nl/event/410) or return to the [homepage](index.md).
+This page outlines the wide-field correlation tutorial that was presented as part of the first **SFXC workshop**, held on **21–23 September 2025** at the Joint Institute for VLBI in Europe ([JIVE](https://jive.eu){:target="_blank"}). For more information and resources regarding the SFXC workshop, see the [workshop webpage](https://indico.astron.nl/event/410){:target="_blank"} or return to the [homepage](index.md).
 
 This tutorial is an introduction to the method of wide-field VLBI and the associated correlation implementation in SFXC. By the conclusion of this tutorial, you should be able to:
 - Understand the correlation methods usually used to enable VLBI imaging across large areas of the sky. 
@@ -51,15 +59,15 @@ Wide-field VLBI is a specialised observing mode which correlates multiple positi
 - **Time smearing** — caused by averaging visibilities over long time intervals.
 - **Bandwidth smearing** — caused by averaging over wide frequency channels.
 
-Smearing is proportional to the baseline length (as shown in Figure A1), therefore doing this for the **entire primary beam** of a VLBI array produces **huge datasets** (often many 10s of terabytes) and demands extreme computational resources, which is increasingly impractical with modern VLBI arrays’ higher bit rates.
+Smearing is proportional to the baseline length (as shown in Figure [A1](#fig-a1)), therefore doing this for the **entire primary beam** of a VLBI array produces **huge datasets** (often many 10s of terabytes) and demands extreme computational resources, which is increasingly impractical with modern VLBI arrays’ higher bit rates.
 
 <img src="figures/wide-field/smearing_ex.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
-**Figure A1** - *Example image illustrating the effects of smearing on the imaging of extragalactic sources. The background image is from the short baselines of MeerKAT which shows no smearing in the image. However, when looking at higher resolution (as with e-MERLIN) smearing affects the source which is far from the delay tracking centre.*
+<a name="fig-a1">**Figure A1**</a> - *Example image illustrating the effects of smearing on the imaging of extragalactic sources. The background image is from the short baselines of MeerKAT which shows no smearing in the image. However, when looking at higher resolution (as with e-MERLIN) smearing affects the source which is far from the delay tracking centre.*
 
 ### A2. Multiple phase centre observing
 
-Instead of correlating the whole beam at full resolution, **software correlators** implement the *multiple phase centre observing* mode ([Deller et al. 2011](#ref_deller11)). This process has three distinct steps which are as follows (and shown in the Figure A2):
+Instead of correlating the whole beam at full resolution, **software correlators** implement the *multiple phase centre observing* mode ([Deller et al. 2011](#ref_deller11)). This process has three distinct steps which are as follows (and shown in the Figure [A2](#fig-a2)):
 
 1. **Initial correlation at high resolution**  
    The correlator internally processes the data with a fine time and frequency resolution. This retains the large field-of-view as smearing is kept to a minimum.
@@ -79,7 +87,7 @@ Instead of correlating the whole beam at full resolution, **software correlators
 
 <img src="figures/wide-field/wf_vlbi_cor_diagram.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
-**Figure A2** - *Diagram illustrating the wide-field correlation process when using the multiple phase centre observing technique, including the field-of-views defined by smearing after internal wide-field correlation, along with the shift and averaging steps involved.*
+<a name="fig-a2">**Figure A2**</a> - *Diagram illustrating the wide-field correlation process when using the multiple phase centre observing technique, including the field-of-views defined by smearing after internal wide-field correlation, along with the shift and averaging steps involved.*
 
 
 ## B. Project preparation and data download
@@ -135,20 +143,20 @@ cd ..
 ## C. Correlator preparation
 ### C1. Calculate wide-field correlation parameters
 
-As was shown in Figure A2, a key step in wide-field correlation is:
+As was shown in Figure [A2](#fig-a2), a key step in wide-field correlation is:
 
 1. Deciding what constitutes the acceptable smearing-constrained field-of-view for the internal wide-field correlation step — which determines how far you can extend from the original delay tracking centre (often the primary beam maximum). This is controlled by the `fft_size_correlation` and `sub_integr_time` parameters in the SFXC control file for bandwidth and time smearing, respectively.
 2. Deciding what is the acceptable smearing-constrained field of view for the phase-rotated data sets involves determining how far you can go from the phase-rotated data set before smearing starts to affect the images. This is governed by the `number_channels` and `integr_time` parameters in the SFXC control file for bandwidth and time smearing, respectively.
 
-We therefore need to determine the values of **four** parameters which control the smearing. Some key considerations before we determine these values.
+We therefore need to determine the values of the **four** parameters which control the smearing. Some key considerations before we determine these values.
 
 1. Are the positions selected to be targeted clustered within a single area (e.g., close to the primary beam maximum)? If so, consider reducing the FoV for the initial wide-field correlation to decrease the computational overhead. You might also want to move the delay tracking centre if they are systematically clustered in a specific direction.
 2. Do the positions selected have large uncertainties associated with them? If so you may want to reduce the averaging of the phase shifted data-sets so that you can search a larger area around the positions.
-3. Consider the output file sizes which can get very large very quickly. An estimate for the output file size is given by  $\simeq \frac{N_\mathrm{pc}\cdot N_\mathrm{hr}\cdot N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right)\cdot N_{\mathrm{SB}}\cdot N_\nu\cdot N_{\mathrm{pol}} \cdot f}{74565.4 \cdot t_{\mathrm{int}}} \text { GB. }$, where $N_\mathrm{pc}$ = number of phase centres, $N_\mathrm{hr}$ = number of hours observing, $N_{\mathrm{sta}}$ = number of stations participating, $N_{\mathrm{SB}}$ = number of subbands, $N_\nu$ = number of channels per subband, $N_{\mathrm{pol}}$ = number of output polarisation products, $t_\mathrm{int}$ = integration time and $f$ is a scaling factor that empirically has been seen to be  $\sim 1.4$ for $N_\nu \geq 1024$ and 1 otherwise. This size includes both the baselines and auto-correlations (Campbell et al. 2019).
+3. Consider the output file sizes which can get very large very quickly. An estimate for the output file size is given by  $\simeq \frac{N_\mathrm{pc}\cdot N_\mathrm{hr}\cdot N_{\mathrm{sta}}\left(N_{\mathrm{sta}}+1\right)\cdot N_{\mathrm{SB}}\cdot N_\nu\cdot N_{\mathrm{pol}} \cdot f}{74565.4 \cdot t_{\mathrm{int}}} \text { GB. }$, where $N_\mathrm{pc}$ = number of phase centres, $N_\mathrm{hr}$ = number of hours observing, $N_{\mathrm{sta}}$ = number of stations participating, $N_{\mathrm{SB}}$ = number of subbands, $N_\nu$ = number of channels per subband, $N_{\mathrm{pol}}$ = number of output polarisation products, $t_\mathrm{int}$ = integration time and $f$ is a scaling factor that empirically has been seen to be  $\sim 1.4$ for $N_\nu \geq 1024$ and 1 otherwise. This size includes both the baselines and auto-correlations [Campbell et al. (2019)](#ref_campbell19).
 
 #### Calculate the smearing values
 
-Given these considerations, you should have an idea of what field-of-view you want for your observation and individual phase centres. We can now determine the frequency and time resolutions that correspond to these fields-of-views. The formulae described by Wrobel et al., (1995) for the max FoV corresponding to 10\% smearing are:
+Given these considerations, you should have an idea of what field-of-view you want for your observation and individual phase centres. We can now determine the frequency and time resolutions that correspond to these fields-of-views. The formulae described by [Wrobel et al., (1995)](#ref_wrobel95) for the max FoV corresponding to 10\% smearing are:
 
 Bandwidth smearing: $\text{FoV} \lesssim 49.^{\prime \prime}5 \frac{1}{B} \frac{N_\nu}{\mathrm{BW_{SB}}}$ or $\lesssim 49 .^{\prime \prime} 5 \frac{1}{B} \frac{N_{\mathrm{SB}} N_\nu}{\mathrm{BW_{tot}}}$
 
@@ -156,7 +164,7 @@ Time smearing: $\text{FoV} \lesssim 18.^{\prime \prime}56 \frac{\lambda}{B} \fra
 
 where $\mathrm{BW_{SB}}$ = bandwidth per subband (MHz), $\mathrm{BW_{tot}}$ = total bandwidth (MHz), $N_\mathrm{SB}$ = Number of subbands,  $N_\nu$ = number of frequency channels per subband (FFT size), $\text{FoV}$ = field-of-view (arcseconds) at a given baseline, $B$ = baseline length (km), $\lambda$ = wavelength (cm) and $t_\mathrm{int}$ = integration time (seconds).
 
-To help you calculate these values, there is a widget below which calculates the smearing FoV values for different channelisation, observing frequencies and integration times together with a table containing values corresponding to short (Western European) baselines and global VLBI. These values are from Campbell et al. (2019).
+To help you calculate these values, there is a widget below which calculates the smearing FoV values for different channelisation, observing frequencies and integration times together with a table containing values corresponding to short (Western European) baselines and global VLBI. These values are from [Campbell et al. (2019)](#ref_campbell19).
 
 <!-- Interactive smearing FoV Calculator -->
 <div class="card" id="fov-calc" style="padding:1rem; margin-top:1rem;">
@@ -542,45 +550,16 @@ tclean(vis='n24l2_B.ms',
 
 ## H. Resources
 ### Technical papers/memos on wide-field correlation
-<a name="ref_deller11">1.</a> Deller, A. T., et al., “DiFX-2: A More Flexible, Efficient, Robust, and Powerful Software Correlator”, *PASP*, 123(901), 275 (2011). DOI: [10.1086/658907](https://ui.adsabs.harvard.edu/abs/2011PASP..123..275D/abstract)  
-2. Morgan, J. S., et al., “VLBI imaging throughout the primary beam using accurate UV shifting”, *A&A*, 526, A140 (2011). DOI: [10.1051/0004-6361/201015138](https://ui.adsabs.harvard.edu/abs/2011A%26A...526A.140M/abstract)  
-3. Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, *Experimental Astronomy*, 39(2), 259–279 (2015). DOI: [10.1007/s10686-015-9462-z](https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract)  
-4. Wrobel, J. M., “VLBI Observing Strategies”, *Very Long Baseline Interferometry and the VLBA*, ASP Conf. Ser., 82, 411 (1995). DOI: [1995ASPC...82..411W](https://ui.adsabs.harvard.edu/abs/1995ASPC...82..411W/abstract)
+<a name="ref_deller11">1.</a> Deller, A. T., et al., “DiFX-2: A More Flexible, Efficient, Robust, and Powerful Software Correlator”, *PASP*, 123(901), 275 (2011). DOI: [10.1086/658907](https://ui.adsabs.harvard.edu/abs/2011PASP..123..275D/abstract){:target="_blank"}  
+<a name="ref_morgan11">2.</a> Morgan, J. S., et al., “VLBI imaging throughout the primary beam using accurate UV shifting”, *A&A*, 526, A140 (2011). DOI: [10.1051/0004-6361/201015138](https://ui.adsabs.harvard.edu/abs/2011A%26A...526A.140M/abstract){:target="_blank"}  
+<a name="ref_keimpema15">3.</a> Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, *Experimental Astronomy*, 39(2), 259–279 (2015). DOI: [10.1007/s10686-015-9462-z](https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract){:target="_blank"}
+<a name="ref_campbell19">4.</a> Campbell, B., “Field of View Calculations for SFXC”, EVN JIVE documentation, revised 3 January 2019. Retrieved from the [EVN website](https://www.evlbi.org/sites/default/files/users/Gina/fovSFXC.pdf){:target="_blank"}. DOI: not available.  
+<a name="ref_wrobel95">5.</a> Wrobel, J. M., “VLBI Observing Strategies”, *Very Long Baseline Interferometry and the VLBA*, ASP Conf. Ser., 82, 411 (1995). DOI: [1995ASPC...82..411W](https://ui.adsabs.harvard.edu/abs/1995ASPC...82..411W/abstract){:target="_blank"}
 
-# Moved template rubbish
-
-**Folder structure**
-```text
-tutorial/
-├─ index.html
-└─ (images, assets, etc.)
-```
-
-> **Tip**: Use Prism for syntax highlighting and line numbers.
-
-**Include Prism (core, Python, line numbers):**
-```html
-test
-```
-### Example Python block (from the tutorial)
-```python
-from __future__ import annotations
-from dataclasses import dataclass
-
-@dataclass
-class Greeter:
-    prefix: str = "Hello"
-
-    def greet(self, name: str) -> str:
-        return f"{self.prefix}, {name}!"
-
-if __name__ == "__main__":
-    g = Greeter()
-    for who in ("Alice", "Bob", "Charlie"):
-        print(g.greet(who))
-```
+### Technical papers/memos on wide-field correlation
 
 ---
+_Content built by Jack Radcliffe._ <i><span id="lastModified"></span></i>
 _Built with ♥ — Markdown + HTML + CSS + Prism.js + a bit of AI. © Jack Radcliffe (2025)_
 
 <!-- Custom Script: funcs.js -->
