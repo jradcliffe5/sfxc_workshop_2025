@@ -10,6 +10,14 @@
     });
 </script> 
 
+<script type="text/javascript">
+var pcs = document.lastModified.split(" ")[0].split("/");
+var date = pcs[1] + '/' + pcs[0] + '/' + pcs[2];
+onload = function(){
+    document.getElementById("lastModified").innerHTML = "Page last modified on " + date;
+}
+		</script>
+
 <link href="styles.css" rel="stylesheet" />
 
 <!-- Prism CSS -->
@@ -54,7 +62,9 @@ The timetable can be found on the [timetables page](timetable.md). The slides fo
 
 ---
 
-_Built with ♥ — Markdown + HTML + CSS + Prism.js + a bit of AI. © Jack Radcliffe (2025)_
+_Content built by XX._ <i><span id="lastModified"></span></i>
+
+_Built with ♥ — Markdown + HTML + CSS + Prism.js + a bit of AI + Jack Radcliffe (2025)_
 
 <!-- Custom Script: funcs.js -->
 <script>

@@ -16,7 +16,7 @@
 var pcs = document.lastModified.split(" ")[0].split("/");
 var date = pcs[1] + '/' + pcs[0] + '/' + pcs[2];
 onload = function(){
-    document.getElementById("lastModified").innerHTML = "Page last modified: " + date;
+    document.getElementById("lastModified").innerHTML = "Page last modified on " + date;
 }
 		</script>
 
@@ -560,7 +560,8 @@ tclean(vis='n24l2_B.ms',
 
 ---
 _Content built by Jack Radcliffe._ <i><span id="lastModified"></span></i>
-_Built with ♥ — Markdown + HTML + CSS + Prism.js + a bit of AI. © Jack Radcliffe (2025)_
+
+_Built with ♥ — Markdown + HTML + CSS + Prism.js + a bit of AI + Jack Radcliffe (2025)_
 
 <!-- Custom Script: funcs.js -->
 <script>
