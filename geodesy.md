@@ -31,7 +31,7 @@ onload = function(){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 
 [Return to the homepage](index.md)
-# SFXC workshop 2025 • Template
+# SFXC workshop 2025 • Geodesy
 
 
 
@@ -40,21 +40,32 @@ onload = function(){
 2. [Data download](#data-download)
 
 ## Introduction
-Wide-field VLBI is a specialised correlation mode that …
 
-**Folder structure**
-```text
-tutorial/
-├─ index.html
-└─ (images, assets, etc.)
-```
-
-Only in-line math works on the Github-pages site:
-
-$\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)$
+SFXC can be used to produce correlated data sets in Mark4 format for
+use with the HOPS post-processing package.  After post-processing the
+results can be used for geodesy and absolute astrometry.
 
 ## Data download
-_Add links and instructions for obtaining the relevant datasets here._
+
+This tutorial uses the same N24L2 dataset as some of the previous tutorials.
+If you did do so already, you can download this dataset from:
+
+<https://archive.jive.nl/sfxc-workshop/n24l2>
+
+On the workshop cluster the data is available available in the
+`/data/n24l2` directory.
+
+For this tutorial you will need the HOPS software.  This tutorial has
+been tested using HOPS 3.26, but earlier versions should work as well
+If this software is not installed already on your system you can
+download the HOPS source code from:
+
+<https://web.mit.edu/haystack-www/hops/hops-3.26-4329.tar.gz>
+
+On the workshop cluster you can find the HOPS source code in the
+`/data/src` directory.  A pre-compiled version is available in
+`/home/kettenis/hops/x86_64-3.26`.
+
 
 ## Project setup
 > **Tip**: Use Prism for syntax highlighting and line numbers.
