@@ -149,10 +149,62 @@ how to correlate:
 # Set PATH and CALC_DIR
 # Copy n24l2.vix to your working directory
 gen_all_delay_files.py n24l2.vix N24L2_No0005.ctrl
-salloc -n32
+salloc -n16
 mpirun sfxc N24L2_No0005.ctrl n24l2.vix
 exit
 ```
+
+## Geodesy post-processing
+
+To convert the correlator output into Mark4 format you will need to
+use the `sfxck2mark4.py` tool.  This tool isn't automatically
+installed, but you can run it straight from the source directory.
+Assuming you checked out the SFXC source code in `~/src/sfxc` you can
+convert the data above by:
+
+```text
+~/src/sfxc/sfxc2mark4/sfxc2mark4.py n24l2.vix N24L2_No0005.ctrl
+```
+
+This will write output in the `1234` subdirectory.  Take a look at the
+contents of that directory.  Can you guess what the cryptic file names
+mean?
+
+Now we can use the fourfit tools from HOPS to do some fringe-fitting
+and produce the famous plots.  First we have to activate the HOPS
+environment:
+
+```text
+. ~/hops/x86_64-3.26/bin/hops.bash
+```
+
+This should produce a message like:
+
+```text
+Setup HOPS v3.26 with HOPS_ROOT=/home/workshop25/hops for x86_64-3.26
+```
+
+On the workshop cluster this also produces a bash error that seems to
+be harmless.
+
+You can now run `fourfit` to produce plots in test mode, using the
+`-t` option, to inspect the data.  If you are on a machine with X (or
+have set up X forwarding), you can use the `-x` option to get output
+on your screen:
+
+```text
+fourfit -t -x 1234
+```
+
+Alternatively you can create a PDF file with the plots by using the
+`-d ps2pdf` option:
+
+```text
+fourfit -t -d ps2pdf:n24l2 1234
+```
+
+
+
 
 ## Project setup
 > **Tip**: Use Prism for syntax highlighting and line numbers.
