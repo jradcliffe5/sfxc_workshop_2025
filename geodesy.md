@@ -66,6 +66,93 @@ On the workshop cluster you can find the HOPS source code in the
 `/data/src` directory.  A pre-compiled version is available in
 `/home/kettenis/hops/x86_64-3.26`.
 
+## Building HOPS (optional)
+
+Instructions for building HOPS are provided in the README.txt file
+that comes with the source code.  Installing shouldn't be difficult;
+the hardest part is probably setting up its dependencies, in
+particular the PGPLOT package.  The necessary dependencies have
+already been installed on the workshop cluster.
+
+```text
+mkdir hops
+cd hops
+tar xfz /data/src/hops-3.26-4329.tar.gz
+mkdir bld-3.26
+cd bld-3.26
+../hops-3.26/configure
+make install
+```
+
+## Basic Correlation
+
+In order to create Mark4 data products we'll need to have some
+correlated data.  You can re-use some of the data that you have
+correlated earlier in the workshop.  But if you want to start fresh,
+here is an example control file that will work:
+
+```text
+{
+    "cross_polarize": true,
+    "number_channels": 32,
+    "data_sources": {
+        "De": [
+            "file:///data/n24l2/files/n24l2_de_no0005.vdif"
+        ],
+        "Cm": [
+            "file:///data/n24l2/files/n24l2_cm_no0005.vdif"
+        ],
+        "Ef": [
+            "file:///data/n24l2/files/n24l2_ef_no0005"
+        ],
+        "Hh": [
+            "file:///data/n24l2/files/n24l2_hh_no0005"
+        ]
+    },
+    "stations": [
+        "Cm",
+        "De",
+        "Ef",
+        "Hh"
+    ],
+    "start": "2024y144d12h47m00s",
+    "stop": "2024y144d12h47m20s",
+    "channels": [
+        "CH01",
+        "CH02",
+        "CH03",
+        "CH04",
+        "CH05",
+        "CH06",
+        "CH07",
+        "CH08"
+    ],
+    "setup_station": "Ef",
+    "exper_name": "N24L2",
+    "output_file": "file:///home/workshop99/n24l2-geo/N24L2_No0005.cor",
+    "integr_time": 2.0,
+    "slices_per_integration": 4,
+    "delay_directory": "file:///home/workshop99/n24l2-geo/delays",
+    "scans": [
+        "No0005"
+    ]
+}
+```
+
+Put this in a file called `N24L2_No0005.ctrl` and make sure you adjust
+the `output_file` and `delay_directory` parameters to point to
+appropriate locations.  You can use the `n24l2.vix` VEX file that
+comes with the data for this correlation.  Here is a quick reminder on
+how to correlate:
+
+```text
+# Set PATH and CALC_DIR
+# Copy n24l2.vix to your working directory
+gen_all_delay_files.py n24l2.vix N24L2_No0005.ctrl
+salloc -n32
+mpirun sfxc N24L2_No0005.ctrl n24l2.vix
+exit
+```
 
 ## Project setup
 > **Tip**: Use Prism for syntax highlighting and line numbers.
