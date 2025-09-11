@@ -77,17 +77,111 @@ Effelsberg as it is the most sensitive dish in the array.
 
 The aim of this exercise is to a) introduce the pulsar-related capabilities of SFXC and b)
 show some basics of pulsar analysis software. 
+### Prepare the vex file
+The vex file as it was generated using `sched` (or `pysched`) does not yet contain all the
+info required by the correlated. E.g., it's missing the `CLOCKS` section as well as the `EOP`
+section. This can be fixed by running 
+```bash
+prepare_vex.py pr359a.vex pr359a.vix
+```
+This utility is shipped with SFXC. 
+> **Caution**: In case the LO-frequency is above the sky frequency, the frequency order in
+> the subbands will be reversed. prepare_vex.py does not currently fix this; i.e. this
+> to be done manually.
 ### Prepare the ctrl file
 ```yaml
-    "number_channels": 128, 
-    "cross_polarize": true, 
-    "integr_time": 2.048, 
-    "sub_integr_time": 128.0,
-    "start": "2021y66d20h43m15s", 
-    "stop": "2021y66d20h45m09s",
-    "output_file": "file:///data1/franz/pr143a/sfxc/pr143a_corr_no0082_b0355_128us_125kHz_FullPol_FullDedisp.cor", 
-    "filterbank": true, 
+{
+    "number_channels": 128,
+    "cross_polarize": false,
+    "integr_time": 2.048,
+    "sub_integr_time": 1024.0,
+    "fft_size_correlation": 128,
+    "start": "2025y244d17h31m50s",
+    "stop": "2025y244d17h32m00s",
+    "output_file": "file:///path/to/pr359a_ef_no0001_b1933.cor",
+    "filterbank": true,
+    "pulsar_binning": false,
+    "normalize": false,
+    "window_function": "NONE",
+    "data_sources": {
+        "Ef": [
+            "file:///path/to/pr359a_ef_no0001"
+        ]
+    },
+    "stations": [
+        "Ef"
+    ],
+    "channels": [
+        "CH01",
+        "CH02",
+        "CH03",
+        "CH04",
+        "CH05",
+        "CH06",
+        "CH07",
+        "CH08",
+        "CH09",
+        "CH10",
+        "CH11",
+        "CH12",
+        "CH13",
+        "CH14",
+        "CH15",
+        "CH16"
+    ],
+    "exper_name": "pr359a",
+    "delay_directory": "file:///path/to/delay-tables/",
+    "message_level": 1
+}
 ```
+### Run the correlator and convert the output to filterbank
+```bash
+mpirun -n 10 sfxc pr359a_ef_no0001_b1933.ctrl pr359a.vix
+# in case you get an error about not enough cores present, you may need to add
+--use-hwthread-cpus
+```
+The output file will be at `/path/to/pr359a_ef_no0001_b1933.cor_Ef` -- note the suffix
+ `Ef` since this is for station Effelsberg. Now we'll convert this to filterbank format as
+ regular pulsar software cannot handle the output format of SFXC.
+```bash
+cor2filterbank.py pr359a.vix pr359a_ef_no0001_b1933_10s.cor_Ef pr359a_ef_no0001_b1933_10s.cor_Ef.fil
+```
+`cor2filterbank.py` has a bunch of different options. Above we're running it at defaults,
+generating a Stokes I filterbank. Options are:
+```bash
+cor2filterbank.py --help
+Usage: Usage : cor2filterbank.py [OPTIONS] <vex file> <cor file 1> ... <cor file N> <output_file>
+
+Options:
+  -h, --help            show this help message and exit
+  -i IFS, --ifs=IFS     Range of sub-bands to correlate, format first:last.
+                        For example -i 0:3 will write the first 4 sub-bands.
+  -s SETUP_STATION, --setup-station=SETUP_STATION
+                        Define setup station, the frequency setup of this
+                        station is used in the conversion. The default is to
+                        use the first station in the vexfile
+  -b, --bandpass        Apply bandpass
+  -z, --zerodm          Apply zerodm subtraction
+  -d, --decimate-freq   Compensate for zeropadding by removing the odd
+                        numbered frequency points, default=no
+  -p POL, --pol=POL     Which polarization to use: R, L, I (=R+L), or F(=R,
+                        Re(RL), Im(RL), L), default=I
+```
+### Take a look at what's in the filterbank
+Let's plot what's in the filterbank with `waterfaller.py` that comes with the `PRESTO`
+package. Here we're using a slightly modified version that has a some functionality added
+to it, such as flagging channels and setting the dynamic range (can be found on [Franz'
+github](https://github.com/pharaofranz/presto))
+```bash
+waterfaller.py --show-ts --show-spec -T 1 -t 2.0 --nsub 128 --downsamp 1 -d 0.0 pr359a_ef_no0001_b1933_10s.cor_Ef.fil --full_info --colour-map viridis --killchans 0-300 --vmin -1 --vmax 1
+```
+The outcome should look something like Figure [1](#fig-1)
+<img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_10s.cor_Ef.fil.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
+
+<a name="fig-1">**Figure 1**</a> - *Dynamic spectrum (main panel), frequency-collapses
+time series (top panel) and time-averaged spectrum (right panel) as generated with
+`PRESTO`'s `waterfaller.py`. Here we flagged the top part of the band due to RFI. One can
+cleary see the quadratic sweep of the pulses.*
 
 ## Pulsar Gating
 - pic of a pulse profile chopped into gates
@@ -121,12 +215,9 @@ show some basics of pulsar analysis software.
 
 ## Resources
 ### Technical papers/memos on wide-field correlation
-1. Deller, A. T., et al., “DiFX-2: A More Flexible, Efficient, Robust, and Powerful Software Correlator”, *PASP*, 123(901), 275 (2011). doi: <https://ui.adsabs.harvard.edu/abs/2011PASP..123..275D/abstract>
-2. Morgan, J. S., et al., “VLBI imaging throughout the primary beam using accurate UV shifting”, *A&A*, 526, A140 (2011). doi: <https://ui.adsabs.harvard.edu/abs/2011A%26A...526A.140M/abstract>
-3. Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, *Experimental Astronomy*, 39(2), 259–279 (2015). doi: <https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract>
 
 ---
-_Content built by XX._ <i><span id="lastModified"></span></i>
+_Content built by Franz Kirsten._ <i><span id="lastModified"></span></i>
 
 _Built with ♥ — Markdown + HTML + CSS + Prism.js + a bit of AI + Jack Radcliffe (2025)_
 
