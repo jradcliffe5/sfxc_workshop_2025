@@ -436,9 +436,8 @@ source = J0854+2006; source = J0854_off;
 >enddef;
 >.
 >wq
-ED
->```
->```
+>ED
+>
 >sed -i.bak -E 's/^[[:space:]]*source[[:space:]]*=[[:space:]]*J0854\+2006;[[:space:]]*$/source = J0854+2006; source = J0854_off;/' >24l2.vix
 >```
 
