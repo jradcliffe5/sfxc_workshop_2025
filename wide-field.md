@@ -425,21 +425,22 @@ source = J0854+2006; source = J0854_off;
 ```
 
 >***Cheat script:*** 
-```bash
-ed -s n24l2.vix <<'ED'
-407a
-def J0854_off;
-source_name = J0854_off;
-ra = 08h54m48.8749270s;
-dec = 20d06'31.140851";
-ref_coord_frame = J2000;
-enddef;
-.
-wq
+>```bash
+>ed -s n24l2.vix <<'ED'
+>407a
+>def J0854_off;
+>source_name = J0854_off;
+>ra = 08h54m48.8749270s;
+>dec = 20d06'31.140851";
+>ref_coord_frame = J2000;
+>enddef;
+>.
+>wq
 ED
-
-sed -i.bak -E 's/^[[:space:]]*source[[:space:]]*=[[:space:]]*J0854\+2006;[[:space:]]*$/source = J0854+2006; source = J0854_off;/' >24l2.vix
-```
+>```
+>```
+>sed -i.bak -E 's/^[[:space:]]*source[[:space:]]*=[[:space:]]*J0854\+2006;[[:space:]]*$/source = J0854+2006; source = J0854_off;/' >24l2.vix
+>```
 
 Note that there is no limit to the number of sources that you can specify here, and it is just a matter of defining the coordinates in the `$SOURCE` section and then adding the source name in the relevant scans (`$SCHED` section).  
 
