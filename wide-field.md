@@ -509,7 +509,8 @@ We will then fringe-fit the phase centre with the source located at the delay tr
 fringefit(vis='n24l2_A.ms',
           caltable='n24l2.sbd',
           refant='EF',
-          corrdepflags=True)
+          corrdepflags=True,
+          parang=True)
 ```
 
 With the solutions obtained, we can now apply these solutions to the measurement sets to align the phases and the visibilities should now constructively interfere where the source is located. 
