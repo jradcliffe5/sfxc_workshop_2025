@@ -426,7 +426,7 @@ source = J0854+2006; source = J0854_off;
 
 >***Cheat script:*** 
 >```bash
->ed -s n24l2.vix \<\< 'ED'
+>ed -s n24l2.vix &lt;&lt; 'ED'
 >407a
 >def J0854_off;
 >source_name = J0854_off;
