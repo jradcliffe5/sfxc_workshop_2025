@@ -125,12 +125,14 @@ With the software installed, we now wish to set up the data, supporting scripts 
     ├── flag_weights.py
     ├── n24l2_calibration.py
     ├── n24l2.ctrl
-    └── n24l2.vix
+    ├── n24l2.vix
+    └── run_correlation_post_process.bash
 ```
 ```bash
 mkdir -p n24l2_mpcc/calibration
 cd n24l2_mpcc
 wget https://www.jb.man.ac.uk/~radcliff/sfxc_workshop/n24l2.ctrl
+wget https://www.jb.man.ac.uk/~radcliff/sfxc_workshop/run_correlation_post_process.bash
 wget https://www.jb.man.ac.uk/~radcliff/sfxc_workshop/n24l2_calibration.py
 wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*vix"
 mkdir N24L2_delays
@@ -373,23 +375,23 @@ Next, we can convert the control file to do multiple phase centre correlation. W
 multi_phase_center: true
 ```
 Then we use internal wide-field correlation is governed by:
-- `fft_size_correlation` — number of frequency points/channels per subband $N_\mathrm{FFT}$ (power of 2).
+- `fft_size_correlation` — number of frequency points/channels per subband ($N_\mathrm{FFT}$). This must be a power of 2.
 - `sub_integr_time` — sub integration time $t_{\mathrm{int,sub}}$ in microseconds. Note that this needs to respect $t_\mathrm{int,sub} = \frac{N}{2\Delta\nu_\mathrm{SB}}\cdot N_\mathrm{FFT}$
 
 And the averaging of the phase shifted data by:
-- `number_channels`, - number of frequency points/channels per subband.
-- `integr_time`, - integration time. This needs to satisfy the following: $t_{\mathrm{int}} \geq N_\nu / \mathrm{BW}_{\mathrm{SB}}$
+- `number_channels` - number of frequency points/channels per subband.
+- `integr_time` - integration time. This needs to satisfy the following: $t_{\mathrm{int}} \geq N_\nu / \mathrm{BW}_{\mathrm{SB}}$
 
 Finally we need to ensure that multi-phase centre correlation is enabled:
 
 >***Cheat script:***
-```bash 
-jq '.multi_phase_center = (.multi_phase_center // true) | .sub_integr_time = (.sub_integr_time // 13056) | .fft_size_correlation = (.fft_size_correlation // 16384)' n24l2.ctrl > n24l2.ctrl.tmp && mv n24l2.ctrl.tmp n24l2.ctrl
-```
+>```bash 
+>jq '.multi_phase_center = (.multi_phase_center // true) | .sub_integr_time = (.sub_integr_time // 13056) | .fft_size_correlation = (.>fft_size_correlation // 16384)' n24l2.ctrl > n24l2.ctrl.tmp && mv n24l2.ctrl.tmp n24l2.ctrl
+>```
 
-### C3. Edit the VIX file
+### C3. Edit the vix file
 
-With the control file now ready, we need to edit the VIX file. First, search for the `$SOURCE` section of the VIX file and add in the locations of the new positions to be correlated on. This must be in the format that is specified below:
+With the control file now ready, we need to edit the vix file. First, search for the `$SOURCE` section of the VIX file and add in the locations of the new positions to be correlated on. This must be in the format that is specified below:
 
 ```text
 def J0854_off;
@@ -436,68 +438,63 @@ enddef;
 wq
 ED
 
-sed -i.bak -E 's/^[[:space:]]*source[[:space:]]*=[[:space:]]*J0854\+2006;[[:space:]]*$/source = J0854+2006; source = J0854_off;/' n24l2.vix
+sed -i.bak -E 's/^[[:space:]]*source[[:space:]]*=[[:space:]]*J0854\+2006;[[:space:]]*$/source = J0854+2006; source = J0854_off;/' >24l2.vix
 ```
+
+Note that there is no limit to the number of sources that you can specify here, and it is just a matter of defining the coordinates in the `$SOURCE` section and then adding the source name in the relevant scans (`$SCHED` section).  
 
 ## D. Running the correlator
 
-Next we can just run the correlator as before, giving it the new control file and the edited vix file. 
+Once this is complete, we can just run `sfxc`, as shown in the previous tutorials:
 
 ```bash
-mpirun sfxc n24l2_mpcc.ctrl n24l2.vix
+mpirun sfxc n24l2.ctrl n24l2.vix
 ```
 
-```bash
-singularity exec --env CALC_DIR=/home/azimuth/n24l2/sfxc/sfxc/lib/calc10/data --bind /home:/home sfxc_ipp.simg mpirun sfxc n24l2_mpcc.ctrl n24l2_mpcc.vix
-```
-
-This will produce two output files instead of one -- corresponding to each of the phase centres. The files are appended with the source name i.e., `N24L2.cor_J0854+2006` and `N24L2.cor_J0854_OFF`.
+This will produce two output files instead of one -- corresponding to each of the phase centres. The files are appended with the source name so you should have `N24L2.cor_J0854+2006` and `N24L2.cor_J0854_OFF` in your current working directory.
 
 ## E. Post processing
-The correlator produces a custom `.cor` format that you can convert to standard interferometric formats.
 
-Conversion generally uses helper software from the **jive-casa** repository: <https://code.jive.eu/verkout/jive-casa>.
+Now that these two output correlations are completed, we can continue with the standard post-processing steps. The only difference with standard correlation is that you do the steps with each `.cor` file separately. This is highly parallelisable!
 
 **Convert to Measurement Set with `j2ms2`:**
 
-```bash
-j2ms2 -o n24l2_1_1.ms N24L2.cor_J0854+2006
-j2ms2 -o n24l2_2_1.ms N24L2.cor_J0854_off
-```
-
+Firstly, we convert into a measurement set, remembering that we need to define the setup reference station due to the mixed bandwidths correlation that was performed.
 
 ```bash
-singularity run --app j2ms2 jive-casa.simg -o n24l2_1_1.ms N24L2.cor_J0854+2006
-singularity run --app j2ms2 jive-casa.simg -o n24l2_2_1.ms N24L2.cor_J0854_off
+j2ms2 -o n24l2_1_1.ms eo:setup_ref_station=Ef N24L2.cor_J0854+2006
+j2ms2 -o n24l2_2_1.ms eo:setup_ref_station=Ef N24L2.cor_J0854_off
 ```
 
+Note that the normal practice is that the first measurement set will also contain the correlated scans of the calibrator sources as well. This is because the calibration that will be performed on the calibrators will be identically applicable to all of the phase centres. 
 
-**Flag low weight**
+**Flag low weights**
+
+We then flag the low weights in these data. Note that this is using a modified `flag_weights.py` that uses CASA. 
 
 ```bash
 casa --nologger --log2term -c flag_weights.py n24l2_1_1.ms 0.7 True
 casa --nologger --log2term -c flag_weights.py n24l2_2_1.ms 0.7 True
 ```
 
-```bash
-casa-6.7.0-31-py3.10.el8/bin/casa --nologger --log2term -c flag_weights.py n24l2_1_1.ms 0.7 True
-casa-6.7.0-31-py3.10.el8/bin/casa --nologger --log2term -c flag_weights.py n24l2_2_1.ms 0.7 True
-```
-
 **Convert MS to FITS-IDI with `tConvert`:**
+
+Finally, we convert each of the measurement sets into a FITS IDI file (one per each phase centre).  
 
 ```bash
 tConvert n24l2_1_1.ms n24l2_1_1.IDI
 tConvert n24l2_2_1.ms n24l2_2_1.IDI
 ```
 
-```bash
-singularity run --app tConvert jive-casa.simg n24l2_1_1.ms n24l2_1_1.IDI
-singularity run --app tConvert jive-casa.simg n24l2_2_1.ms n24l2_2_1.IDI
-```
 If IDI files exceed 2 GB, they may be split into ~1.9 GB chunks (as on the EVN archive).
 
 ## F. Confirming the outcome
+
+Finally, with the data correlated and post-processed, we can now calibrate these data to illustrate the phase shifting technique employed. To do this, copy your IDI files into the calibration folder and then change directory into that folder. This is just to ensure that we start the calibration process with a clean slate. With multiple phase centre observing, the data-sets are corrupted by the majority of the same calibration effects, therefore you only need to calibrate a single phase centre to calibrate them all. Only direction-dependent effects such as primary beam corrections require different corrections per phase centre.
+
+In this tutorial, we are just going to fringefit these data to reveal the source location and are omitting other calibration steps such as flux scaling, amplitude corrections etc. If you wish to learn how to reduce the data, please refer to the JIVE VLBI school 2025.
+
+Firstly, we will convert the two IDI files into a CASA-compatible measurement set,
 
 ```python
 importfitsidi(fitsidifile='n24l2_1_1.IDI',
@@ -506,6 +503,16 @@ importfitsidi(fitsidifile='n24l2_2_1.IDI',
               vis='n24l2_B.ms')
 ```
 
+We will then fringe-fit the phase centre with the source located at the delay tracking centre,
+
+```python
+fringefit(vis='n24l2_A.ms',
+          caltable='n24l2.sbd',
+          refant='EF',
+          corrdepflags=True)
+```
+
+With the solutions obtained, we can now apply these solutions to the measurement sets to align the phases and the visibilities should now constructively interfere where the source is located. 
 ```python
 applycal(vis='n24l2_A.ms',
          gaintable=['n24l2.sbd'],
@@ -514,6 +521,8 @@ applycal(vis='n24l2_B.ms',
          gaintable=['n24l2.sbd'],
          parang=True)
 ```
+
+To visualise this, we can generate an image of both phase centres.
 
 ```python
 tclean(vis='n24l2_A.ms',
@@ -529,19 +538,43 @@ tclean(vis='n24l2_B.ms',
        cell='1mas',
        niter=0)
 ```
+These images will be extremely ugly as we are only using a few seconds of data. However, if you visualise this with the CASA `viewer` or CARTA, you should see that there is an amplitude spike at the source position, which is offset from the delay tracking centre by 0.5 arcseconds (as expected!). We visualise this in Figure F1, which shows a Declination slice at a fixed Right Ascension showing the fringe spikes at the expected source location with one phase centre being offset. In Figure F2, we clean this data-set to illustrate the location of the source. Note that we have fixed the restoring beam. 
 
 <img src="figures/wide-field/dirty_y_cuts.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
-**Figure F1** - *.*
+**Figure F1** - A central Right Ascension slice of the two (uncleaned) images of the two phase centres showing the increase in fringe amplitude height at the expected location of the source.
 
 <img src="figures/wide-field/clean_images.png" alt="drawing" style="width: 100%;height: auto;" class="center"/>
 
-**Figure F2** - *.*
+**Figure F2** - Cleaned images of both phase centres. The restoring beam is circular for visualisation purposed with the peak pixel identified by the red arrow.
 
 >***Cheat script:***
 
 ## G. Current & future developments
 - Containerised software
+
+```bash
+singularity exec --env CALC_DIR=/home/azimuth/n24l2/sfxc/sfxc/lib/calc10/data --bind /home:/home sfxc_ipp.simg mpirun sfxc n24l2_mpcc.ctrl n24l2_mpcc.vix
+```
+
+```bash
+singularity run --app j2ms2 jive-casa.simg -o n24l2_1_1.ms N24L2.cor_J0854+2006
+singularity run --app j2ms2 jive-casa.simg -o n24l2_2_1.ms N24L2.cor_J0854_off
+```
+
+```bash
+casa --nologger --log2term -c flag_weights.py n24l2_1_1.ms 0.7 True
+casa --nologger --log2term -c flag_weights.py n24l2_2_1.ms 0.7 True
+```
+
+```bash
+singularity run --app tConvert jive-casa.simg n24l2_1_1.ms n24l2_1_1.IDI
+singularity run --app tConvert jive-casa.simg n24l2_2_1.ms n24l2_2_1.IDI
+```
+
+
+Conversion generally uses helper software from the **jive-casa** repository: <https://code.jive.eu/verkout/jive-casa>.
+
 - Automated wide-field correlation software
 - Smearing corrections
 - End-to-end correlation & calibration
