@@ -41,8 +41,8 @@ onload = function(){
 ---
 
 ## Sunday, 21 September 2025
-- **17:00–20:00** — **Ice‑breaker reception**  
-  _Either at ASTRON or at De Börken_
+- **18:00–20:00** — **Ice‑breaker reception**  
+  _At the venue - ASTRON's premises_
 
 ## Monday, 22 September 2025
 
