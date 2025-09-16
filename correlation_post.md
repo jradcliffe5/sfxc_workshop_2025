@@ -76,6 +76,15 @@ The typical post-correlation workflow at JIVE can be summarized as follows:
 
 The SFXC correlator generates outputs as `<job number>/<exp>_<scan>.cor`, or just `<exp>_<scan>.cor`, e.g. `N24L2_No0001.cor`. These jobs must be collected, together with the VEX-file that was used for the correlation in a folder structure like this:
 
+For a simple run - such as here:
+```text
+/path/to/EXPERIMENT/
+               ├─ EXPERIMENT.vix
+               ├─ <EXPERIMENT>_<SCANx>.cor
+               └─ <EXPERIMENT>_<SCANy>.cor
+```
+
+Or, how it looks at JIVE, where an experiment is correlated in multiple jobs:
 ```text
 /path/to/EXPERIMENT/
                ├─ EXPERIMENT.vix
