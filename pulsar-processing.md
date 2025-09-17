@@ -267,8 +267,8 @@ And we can even zoom in on one pulse -- see [Figure 3](#fig-3). What you will se
 things do not align perfectly in frequency. This is caused by residual dispersion
 smearing; residual in the sense that not all the dispersion has been taken out, in
 particular that within a channel. We chose quite a crude channelisation just to show this
-effect. The amount of residual smearing per bandwidth $BW$ at a certain central frequency
-$\nu$ is approximated as 
+effect. The amount of residual smearing $\delta \tau$ per bandwidth $BW$ at a certain
+central frequency $\nu$ is approximated as 
 
 $\frac{\delta \tau}{\mu s} = 8.3 * \frac{\text{BW}}{[\text{MHz}]} * \text{DM} * \left
 (\frac{\nu}{[\text{GHz}]}\right )^{-3}$
