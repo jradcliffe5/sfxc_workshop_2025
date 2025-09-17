@@ -47,6 +47,14 @@ Pulsar processing is special in the sense that
 - the signal is **dispersed** and that
 - the pulsar is "off" most of the time.
 
+The dispersion is caused by the fact that the signal traverses the interstellar medium
+which is filled with free electrons at varying densities $n_e$. This does not only lead to
+multi-path propagation but, as such, the medium has a
+frequency dependent index of refraction which in turn leads to lower frequencies arriving
+later at the observer than higher frequencies. This time delay, $\Delta t$, is
+proportional to the total amount of electrons along the line of sight $dl$ -- the dispersion
+measure or ${DM}=\int n_e dl$.
+
 Thus, in order to achieve the highest signal-to-noise possible, the data need to be
 de-dispersed at the correct dispersion measure and we can apply a technique called
 **gating** to only correlate the data when the pulsar is "on". In this tutorial we will use SFXC to
@@ -217,9 +225,9 @@ github](https://github.com/pharaofranz/presto)). The outcome should look somethi
 [Figure 1](#fig-1). 
 
 ```bash
-waterfaller.py --show-ts --show-spec -T 1.25 -t 1.2 --killchans 0-16,31,46-47,62-63
-pr359a_ef_no0001_b1933_10s.cor_Ef.fil --full_info --colour-map viridis
---vmin -1 --vmax 1
+waterfaller.py --show-ts --show-spec -T 1.25 -t 1.2 --killchans 0-16,31,46-47,62-63 \
+  pr359a_ef_no0001_b1933_10s.cor_Ef.fil --full_info --colour-map viridis \
+  --vmin -1 --vmax 1
 ```
 
 > Tipp: In case no plots are being shown with the command above, you may need to set the
@@ -256,9 +264,16 @@ And we can even zoom in on one pulse -- see [Figure 3](#fig-3)
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_NoDedisp_waterfaller-dedisp-zoom.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
 <a name="fig-3">**Figure 3**</a> - *Zoom in on a single pulse with incoherent dedispersion
-applied.*
+applied. The pulse does not appear "straight" in the dynamic spectrum because of residual
+dispersion smearing: we chose quite a crude frequency resolution leading to some
+dispersive delay being present **within** a channel.*
 
 ### Generate coherently dedispersed filterbank with SFXC
+Of course we can try and compensate for the residual smearing by increasing the number of
+frequency channels in the fitlerbanks. However, this will come at the cost of time
+resolution which in the case of a millisecond pulsar (or and FRB) will disable us look for
+fine structure. Therefore we can use coherent dedispersion which removes any residual
+dispersion smearing also **within** a channel.
 - prep the control file:
 
 ```yaml
