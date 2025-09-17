@@ -497,10 +497,9 @@ containing the "offpulse" data, i.e. that which is outside the interval. We can 
 
 ```
 
-<a name="fig-6"></a>
 <img src="figures/pulsar-processing/gated-profile.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
-<a name="fig-9">**Figure 6**</a> - *Pulse "profiles" on the Ef-Ur and Ef-O8
+<a name="fig-6">**Figure 6**</a> - *Pulse "profiles" on the Ef-Ur and Ef-O8
 baselines. The pulse period (~358.7ms) is broken up into 50 time bins (~7.2ms each) based on the
 polynomial coefficients from `tempo2`. Each "set" of data (10s/358.7ms=28 chunks) is
 correlated individually. The bin that contains the pulse clearly sticks out. In a way,
@@ -536,6 +535,9 @@ I.e., in the control file we'll have the following
 <a name="fig-7">**Figure 7**</a> - *Same as [Figure 6](#fig-6) but zoomed in on
 the pulse phase range 0.65-0.75. Now the substructure also becomes available here.*
 
+At this point one would refine the interval even more to have only "on-bins". As in
+regular observations, the following steps are then to run `tconvert` and `j2ms2` to create
+fitsidi files that can then loaded into your favourite data reduction and calibration tool.
 
 
 ## Current & future developments
