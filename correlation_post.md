@@ -45,8 +45,8 @@ This section explains how the workflow at [JIVE](https://jive.eu) addresses thes
 3. [Setting up your environment](#setup-your-environment)
 4. [Gathering data](#gather-data)
 5. [Translate into MeasurementSet](#translate-to-measurementset)
-6. (optional) [Data inspection using `jiveplot`]()
-7. [Export to FITS-IDI]
+6. (optional) [Data inspection using `jiveplot`](#data-inspection-using-jiveplot)
+7. (optional) [Export to FITS-IDI](#export-to-fits-idi)
 
 # Introduction/background
 At JIVE it was decided long ago (~1997, that was in the previous millenium) to use the [AIPS++/CASA MeasurementSet v2](https://casacore.github.io/casacore-notes/229.pdf) format ("MS", "MSv2" hereafter) as internal data format.
@@ -74,36 +74,34 @@ The typical post-correlation workflow at JIVE can be summarized as follows:
 - run scripts (optional):
      - that fix known issues
      - that flag bad/missing data
-     - plot data from the MS
+     - [plot data from the MS](#data-inspection-using-jiveplot)
 - (optional) add calibration tables
-- export to FITS-IDI
+- (optional) [export to FITS-IDI](#export-to-fits-idi)
 
 # Setup your environment
 
 In the following steps several tools will be needed. They need to be present on your post-correlation system. On the workshop cluster the compiled binaries will already have been installed for you, as documented below. The Python modules used in this document are not: because of Python3 package management strategies these have to be installed in a virtual environment of your own by yourself - also documented below.
 
-## The C/C++ compiled tools
+## The `jive-casa` C/C++ compiled tools
 
-The necessary tools can be compiled from the following git repositories and following the build instructions therein:
-- the [myvex](https://code.jive.eu/verkout/myvex.git) VEX-parsing library (a dependency for the next item)
-- the [jive-casa](https://code.jive.eu/verkout/jive-casa.git) data format translation programs
-
-On the workshop cluster the tools are installed under `/data/verkout/tools/bin`, i.e. to make them easily usable do this in your shell:
+The [jive-casa](https://code.jive.eu/verkout/jive-casa.git) tools are absolutely necessary for the post-correlation workflow. If not available on the system, compiling from source is simple enough. However, before going there, test if the tool(s) are already on your system:
 
 ```bash
-$> export PATH=/data/verkout/tools/bin:${PATH}
-$> hash -r
-
-# verify they work; expect output as below
+# Check if the tool is already available on your system,
+# expect output similar to this.
 $> j2ms2 --version
 j2ms2: Version 1.0.6 git:master@95009aa
-
 ```
-and you're good to go.
 
-Remember to do this in each new shell, or, add the `/data/verkout/tools/bin` to your `${PATH}` variable in your `~/.profile` or `~/.bashrc` exactly as in the snippet above (the `hash -r` is not needed in that case).
+If not installed, the tools can be compiled from the following git repositories and following the build instructions therein. They're all CMake-ified projects.
+- the [casacore](https://github.com/casacore/casacore) suite of C++ libraries for radio astronomy data processing<br>NOTE: may be installable throuh the system's package manager (`apt-get`, `yum`, ...), YMMV:
+```bash
+$> sudo {apt-get|yum|...} install casacore-dev
+```
+- the [myvex](https://code.jive.eu/verkout/myvex.git) VEX-parsing library, a dependency for the next item
+- the [jive-casa](https://code.jive.eu/verkout/jive-casa.git) data format translation programs
 
-## The python MS plotting package
+## The Python based `jiveplot` MS plotting package
 JIVE software engineers are much like software engineers elsewhere: if something doesn't work, or is too slow, or is cumbersome - let's write something different ourselves!
 
 Visualizing data from a MeasurementSet has always been painful, and in the beginning non-existant even. Based upon the in-house developed [not python](https://casa.nrao.edu/aips2_docs/glish/glish.html) application  [jivegui-ms2](https://code.jive.eu/verkout/jivegui-ms2.git), eventually, when Python _did_ become the scripting language of `CASA`, the [`jiveplot`](https://github.com/haavee/jiveplot.git) package got developed.
@@ -126,11 +124,11 @@ The command to activate (or switch to) a specific "venv" in the current shell is
 
 ```bash
 # Note the leading '. ' (dot and space)
-$> . ${HOME}/venvs/<venv-name>/bin/activate
+$> . ${HOME}/venvs/jiveplot/bin/activate
 ```
-Substitute e.g. `jiveplot` to activate the venv that was just created.
+Or substitute `jiveplot` with the name of the venv of your choice.
 
-Within the activated `jiveplot` venv, installing the `jiveplot` Python package should be as easy as:
+Within the **activated** (`jiveplot`) venv, installing the `jiveplot` Python package should be as easy as:
 
 ```bash
 $> pip3 install jiveplot
@@ -190,12 +188,145 @@ $> j2ms2 -o EXPERIMENT.ms */*.cor
 ```
 
 This will append the specifed `.cor`'s data to `EXPERIMENT.ms`, creating it if it doesn't exist.
+If an error occurs about "not being able to find subband information" - please check the [mixed bandwidth](#mixed-bandwidth-correlation) note below first.
 
 Notes:
 - if `EXPERIMENT.ms` already exists, all data specified on the `j2ms2` command line will be **appended** to that MS. Usually this is desirable behaviour, but please see the [notes on `j2ms2`](https://code.jive.eu/verkout/jive-casa/src/branch/master/j2ms2.md#what-j2ms2-does-not-do)
 - the name of the MS is rather immaterial, for demonstration purposes it is always `EXPERIMENT.ms` but the `EXPERIMENT` part in this documentation is to be interpreted as _placeholder_.
 
 
+## Mixed-bandwidth correlation
+A special mention needs to go out to "mixed bandwidth" correlation. Many stations in the EVN observe with different channel/IF/spectral window bandwidths. The scheduler takes care that for example one 64 MHz band of station X overlaps with 2 x 32 MHz bands of station Y - otherwise correlation would be impossible.
+
+Because the VEX file is organised _per station_ this means there are different **frequency setups** in the VEX file. E.g. `setup_64MHz` for station X and `setup_32MHzx2` for station Y.
+
+At correlation time this is usually fixed by assigning (or creating) a specific station's frequency setup as "how it's correlated". In the example here: the experiment will be correlated as 2 x 32 MHz bands - i.e. in the `setup_32MHzx1` mode.
+
+`j2ms2` cannot by itself know how the data was correlated in a case like this. Its default behaviour is to take the **first frequency configuration** of the **first** station it finds in the VEX file.
+
+As the [`j2ms2`](https://code.jive.eu/verkout/jive-casa/src/branch/master/j2ms2.md#notes-re-filler-and-experiment-options) documentation explains, the following command line option can be used to instruct `j2ms2` to use station Y's frequency configuration:
+
+```bash
+$> j2ms2 eo:setup_ref_station=Y [options] *.cor
+```
+
+# Data inspection using `jiveplot`
+
+Before blindly throwing data reduction software at the data, it is recommended to do some data quality assessments. At JIVE the `jiveplot` package is used to create diagnostic plots from the raw data in a MeasurementSet.
+
+For interferometric data a number of "standard plots" can tell "did the correlation actually work?", and summarise the data visually for quick inspection if any issues with the downstream data reduction can be foreseen.
+
+The SFXC correlator produces _complex spectra_ as output by default, and that is what ends up in [the MeasurementSet](#translate-to-measurementset). One _complex spectrum_ per baseline, per source, per subband, per polarisation per integration time. In other words: even a small MS will contain _a lot_ of spectra.
+
+In this section the `jplotter` command line interface (the "jcli") (from the [`jiveplot`](https://github.com/haavee/jiveplot.git) project) will be used to create those 'standard diagnostic plots'. It features _very_ short commands to type in (but they are 'mnemonics', mostly); the focus is on speedy interactive plotting in favour of readability. In this section the "jcli" commands that can be typed at the prompt are rendered **in boldface**.
+
+After [having your environment set up](#setup-your-environment), the "jcli" can be entered:
+
+```python
+# for reasons, the program is called `jplotter`, not jiveplot, sorry
+# it will drop you into the jplotter command line interface ('jcli')
+$> jplotter
++++++++++++++++++++++ Welcome to cli +++++++++++++++++++
+$Id: command.py,v 1.16 2015-11-04 13:30:10 jive_cc Exp $
+  'exit' exits, 'list' lists, 'help' helps
+jcli>
+```
+Feel free to see what `help` and `list` do. (Hint: `help` without arguments provides an overview of _all_ commands with a one-line summary of what they do, providing some inspiration.)
+
+According to the `jiveplot`'s README.md the 5-second workflow is like this:
+```python
+# open a m(easurement) s(et)
+jcli> ms /path/to/a/file.ms
+
+# or this (featuring TAB-completion)
+jcli> cd /path/to/a
+jcli> ms file.ms
+
+# (optional) select which data to plot
+...
+
+# select a p(lot) t(ype) using "pt <plottype>"
+# l(ist) p(lottypes) ("lp") to see what's available
+jcli> lp
+...
+jcli> pt <plottype>
+
+# And ... pl(ot)
+jcli> pl
+```
+
+In the `jiveplot` repository exists [a the colourful PDF](https://github.com/haavee/jiveplot/blob/master/doc/jplotter-cookbook-draft-v2.pdf) that explains the high-level ideas behind `jiveplot`.
+Use the built-in `help <command>` to have `<command>` explained in (too?) much detail, e.g. about 'mini languages' that help easing the data selection.
+
+
+### Weights
+One of the simplest diagnostics to check is checking the _weights_ that the correlator has assigned to each _complex spectrum_. The weight is a floating point number $0 \leq \text{weight} \leq 1$, where $\text{weight} = 0$ implies no valid samples at all went into the resulting spectrum, and $\text{weight} = 1$ meaning _perfect data_ - not a sample was lost computing that spectrum.
+
+```python
+# assumes a MeasurementSet was already opened.
+# select p(lot) t(ype) w(eight-versus-)t(ime)
+jcli> pt wt
+
+# just give it a go; pl(ot) all data and see what happens
+jcli> pl
+```
+
+Most likely this plots _way_ too much information. It helps realising that the _weight_ on a cross-baseline "XY" is computed from the weights of the individual antennae forming the baseline. Those weights are taken from the antennae's auto-correlation spectra, the '0-baseline' "XX" and "YY". In fact, that extends to the cross-polarization products too: the RL/LR weights are formed by combining the baseline input's individual "X/R", "X/L", "Y/R", "Y/L" polarization weights.
+
+This knowledge, together with `jplotter`'s data set agnostic data selection mechanisms allows plotting only the _relevant_ weights:
+```python
+# only select the auto baselines
+jcli> bl auto
+
+# for each subband/spectral window ('*'), select only the p(arallel) polarizations
+# (the 'fq' command is for selecting the 'frequencies', or "channels")
+jcli> fq */p
+
+# and regenerate the pl(ot)
+jcli> pl
+```
+
+### Auto-correlation spectra, a.k.a. "bandpass"
+It is very insightful to inspect the amplitude of the complex spectra versus frequency response of the individual antennas. This is also called the "bandpass". It shows (local) RFI signals, polarization- or subband related issues, or e.g. receiver gain fall off when observing near the edge of the receiver's usable frequency range.
+
+For these plots again only the auto baselines are used, but the cross-polarization plots have a good use case here. They'll show e.g. if a polarization is swapped, or if a station is using a linearly polarized receiver whilst others employ circular polarized receivers.
+
+```python
+# again assumes a measurement set is opened
+# make sure auto baselines are selected
+jcli> bl auto
+
+# select p(lot) t(ype) amp(litude-versus-)freq(uency)
+pt ampfreq
+
+# select all polarization products (=the default) of all subbands ('*')
+jcli> fq *
+
+# and regenerate the pl(ot)
+jcli> pl
+```
+
+### Phase across the band
+If the system(s) are working
+
+### Phase versus time
+
+# Export to FITS-IDI
+
+The `jive-casa` toolbox comes with two programs:
+- `j2ms2` for correlator output $\rightarrow$ MeasurementSet format
+- `tConvert` for MeasurementSet $\rightarrow$ FITS-IDI format
+
+If the correlated data cannot usefully be processed using [`CASA`](https://casa.nra.edu/), or other tools that operate on MeasurmentSet, or inspected using [`jiveplot`](#data-inspection-using-jiveplot), then maybe exporting to FITS-IDI format is a last resort.
+
+The basic use should be literally as simple as this, provide the input MS name and a desired FITS-IDI output file name:
+```bash
+$> tConvert <input-ms> <output-fits-file>
+```
+
+Unless the `<input-ms>` was created in a bizarre way - e.g. mixing data from different experiments, or from different correlator setups - the process should Just Work&trade;. The key issue to be aware of is that the MeasurementSet format allows much more than what can be represented in FITS-IDI format. `tConvert` does all kinds of checks on `<input-ms>` to verify that in principle the translation can be done.
+
+See the full [`tConvert`](https://code.jive.eu/verkout/jive-casa/tConvert.md) documentation for all intricate details and slightly more advanced use cases that `tConvert` supports.
 
 
 
