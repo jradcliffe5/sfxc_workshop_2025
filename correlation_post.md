@@ -31,30 +31,74 @@ onload = function(){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 
 [Return to the homepage](index.md)
-# SFXC workshop 2025 • Template
+# SFXC workshop 2025 • Post-correlation workflow
 
+With the SFXC installation come some tools that allow inspection of the `.cor` files that the correlator outputs directly.
 
+This, however, is not suitable for proper data quality assessment, and those `.cor` files cannot be distributed to a scientist: none of the viable VLBI Radio Data Processing systems (AIPS, CASA, Miriad, HOPS, ...) can use the `.cor` files directly
 
-## On this page
+This section explains how the workflow at [JIVE](https://jive.eu) addresses these issues.
+
+# On this page
 1. [Introduction](#introduction)
-2. [Data download](#data-download)
+2. [Canonical post-correlation workflow](#canonical-post-correlation-workflow)
 
-## Introduction
-Wide-field VLBI is a specialised correlation mode that …
+# Introduction/background
+At JIVE it was decided long ago (~1997, that was in the previous millenium) to use the [AIPS++/CASA MeasurementSet v2](https://casacore.github.io/casacore-notes/229.pdf) format ("MS", "MSv2" hereafter) as internal data format.
 
-**Folder structure**
+The reasons for choosing it as "internal" data format were simple:
+- no VLBI data reduction supported in the `AIPS++` (former name of `CASA`, it's [complicated](https://code.jive.eu/verkout/jive-casa/commit/d6d6ad3ac7b2af6f21d60f2a859ef47375760699)) data reduction package (DRP) at the time
+- but it was a more modern data structure
+- `AIPS++` had scripting language that give direct access to the data; none of the other data formats had that (no, [not Python](https://casa.nrao.edu/aips2_docs/glish/glish.html), Python [had it's v1.2 release in 1995](https://en.wikipedia.org/wiki/History_of_Python) - and it _definitely_ didn't come with batteries included back then)
+- it would allow the correlator builders $\infty$ freedom of choice how to capture or format the correlator output
+- and finally, it would only be a matter of time before the `AIPS++` project would be the VLBI DRP of choice ... (it took until ~2019, a matter of time indeed)
+
+This decision, to use CASA MeasurementSet as intermediate/internal data format has proven to be a very, very, good one. It has allowed JIVE to support multiple correlators, with equally different output data formats, each only having to provide code to decode the data format so it could be written out as MeasurementSet.
+
+All other post-correlation workflow tools, which operate on the MeasurementSet directly, are, and have been, entirely agnostic about which correlator produced the data. Not bad!
+
+As archival data product, which ends up in the [EVN Archive](https://archive.jive.eu/) and gets distributed to the scientists, the well-documented [FITS-IDI](https://fits.gsfc.nasa.gov/registry/fitsidi.html) format ("FITS-IDI") was chosen.
+
+# Canonical post-correlation workflow
+
+The typical post-correlation workflow at JIVE can be summarized as follows:
+
+- [gather correlator output and experiment meta data](#gather-data) (=VEX file)
+- translate into MeasurementSet
+- run scripts (optional):
+     - that fix known issues
+     - that flag bad/missing data
+     - plot data from the MS
+- (optional) add calibration tables
+- export to FITS-IDI
+
+## Gather data
+
+The SFXC correlator generates outputs as `<job number>/<exp>_<scan>.cor`, or just `<exp>_<scan>.cor`, e.g. `N24L2_No0001.cor`. These jobs must be collected, together with the VEX-file that was used for the correlation in a folder structure like this:
+
+For a simple run - such as here:
 ```text
-tutorial/
-├─ index.html
-└─ (images, assets, etc.)
+/path/to/EXPERIMENT/
+               ├─ EXPERIMENT.vix
+               ├─ <EXPERIMENT>_<SCANx>.cor
+               └─ <EXPERIMENT>_<SCANy>.cor
+```
+
+Or, how it looks at JIVE, where an experiment is correlated in multiple jobs:
+```text
+/path/to/EXPERIMENT/
+               ├─ EXPERIMENT.vix
+               ├─ <JOBx> 
+                     ├─ <EXPERIMENT>_<SCANx>.cor
+                     └─ <EXPERIMENT>_<SCANy>.cor
+               ├─ <JOBy> 
+                     ├─ <EXPERIMENT>_<SCANz>.cor
+                     └─ <EXPERIMENT>_<SCANi>.cor
 ```
 
 Only in-line math works on the Github-pages site:
 
 $\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)$
-
-## Data download
-_Add links and instructions for obtaining the relevant datasets here._
 
 ## Project setup
 > **Tip**: Use Prism for syntax highlighting and line numbers.
