@@ -56,7 +56,7 @@ data and we'll use SFXC's capabilities of creating coherently dedispersed, full
 polarisation filterbanks to create a folded full polarisation pulse profile of the pulsar
 B1933+16. 
 
-Eventually, we will use standard pulsar tools to generage a so-called "polyco" file, a
+Eventually, we will use standard pulsar tools to generate a so-called "polyco" file, a
 file that contains the polynomial coefficients used to predict the time of arrival (TOA) of
 individual pulses. It is these TOAs that the correlator needs to extract only the chunks
 of data when the pulsar is "on". We will generate gated output files and also take a look
@@ -73,23 +73,27 @@ _Add links and instructions for obtaining the relevant datasets here._
 _Need to find where to upload singularity containers that container pulsar software_
 
 ## Producing filterbank format output + run PSR tools
-What we'll do in this tutorial is to use SFXC to generate a filterbank file from the
+Let's generate a filterbank file from the
 baseband data of one of the stations in our observations. We chose to use the data from
 Effelsberg as it is the most sensitive dish in the array.
-
 
 The aim of this exercise is to a) introduce the pulsar-related capabilities of SFXC and b)
 show some basics of pulsar analysis software. 
 ### Prepare the vex file
 The vex file as it was generated using `sched` (or `pysched`) does not yet contain all the
-info required by the correlated. E.g., it's missing the `CLOCKS` section as well as the `EOP`
+info required by the correlator. E.g., it's missing the `CLOCKS` section as well as the `EOP`
 section. This can be fixed by running 
 
 ```bash
 prepare_vex.py pr359a.vex pr359a.vix
 ```
 
-This utility is shipped with SFXC. 
+This utility is shipped with SFXC. The generated vix file contains the correct sections
+but the `CLOCKS` will all be zero. To get the clock delays right one would now perform
+clock searching as shown in the [correlation tutorial--link needed](do we hav a
+link?). Here we have already fixed the clocks for the stations relevant for this tutorial:
+Ef, Ur, O8 in the provided vis file.
+
 > **Caution**: In case the LO-frequency is above the sky frequency, the frequency order in
 > the subbands will be reversed. prepare_vex.py does not currently fix this; i.e. this
 > to be done manually.
@@ -98,12 +102,14 @@ This utility is shipped with SFXC.
 
 ### Prepare the ctrl file
 
+As a first step we'll create a 10s-filterbank as outlined below:
+
 ```yaml
 {
     "number_channels": 8,           # number of channels per subband 
     "cross_polarize": false,
     "integr_time": 1.024,           # in seconds needs to be an integer multiple of: 
-    "sub_integr_time": 256.0,       # sub_integr_time (in us); cannot be less than the time equivalent of:
+    "sub_integr_time": 256.0,       # sub_integr_time (in us); cannot be less than the time equivalent of (depends on the sampling rate of course):
     "fft_size_correlation": 128,    # number of samples per FFT; 
     "start": "2025y244d17h31m10s",
     "stop": "2025y244d17h31m20s",
@@ -119,8 +125,6 @@ This utility is shipped with SFXC.
     "stations": [
         "Ef"
     ],
-    "normalize": false,
-    "window_function": "NONE",
     "channels": [
         "CH01",
         "CH02",
@@ -140,6 +144,8 @@ This utility is shipped with SFXC.
         "CH16"
     ],
     "exper_name": "pr359a",
+    "normalize": false,
+    "window_function": "NONE",
     "message_level": 1
 }
 ```
@@ -197,20 +203,12 @@ Options:
 
 ### Take a look at what's in the filterbank
 For the below we will work in the singularity image that contains all of the pulsar
-software tools that we need. It can be retrieved from [here](link
+software tools that we need. It can be retrieved from [here -- fix link](link
 to workshop image).
 Enter the image like so to run things interactively
 ```bash
-singularity shell -e /path/to/psr-heimdall-your-fetch-ubuntu-2004-cuda11.7.simg
+singularity shell -e /path/to/psrsoft.simg
 ```
-> Tipp: In case no plots are being shown with the commands below, you may need to set the
-> environement variable `$DISPLAY`. Before starting the image as shown above, check what the 
-> variable is set to in your terminal via
-> `echo $DISPLAY`
-> Once you're in the image, you need to set `$DISPLAY` to whatever the outcome is of the
-> above by running
-> `export DISPLAY=<output from above`
-
 
 Now we can plot what's in the filterbank with `waterfaller.py` that comes with the `PRESTO`
 package. Here we're using a slightly modified version that has some functionality added
@@ -224,6 +222,15 @@ pr359a_ef_no0001_b1933_10s.cor_Ef.fil --full_info --colour-map viridis
 --vmin -1 --vmax 1
 ```
 
+> Tipp: In case no plots are being shown with the command above, you may need to set the
+> environement variable `$DISPLAY`. Before starting the image as shown above, check what the
+> variable is set to in your terminal via
+> `echo $DISPLAY`
+> Once you're in the image, you need to set `$DISPLAY` to whatever the outcome is of the
+> above by running
+> `export DISPLAY=<output from above`
+
+
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_NoDedisp_waterfaller.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
 <a name="fig-1">**Figure 1**</a> - *Dynamic spectrum (main panel), frequency-collapses
@@ -236,9 +243,7 @@ We can now apply incoherent dedispersion as it is provided by `waterfaller.py` v
 flag `-d <DM>` to get [Figure 2](#fig-2)
 
 ```bash
-waterfaller.py --show-ts --show-spec -T 1.25 -t 1.2 --killchans 0-16,31,46-47,62-63
-pr359a_ef_no0001_b1933_10s.cor_Ef.fil --full_info --colour-map viridis
---vmin -1 --vmax 1 -d 158.52
+waterfaller.py --show-ts --show-spec -T 1.25 -t 1.2 --killchans 0-16,31,46-47,62-63 pr359a_ef_no0001_b1933_10s.cor_Ef.fil --full_info --colour-map viridis --vmin -1 --vmax 1 -d 158.52
 ```
 
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_NoDedisp_waterfaller-dedisp.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
