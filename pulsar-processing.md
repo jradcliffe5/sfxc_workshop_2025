@@ -82,15 +82,19 @@ show some basics of pulsar analysis software.
 The vex file as it was generated using `sched` (or `pysched`) does not yet contain all the
 info required by the correlated. E.g., it's missing the `CLOCKS` section as well as the `EOP`
 section. This can be fixed by running 
+
 ```bash
 prepare_vex.py pr359a.vex pr359a.vix
 ```
+
 This utility is shipped with SFXC. 
 > **Caution**: In case the LO-frequency is above the sky frequency, the frequency order in
 > the subbands will be reversed. prepare_vex.py does not currently fix this; i.e. this
 > to be done manually.
 - **add expert notes on vdif-splitting for freq-flip**
+
 ### Prepare the ctrl file
+
 ```yaml
 {
     "number_channels": 8,           # number of channels per subband 
@@ -137,18 +141,22 @@ This utility is shipped with SFXC.
     "message_level": 1
 }
 ```
+
 ### Run the correlator and convert the output to filterbank
+
 ```bash
 mpirun -n 22 sfxc pr359a_ef_no0001_b1933.ctrl pr359a.vix
 # if using the singularity image:
 mpirun -n 22 singularity run /path/to/sfxc-coherent.simg sfxc pr359a_ef_no0001_b1933.ctrl pr359a.vix
 ```
+
 > **TIPP**: In case the above gives you an error about not enough cores resent, you may need to add
 > --use-hwthread-cpus or, alternatively, --oversubscribe 
 
 The output file will be at `/path/to/pr359a_ef_no0001_b1933_10s.cor_Ef` -- note the suffix
  `Ef` since this is for station Effelsberg. Now we'll convert this to filterbank format as
  regular pulsar software cannot handle the output format of SFXC.
+
 ```bash
 cor2filterbank.py pr359a.vix pr359a_ef_no0001_b1933_10s.cor_Ef pr359a_ef_no0001_b1933_10s.cor_Ef.fil
 
@@ -161,8 +169,10 @@ singularity shell -e /path/to/sfxc-coherent.simg
 # and run like so:
 /usr/local/src/sfxc/frb_runjob/cor2filterbank.py pr359a.vix pr359a_ef_no0001_b1933_10s.cor_Ef pr359a_ef_no0001_b1933_10s.cor_Ef.fil
 ```
+
 `cor2filterbank.py` has a bunch of different options. Above we're running it at defaults,
 generating a Stokes I filterbank. Options are:
+
 ```bash
 cor2filterbank.py --help
 Usage: Usage : cor2filterbank.py [OPTIONS] <vex file> <cor file 1> ... <cor file N> <output_file>
@@ -182,6 +192,7 @@ Options:
   -p POL, --pol=POL     Which polarization to use: R, L, I (=R+L), or F(=R,
                         Re(RL), Im(RL), L), default=I
 ```
+
 ### Take a look at what's in the filterbank
 For the below we will work in the singularity image that contains all of the pulsar
 software tools that we need. It can be retrieved from [here](link
@@ -202,11 +213,13 @@ package. Here we're using a slightly modified version that has some functionalit
 to it, such as flagging channels and setting the dynamic range (can be found on [Franz'
 github](https://github.com/pharaofranz/presto)). The outcome should look something like
 [Figure 1](#fig-1). 
+
 ```bash
 waterfaller.py --show-ts --show-spec -T 1.25 -t 1.2 --killchans 0-16,31,46-47,62-63
 pr359a_ef_no0001_b1933_10s.cor_Ef.fil --full_info --colour-map viridis
 --vmin -1 --vmax 1
 ```
+
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_NoDedisp_waterfaller.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
 <a name="fig-1">**Figure 1**</a> - *Dynamic spectrum (main panel), frequency-collapses
@@ -217,11 +230,13 @@ pop out in the time series as they are still dispersed.*
 
 We can now apply incoherent dedispersion as it is provided by `waterfaller.py` via the
 flag `-d <DM>` to get [Figure 2](#fig-2)
+
 ```bash
 waterfaller.py --show-ts --show-spec -T 1.25 -t 1.2 --killchans 0-16,31,46-47,62-63
 pr359a_ef_no0001_b1933_10s.cor_Ef.fil --full_info --colour-map viridis
 --vmin -1 --vmax 1 -d 158.52
 ```
+
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_NoDedisp_waterfaller-dedisp.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
 <a name="fig-2">**Figure 2**</a> - *Same as [Figure 1](#fig-1) but with incoherent
@@ -234,6 +249,7 @@ applied.*
 
 ### Generate coherently dedispersed filterbank with SFXC
 - prep the control file:
+
 ```yaml
 {
     "number_channels": 8,
@@ -255,8 +271,10 @@ applied.*
     "pulsar_binning": false,
 ### everything else stays the same
 ```
+
 - we require a so-called polyco file which contains info about the pulsar; most important
 here the DM: 
+
 ```bash
 cat b1933.polyco
 1935+1616  31-Aug-25   93000.00   60918.39583333330           158.521055  0.496 -8.844
@@ -267,9 +285,11 @@ cat b1933.polyco
 - run correlator
 - convert
 - plot again with waterfaller.py
+
 ```bash
 waterfaller.py --show-ts --show-spec -T 1.25 -t 0.2 --full_info --colour-map viridis --killchans 0-18,30-32,44-47,57-63 --vmin -1 --vmax 1 pr359a_ef_no0001_b1933_10s_coher+incoher.cor_Ef.fil
 ```
+
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_singlePulse_coherentlyDedispersed.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
 <a name="fig-4">**Figure 4**</a> - *Single burst coherently dedispersed. Substructure
