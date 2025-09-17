@@ -55,7 +55,7 @@ later at the observer than higher frequencies. This time delay, $\Delta t$, is
 proportional to the total amount of electrons along the line of sight $dl$ -- the dispersion
 measure or ${DM}=\int n_e\,dl$ -- and it is proportional to the square of frequency:
 
-$\frac{\Delta t}{\text{[ms]}}=4.15 * $
+$\left[ \frac{\Delta t}{\text{[ms]}} \right]=4.15 * $
 
 $DM * [ ( \frac{\nu_{low}}{\text{[GHz]}})*{-2} - ( \frac{\nu_{high}}{\text{[GHz]}})*{-2} ]$.
 
