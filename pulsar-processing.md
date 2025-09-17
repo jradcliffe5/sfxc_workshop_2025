@@ -57,8 +57,7 @@ measure or ${DM}=\int n_e\,dl$ -- and it is proportional to the square of freque
 
 $\frac{\Delta t}{\text{[ms]}}=4.15 * $
 
-$DM * \left [ \left ( \frac{\nu_{low}}{\text{[GHz]}}
-\right )*{-2}- \left ( \frac{\nu_{high}}{\text{[GHz]}}\right )*{-2} \right ]$.
+$DM * [ ( \frac{\nu_{low}}{\text{[GHz]}})*{-2} - ( \frac{\nu_{high}}{\text{[GHz]}})*{-2} ]$.
 
 Thus, in order to achieve the highest signal-to-noise possible, the data need to be
 de-dispersed at the correct dispersion measure and we can apply a technique called
