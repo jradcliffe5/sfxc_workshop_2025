@@ -359,13 +359,12 @@ cor2filterbank.py pr359a.vix pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef pr359a_ef
 - create a "par" file (contains pulsar parameters like period, period derivative,
 dispersion measure) with `psrcat`:
 ```bash
-psrcat -e B1933+16 > B1933.par
+psrcat -e B1933+16 > B1933+16.par
 ```
 - run dspsr on the full polarisation filterbank file with the par-file that we just created:
 ```bash
-dspsr -E B1933.par -L 1 -A -k effelsberg -d4
-pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil -O
-pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil
+dspsr -E B1933+16.par -L 1 -A -k effelsberg -d4 pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil
+-O pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil
 #### Flags set here are:
 # -E <par file> : par file to use
 # -L <seconds>  : number of seconds per "sub-integration"
@@ -396,22 +395,37 @@ respectively. The while line is the total intensity.*
 applied.*
 
 ## Pulsar Gating
-In pulsar gating we do the following...
+Now that know what's in the data and how folding works, let's try pulsar
+gating/binning. Here we accumulate only the data that contain a pulse to boost S/N. For
+the correlator to be able to do so, it needs to "know" the TOAs of each pulse. This info
+is provided by the polyco file which can be generated with `tempo2` given a pulsar
+parameter file.
 ### Create polyco for gating.
+We generated the par file above for folding. We can reuse it here:
+
 ```bash
-# from inside the singularity container
-tempo2 -f B1933+16.psrcat.par -polyco "60918 60920 300 12 8 coe 1400.0" -tempo1
-mv 
+# from inside the singularity container psrsoft.simg we run
+tempo2 -f B1933+16.par -polyco "60918 60920 300 12 8 coe 1400.0" -tempo1
+
+# we are asking for coefficients between MJDs 60918 60920, we'd like a new set of 
+# coefficients avery 300 minutes, we're asking for a 12th order polynomial at a 
+# maximum hour angle of 8h; the TOAs should be for the center of Earth (coe) at a 
+# central frequency of 1400.0 MHz. Last but not least the output should be in 
+# tempo1 format.
+# We will get 3 output files but we're only interested in polyco_new.dat. Let's rename it:
+mv polyco_new.dat b1933-full.polyco
 ```
+
 ### Prepare the ctrl file
+
 ```yaml
 {
     "number_channels": 128,
     "cross_polarize": false,
-    "integr_time": 2.048,
+    "integr_time": 1.024,
     "start": "2025y244d17h31m10s",
     "stop": "2025y244d17h31m20s",
-    "output_file": "file:///path/to/pr359a_ef-ur-o8_no0001_b1933_10s.cor",
+    "output_file": "file:///path/to/pr359a_ef-ur-o8_no0001_b1933_10s_fullPhase.cor",
     "filterbank": false,
     "pulsars": {
         "B1933+16_D": {
@@ -428,16 +442,16 @@ mv
     "pulsar_binning": true,
     "normalize": false,
     "window_function": "NONE",
-    "delay_directory": "file:///data1/franz/pr359a/sfxc",
+    "delay_directory": "file:///path/to/",
     "data_sources": {
         "Ef": [
-            "file:///data1/franz/pr359a/sfxc/pr359a_ef_no0001"
+            "file:///path/to/pr359a_ef_no0001"
         ],
         "Ur": [
-            "file:///data1/franz/pr359a/sfxc/pr359a_ur_no0001"
+            "file:///path/to/pr359a_ur_no0001"
         ],
         "O8": [
-            "file:///data1/franz/pr359a/sfxc/pr359a_o8_no0001"
+            "file:///path/to/pr359a_o8_no0001"
         ]
     },
     "stations": [
@@ -467,18 +481,58 @@ mv
     "message_level": 1
 }
 ```
+
+- run the correlator
+
+
+This will generate 51 output files with suffix `.binXY`, one fore each bin plus `bin0`
+containing the "offpulse" data, i.e. that which is outside the interval. We can plot the
+"pulse profile" with the script `profile.py` which is shipped with singularity image
+`sfxc-coherent.simg`.
+
+- plot the outcome form inside the container with
+
+```bash
+/usr/local/src/sfxc/sfxc/utils/profile.py pr359a.vix pr359a_ef-ur-o8_no0001_b1933_10s_fullPhase.cor 50 Ef
+
+```
+
 <img src="figures/pulsar-processing/gated-profile.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
-<a name="fig-XYZ1">**Figure XYZ1**</a> - *Pulse "profiles" on the Ef-Ur and Ef-O8
+<a name="fig-6">**Figure 6**</a> - *Pulse "profiles" on the Ef-Ur and Ef-O8
 baselines. The pulse period (~358.7ms) is broken up into 50 time bins (~7.2ms each) based on the
 polynomial coefficients from `tempo2`. Each "set" of data (10s/358.7ms=28 chunks) is
 correlated individually. The bin that contains the pulse clearly sticks out. In a way,
 this is a "folded" pulsar profile.*
 
-- refine the gates, i.e. change the interval from [0,1] to [?,?]
+We clearly detected the pulse in one of the bins. We can now refine the pulse interval to
+really get an "on-gate" -- in our case we'll go directly into binning to resolve the pulse profile:
+
+- refine the gates, i.e. change the interval from [0,1] to [0.65, 0.75]
+
+I.e., in the control file we'll have the following
+
+```yaml
+    "output_file": "file:///path/to/pr359a_ef-ur-o8_no0001_b1933_10s.cor", # change output name
+    "filterbank": false,
+    "pulsars": {
+        "B1933+16_D": {
+            "polyco_file": "file:///path/to/b1933-full.polyco",
+            "no_intra_channel_dedispersion": false,
+            "coherent_dedispersion": false,
+            "nbins": 50,
+            "interval": [
+              0.65,          # zoom in on this phase range
+              0.75
+            ]
+        }
+    },
+
+```
+
 <img src="figures/pulsar-processing/gated-profile-zoom.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
-<a name="fig-XYZ2">**Figure XYZ2**</a> - *Same as [Figure XYZ1](fig-XYZ1) but zoomed in on
+<a name="fig-7">**Figure 7**</a> - *Same as [Figure 6](#fig-6) but zoomed in on
 the pulse phase range 0.65-0.75. Now the substructure also becomes available here.*
 
 
