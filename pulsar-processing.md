@@ -53,7 +53,10 @@ multi-path propagation but, as such, the medium has a
 frequency dependent index of refraction which in turn leads to lower frequencies arriving
 later at the observer than higher frequencies. This time delay, $\Delta t$, is
 proportional to the total amount of electrons along the line of sight $dl$ -- the dispersion
-measure or ${DM}=\int n_e dl$.
+measure or ${DM}=\int n_e\,dl$ -- and it is proportional to the square of frequency: 
+
+$\frac{\Delta t}{\text{[ms]}}=4.15\,DM\,\left [ \left ( \frac{\nu_{low}}{\text{[GHz]}} \right )*{-2}- \left (
+\frec{\nu_{high}}{\text{[GHz]}}\right )*{-2} \right ]$.
 
 Thus, in order to achieve the highest signal-to-noise possible, the data need to be
 de-dispersed at the correct dispersion measure and we can apply a technique called
