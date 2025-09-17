@@ -490,16 +490,17 @@ containing the "offpulse" data, i.e. that which is outside the interval. We can 
 "pulse profile" with the script `profile.py` which is shipped with singularity image
 `sfxc-coherent.simg`.
 
-- plot the outcome form inside the container with
+- plot the outcome form inside the container `sfxc-coherent.simg`
 
 ```bash
 /usr/local/src/sfxc/sfxc/utils/profile.py pr359a.vix pr359a_ef-ur-o8_no0001_b1933_10s_fullPhase.cor 50 Ef
 
 ```
 
+<a name="fig-6"></a>
 <img src="figures/pulsar-processing/gated-profile.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
-<a name="fig-6">**Figure 6**</a> - *Pulse "profiles" on the Ef-Ur and Ef-O8
+<a name="fig-9">**Figure 6**</a> - *Pulse "profiles" on the Ef-Ur and Ef-O8
 baselines. The pulse period (~358.7ms) is broken up into 50 time bins (~7.2ms each) based on the
 polynomial coefficients from `tempo2`. Each "set" of data (10s/358.7ms=28 chunks) is
 correlated individually. The bin that contains the pulse clearly sticks out. In a way,
