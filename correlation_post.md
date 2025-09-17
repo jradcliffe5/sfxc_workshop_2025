@@ -42,6 +42,11 @@ This section explains how the workflow at [JIVE](https://jive.eu) addresses thes
 # On this page
 1. [Introduction](#introduction)
 2. [Canonical post-correlation workflow](#canonical-post-correlation-workflow)
+3. [Setting up your environment](#setup-your-environment)
+4. [Gathering data](#gather-data)
+5. [Translate into MeasurementSet](#translate-to-measurementset)
+6. (optional) [Data inspection using `jiveplot`]()
+7. [Export to FITS-IDI]
 
 # Introduction/background
 At JIVE it was decided long ago (~1997, that was in the previous millenium) to use the [AIPS++/CASA MeasurementSet v2](https://casacore.github.io/casacore-notes/229.pdf) format ("MS", "MSv2" hereafter) as internal data format.
@@ -53,7 +58,7 @@ The reasons for choosing it as "internal" data format were simple:
 - it would allow the correlator builders $\infty$ freedom of choice how to capture or format the correlator output
 - and finally, it would only be a matter of time before the `AIPS++` project would be the VLBI DRP of choice ... (it took until ~2019, a matter of time indeed)
 
-This decision, to use CASA MeasurementSet as intermediate/internal data format has proven to be a very, very, good one. It has allowed JIVE to support multiple correlators, with equally different output data formats, each only having to provide code to decode the data format so it could be written out as MeasurementSet.
+This decision, to use MeasurementSet as intermediate/internal data format has proven to be a very, very, good one. It has allowed JIVE to support multiple correlators, with equally different output data formats, each only having to provide code to decode the data format so it could be written out as MeasurementSet.
 
 All other post-correlation workflow tools, which operate on the MeasurementSet directly, are, and have been, entirely agnostic about which correlator produced the data. Not bad!
 
@@ -63,8 +68,9 @@ As archival data product, which ends up in the [EVN Archive](https://archive.jiv
 
 The typical post-correlation workflow at JIVE can be summarized as follows:
 
+- [setup your environment](#setup-your-environment)
 - [gather correlator output and experiment meta data](#gather-data) (=VEX file)
-- translate into MeasurementSet
+- [translate into MeasurementSet](#translate-to-measurementset)
 - run scripts (optional):
      - that fix known issues
      - that flag bad/missing data
@@ -72,11 +78,73 @@ The typical post-correlation workflow at JIVE can be summarized as follows:
 - (optional) add calibration tables
 - export to FITS-IDI
 
-## Gather data
+# Setup your environment
 
-The SFXC correlator generates outputs as `<job number>/<exp>_<scan>.cor`, or just `<exp>_<scan>.cor`, e.g. `N24L2_No0001.cor`. These jobs must be collected, together with the VEX-file that was used for the correlation in a folder structure like this:
+In the following steps several tools will be needed. They need to be present on your post-correlation system. On the workshop cluster the compiled binaries will already have been installed for you, as documented below. The Python modules used in this document are not: because of Python3 package management strategies these have to be installed in a virtual environment of your own by yourself - also documented below.
 
-For a simple run - such as here:
+## The C/C++ compiled tools
+
+The necessary tools can be compiled from the following git repositories and following the build instructions therein:
+- the [myvex](https://code.jive.eu/verkout/myvex.git) VEX-parsing library (a dependency for the next item)
+- the [jive-casa](https://code.jive.eu/verkout/jive-casa.git) data format translation programs
+
+On the workshop cluster the tools are installed under `/data/verkout/tools/bin`, i.e. to make them easily usable do this in your shell:
+
+```bash
+$> export PATH=/data/verkout/tools/bin:${PATH}
+$> hash -r
+
+# verify they work; expect output as below
+$> j2ms2 --version
+j2ms2: Version 1.0.6 git:master@95009aa
+
+```
+and you're good to go.
+
+Remember to do this in each new shell, or, add the `/data/verkout/tools/bin` to your `${PATH}` variable in your `~/.profile` or `~/.bashrc` exactly as in the snippet above (the `hash -r` is not needed in that case).
+
+## The python MS plotting package
+JIVE software engineers are much like software engineers elsewhere: if something doesn't work, or is too slow, or is cumbersome - let's write something different ourselves!
+
+Visualizing data from a MeasurementSet has always been painful, and in the beginning non-existant even. Based upon the in-house developed [not python](https://casa.nrao.edu/aips2_docs/glish/glish.html) application  [jivegui-ms2](https://code.jive.eu/verkout/jivegui-ms2.git), eventually, when Python _did_ become the scripting language of `CASA`, the [`jiveplot`](https://github.com/haavee/jiveplot.git) package got developed.
+
+Because of Python3's externally managed package installation (e.g. through `apt`, `yum` or what have you) the `jiveplot` package needs to be installed in a [virtual environment](https://docs.python.org/3/library/venv.html) ("venv"). Fortunately, these days that's reasonably simple:
+
+```bash
+# Create a directory where multiple virtual environments can be created
+$> mkdir ${HOME}/venvs
+$> cd ${HOME}/venvs
+
+# Each "venv" is identified by a name,
+# choose something descriptive, e.g. 'jiveplot'
+$> python3 -m venv jiveplot
+```
+
+Now the "venv" is created. But a "venv" must be **activated** before your system actually **uses** the "venv".
+
+The command to activate (or switch to) a specific "venv" in the current shell is as follows:
+
+```bash
+# Note the leading '. ' (dot and space)
+$> . ${HOME}/venvs/<venv-name>/bin/activate
+```
+Substitute e.g. `jiveplot` to activate the venv that was just created.
+
+Within the activated `jiveplot` venv, installing the `jiveplot` Python package should be as easy as:
+
+```bash
+$> pip3 install jiveplot
+```
+
+The package is published on the Python Package Index (PyPI) [here](https://pypi.org/project/jiveplot/)
+
+
+# Gather data
+
+The SFXC correlator control file determines where the correlator generates outputs and how to name the output file(s). For the post-correlation workflow it is important that the file names end in `.cor`.
+
+It is recommended to, if not already done through the automated tooling, to organise the experiment folder and output and VEX file as indicated here:
+
 ```text
 /path/to/EXPERIMENT/
                ├─ EXPERIMENT.vix
@@ -84,7 +152,7 @@ For a simple run - such as here:
                └─ <EXPERIMENT>_<SCANy>.cor
 ```
 
-Or, how it looks at JIVE, where an experiment is correlated in multiple jobs:
+At JIVE, where an experiment is correlated in multiple independent jobs, the experiment folder is laid out like this:
 ```text
 /path/to/EXPERIMENT/
                ├─ EXPERIMENT.vix
@@ -96,9 +164,40 @@ Or, how it looks at JIVE, where an experiment is correlated in multiple jobs:
                      └─ <EXPERIMENT>_<SCANi>.cor
 ```
 
-Only in-line math works on the Github-pages site:
+If the VEX-file isn't named like the directory it is in, a simple [symbolic link](https://www.lenovo.com/us/en/glossary/symbolic-link/) will fix that readily:
 
-$\gamma = \lim_{n\to\infty}\left(\sum_{k=1}^n \frac{1}{k} - \ln(n)\right)$
+```bash
+$> ln -s some_file_name.vix EXPERIMENT.vix
+```
+
+
+# Translate to MeasurementSet
+
+Assuming the data is gathered in an EXPERIMENT-specific folder as described under [gather data](#gather-data), and your [environment is set up](#setup-your-environment) the conversion to MeasurementSet is done using the [`j2ms2` (jay to em es too)](https://code.jive.eu/verkout/jive-casa/j2ms2.md) tool.
+
+Depending on how the data is organised in the EXPERIMENT directory, translating SFXC Correlator data to a MeasurementSet called "EXPERIMENT.ms" is as simple as:
+
+```bash
+# All `.cor` files in EXPERIMENT directory
+# (Or be explicit in exactly which one(s) to translate)
+$> j2ms2 -o EXPERIMENT.ms *.cor
+
+# ... or, when having subjobs
+# (Here it does all correlator data from all subjobs,
+#  but it is possible to be explicit by naming the `.cor`
+#  files to be translated individually)
+$> j2ms2 -o EXPERIMENT.ms */*.cor
+```
+
+This will append the specifed `.cor`'s data to `EXPERIMENT.ms`, creating it if it doesn't exist.
+
+Notes:
+- if `EXPERIMENT.ms` already exists, all data specified on the `j2ms2` command line will be **appended** to that MS. Usually this is desirable behaviour, but please see the [notes on `j2ms2`](https://code.jive.eu/verkout/jive-casa/src/branch/master/j2ms2.md#what-j2ms2-does-not-do)
+- the name of the MS is rather immaterial, for demonstration purposes it is always `EXPERIMENT.ms` but the `EXPERIMENT` part in this documentation is to be interpreted as _placeholder_.
+
+
+
+
 
 ## Project setup
 > **Tip**: Use Prism for syntax highlighting and line numbers.
