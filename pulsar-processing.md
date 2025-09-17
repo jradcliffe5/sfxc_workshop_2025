@@ -58,9 +58,6 @@ measure or ${DM}=\int n_e\,dl$ -- and it is proportional to the square of freque
 $\frac{\Delta t}{\text{[ms]}} = 4.15 * \text{DM} * \left [\left (\frac{\nu_{\text{low}}}{[\text{GHz}]}\right )^{-2} - \left (\frac{\nu_{\text{high}}}{[\text{GHz}]}\right )^{-2}\right]$
 
 
-$\frac{\Delta t}{\mu s} = 8.3 * \frac{\text{BW}}{[\text{MHz}]} * \text{DM} * \left
-(\frac{\nu}{[\text{GHz}]}\right )^{-3}$
-
 Thus, in order to achieve the highest signal-to-noise possible, the data need to be
 de-dispersed at the correct dispersion measure and we can apply a technique called
 **gating** to only correlate the data when the pulsar is "on". In this tutorial we will use SFXC to
@@ -266,7 +263,16 @@ waterfaller.py --show-ts --show-spec -T 1.25 -t 1.2 --killchans 0-16,31,46-47,62
 
 <a name="fig-2">**Figure 2**</a> - *Same as [Figure 1](#fig-1) but with incoherent
 dedispersion applied.*
-And we can even zoom in on one pulse -- see [Figure 3](#fig-3)
+And we can even zoom in on one pulse -- see [Figure 3](#fig-3). What you will see is that
+things do not align perfectly in frequency. This is caused by residual dispersion
+smearing; residual in the sense that not all the dispersion has been taken out, in
+particular that within a channel. We chose quite a crude channelisation just to show this
+effect. The amount of residual smearing per bandwidth $BW$ at a certain central frequency
+$\nu$ is approximated as 
+
+$\frac{\delta \tau}{\mu s} = 8.3 * \frac{\text{BW}}{[\text{MHz}]} * \text{DM} * \left
+(\frac{\nu}{[\text{GHz}]}\right )^{-3}$
+
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_NoDedisp_waterfaller-dedisp-zoom.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
 <a name="fig-3">**Figure 3**</a> - *Zoom in on a single pulse with incoherent dedispersion
