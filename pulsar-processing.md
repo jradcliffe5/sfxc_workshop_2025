@@ -243,7 +243,9 @@ We can now apply incoherent dedispersion as it is provided by `waterfaller.py` v
 flag `-d <DM>` to get [Figure 2](#fig-2)
 
 ```bash
-waterfaller.py --show-ts --show-spec -T 1.25 -t 1.2 --killchans 0-16,31,46-47,62-63 pr359a_ef_no0001_b1933_10s.cor_Ef.fil --full_info --colour-map viridis --vmin -1 --vmax 1 -d 158.52
+waterfaller.py --show-ts --show-spec -T 1.25 -t 1.2 --killchans 0-16,31,46-47,62-63 \
+  pr359a_ef_no0001_b1933_10s.cor_Ef.fil --full_info --colour-map viridis \
+  --vmin -1 --vmax 1 -d 158.52
 ```
 
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_NoDedisp_waterfaller-dedisp.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
