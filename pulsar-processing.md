@@ -59,6 +59,8 @@ $\frac{\Delta t}{\text{[ms]}}=4.15 * $
 
 $DM * \left[ \left( \frac{\nu_{low}}{\text{[GHz]}}\right)*{-2} - \left( \frac{\nu_{high}}{\text{[GHz]}}\right)*{-2} \right]$.
 
+$\frac{t_{2} - t_{1}}{\text{[ms]}} = 4.15 * \text{DM} * \left [\left (\frac{\nu_{\text{low}}}{[\text{GHz}]}\right )^{-2} - \left (\frac{\nu_{\text{high}}}{[\text{GHz}]}\right )^{-2}\right]$
+
 Thus, in order to achieve the highest signal-to-noise possible, the data need to be
 de-dispersed at the correct dispersion measure and we can apply a technique called
 **gating** to only correlate the data when the pulsar is "on". In this tutorial we will use SFXC to
