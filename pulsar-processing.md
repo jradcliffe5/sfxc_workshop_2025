@@ -55,6 +55,7 @@ from the single dish data. We will take a quick peak at what a pulsar looks like
 data and we'll use SFXC's capabilities of creating coherently dedispersed, full
 polarisation filterbanks to create a folded full polarisation pulse profile of the pulsar
 B1933+16. 
+
 Eventually, we will use standard pulsar tools to generage a so-called "polyco" file, a
 file that contains the polynomial coefficients used to predict the time of arrival (TOA) of
 individual pulses. It is these TOAs that the correlator needs to extract only the chunks
@@ -76,6 +77,7 @@ What we'll do in this tutorial is to use SFXC to generate a filterbank file from
 baseband data of one of the stations in our observations. We chose to use the data from
 Effelsberg as it is the most sensitive dish in the array.
 
+
 The aim of this exercise is to a) introduce the pulsar-related capabilities of SFXC and b)
 show some basics of pulsar analysis software. 
 ### Prepare the vex file
@@ -91,6 +93,7 @@ This utility is shipped with SFXC.
 > **Caution**: In case the LO-frequency is above the sky frequency, the frequency order in
 > the subbands will be reversed. prepare_vex.py does not currently fix this; i.e. this
 > to be done manually.
+
 - **add expert notes on vdif-splitting for freq-flip**
 
 ### Prepare the ctrl file
@@ -100,8 +103,7 @@ This utility is shipped with SFXC.
     "number_channels": 8,           # number of channels per subband 
     "cross_polarize": false,
     "integr_time": 1.024,           # in seconds needs to be an integer multiple of: 
-    "sub_integr_time": 256.0,       # sub_integr_time (in us); cannot be less than the
-    time equivalent of:
+    "sub_integr_time": 256.0,       # sub_integr_time (in us); cannot be less than the time equivalent of:
     "fft_size_correlation": 128,    # number of samples per FFT; 
     "start": "2025y244d17h31m10s",
     "stop": "2025y244d17h31m20s",
@@ -161,11 +163,11 @@ The output file will be at `/path/to/pr359a_ef_no0001_b1933_10s.cor_Ef` -- note 
 cor2filterbank.py pr359a.vix pr359a_ef_no0001_b1933_10s.cor_Ef pr359a_ef_no0001_b1933_10s.cor_Ef.fil
 
 # if using the singularity image either execute like this:
-singularity run /path/to/sfxc-coherent.simg
- /usr/local/src/sfxc/frb_runjob/cor2filterbank.py pr359a.vix
- pr359a_ef_no0001_b1933_10s.cor_Ef pr359a_ef_no0001_b1933_10s.cor_Ef.fil
+singularity run /path/to/sfxc-coherent.simg /usr/local/src/sfxc/frb_runjob/cor2filterbank.py pr359a.vix pr359a_ef_no0001_b1933_10s.cor_Ef pr359a_ef_no0001_b1933_10s.cor_Ef.fil
+
 # or enter into an 'interactive' session
 singularity shell -e /path/to/sfxc-coherent.simg
+
 # and run like so:
 /usr/local/src/sfxc/frb_runjob/cor2filterbank.py pr359a.vix pr359a_ef_no0001_b1933_10s.cor_Ef pr359a_ef_no0001_b1933_10s.cor_Ef.fil
 ```
@@ -208,6 +210,8 @@ singularity shell -e /path/to/psr-heimdall-your-fetch-ubuntu-2004-cuda11.7.simg
 > Once you're in the image, you need to set `$DISPLAY` to whatever the outcome is of the
 > above by running
 > `export DISPLAY=<output from above`
+
+
 Now we can plot what's in the filterbank with `waterfaller.py` that comes with the `PRESTO`
 package. Here we're using a slightly modified version that has some functionality added
 to it, such as flagging channels and setting the dynamic range (can be found on [Franz'
