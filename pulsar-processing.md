@@ -401,16 +401,17 @@ respectively. The white line is the total intensity.*
 
 ### Generate coherently dedispersed filterbank with SFXC
 Of course we can try and compensate for the residual smearing by increasing the number of
-frequency channels in the fitlerbanks. However, this will come at the cost of time
-resolution which in the case of a millisecond pulsar (or and FRB) will disable us look for
+frequency channels in the fitlerbanks as we have done above in the full polarisation
+examples. However, this will come at the cost of time
+resolution which in the case of a millisecond pulsar (or and FRB) will disable us to look for
 fine structure. Therefore we can use coherent dedispersion which removes any residual
 dispersion smearing also **within** a channel.
 - prep the control file:
 
 ```yaml
 {
-    "number_channels": 8,
-    "cross_polarize": false,
+    "number_channels": 8,           # we go back to the crude channelisation
+    "cross_polarize": false,        # turn off full polarisation
     "integr_time": 1.024,
     "sub_integr_time": 256.0,
     "fft_size_correlation": 128,
@@ -418,9 +419,9 @@ dispersion smearing also **within** a channel.
     "stop": "2025y244d17h31m20s",
     "output_file": "file:///data1/franz/pr359a/sfxc/pr359a_ef_no0001_b1933_10s_coher+incoher.cor",
     "filterbank": true,
-    "pulsars": {
-        "B1933+16_D": {
-            "polyco_file": "file:///data1/franz/pr359a/sfxc/b1933.polyco",
+    "pulsars": {                    # here we switch on the "pulsar" mode which requires extra input
+        "B1933+16_D": {             # the source name has to match what's in the vex file
+            "polyco_file": "file:///<<path/to>>/b1933.polyco",  # contains the DM of the pulsar (amongst other things that we will need later)
             "no_intra_channel_dedispersion": false,     # if set to true, the dispersion delay between subbands (IFs) will not be corrected for
             "coherent_dedispersion": true
         }
