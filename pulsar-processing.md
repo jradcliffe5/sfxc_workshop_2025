@@ -381,7 +381,7 @@ psrplot -D /XWIN pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil.zap \
         -j tscrunch,dedisperse,fscrunch \   # summing up in time and frequency
         -p Scyl \                           # request full pol plot
         -c 'x:unit=ms' \                    # set the unit of the x-axis to 'ms'
-        -c 'x:bin=650:900'                  # zoom in on phase bins 250-350
+        -c 'x:bin=650:900'                  # zoom in on phase bins 650-900
 ```
 
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_fullPolProfile-zoom.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
