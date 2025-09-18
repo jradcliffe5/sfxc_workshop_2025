@@ -294,15 +294,14 @@ characteristic. So let's create a full polarisation folded profile of a pulsar.
 
 ```yaml
 {
-    "number_channels": 128,            # <-- note we use more channels now to better compensate for residual smearing
+    "number_channels": 128,            # <--- note we use more channels now to better compensate for residual smearing
     "fft_size_correlation": 128,
-    "cross_polarize": true,            # <---- full Polarisation
+    "cross_polarize": true,            # <--- full Polarisation
     "integr_time": 1.024,
     "sub_integr_time": 256.0,
     "start": "2025y244d17h31m10s",
     "stop": "2025y244d17h31m20s",
-    "output_file": "file:///path/to/pr359a_ef_no0001_b1933_10s_fullPol.cor", # <---- change output
-    file name to not get confused later
+    "output_file": "file:///path/to/pr359a_ef_no0001_b1933_10s_fullPol.cor", # <--- change output file name to not get confused later
 }
 # ---- everything else stays the same
 ```
@@ -410,8 +409,8 @@ dispersion smearing also **within** a channel.
 
 ```yaml
 {
-    "number_channels": 8,           # we go back to the crude channelisation
-    "cross_polarize": false,        # turn off full polarisation
+    "number_channels": 8,           # <--- we go back to the crude channelisation
+    "cross_polarize": false,        # <--- turn off full polarisation
     "integr_time": 1.024,
     "sub_integr_time": 256.0,
     "fft_size_correlation": 128,
@@ -419,10 +418,10 @@ dispersion smearing also **within** a channel.
     "stop": "2025y244d17h31m20s",
     "output_file": "file:///path/to/pr359a_ef_no0001_b1933_10s_coher+incoher.cor",
     "filterbank": true,
-    "pulsars": {                    # here we switch on the "pulsar" mode which requires extra input
-        "B1933+16_D": {             # the source name has to match what's in the vex file
-            "polyco_file": "file:///<<path/to>>/b1933.polyco",  # contains the DM of the pulsar (amongst other things that we will need later)
-            "no_intra_channel_dedispersion": false,     # if set to true, the dispersion delay between subbands (IFs) will not be corrected for
+    "pulsars": {                    # <--- here we switch on the "pulsar" mode which requires extra input
+        "B1933+16_D": {             # <--- the source name has to match what's in the vex file
+            "polyco_file": "file:///<<path/to>>/b1933.polyco",  # <--- contains the DM of the pulsar (amongst other things that we will need later)
+            "no_intra_channel_dedispersion": false,     # <--- if set to true, the dispersion delay between subbands (IFs) will not be corrected for
             "coherent_dedispersion": true
         }
     },
@@ -434,8 +433,12 @@ here the DM:
 
 ```bash
 cat b1933.polyco
-1935+1616  31-Aug-25   93000.00   60918.39583333330           158.521055  0.496 -8.844
-   3488444629.211404    2.787546496219  coe  300   3  1400.000                
+# name     date        UTC        MJD                         DM          DopplerShift  fit_rms
+1935+1616  31-Aug-25   93000.00   60918.39583333330           158.521055  0.496         -8.844
+
+#   reference phase     rotation period  observatory  data_span  n_coefficients  observing_frequency
+   3488444629.211404    2.787546496219   coe          300        3               1400.000                
+#  Coefficent-1            Coefficient-2            Coefficient-3  
   0.00000000000000000e-10 -0.00000000000000000e-02 -0.00000000000000000e-08
 
 ```
