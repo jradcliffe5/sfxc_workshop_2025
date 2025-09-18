@@ -417,7 +417,7 @@ dispersion smearing also **within** a channel.
     "fft_size_correlation": 128,
     "start": "2025y244d17h31m10s",
     "stop": "2025y244d17h31m20s",
-    "output_file": "file:///data1/franz/pr359a/sfxc/pr359a_ef_no0001_b1933_10s_coher+incoher.cor",
+    "output_file": "file:///path/to/pr359a_ef_no0001_b1933_10s_coher+incoher.cor",
     "filterbank": true,
     "pulsars": {                    # here we switch on the "pulsar" mode which requires extra input
         "B1933+16_D": {             # the source name has to match what's in the vex file
@@ -439,8 +439,18 @@ cat b1933.polyco
   0.00000000000000000e-10 -0.00000000000000000e-02 -0.00000000000000000e-08
 
 ```
-- run correlator
-- convert
+- run the correlator
+
+```bash
+mpirun -n 22 --oversubscribe sfxc pr359a_ef_no0001_b1933_10s_coher+incoher.ctrl pr359a.vix
+```
+
+- convert to filterbank
+
+```bash
+cor2filterbank.py pr359a.vix pr359a_ef_no0001_b1933_10s_coher+incoher.cor_Ef pr359a_ef_no0001_b1933_10s_coher+incoher.cor_Ef.fil
+```
+
 - plot again with waterfaller.py
 
 ```bash
@@ -450,17 +460,18 @@ waterfaller.py --show-ts --show-spec -T 1.25 -t 0.2 --full_info --colour-map vir
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_singlePulse_coherentlyDedispersed.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
 <a name="fig-5">**Figure 5**</a> - *Single burst coherently dedispersed. Substructure
-becomes evident now.*
+becomes evident now (compare to [Figure 3](#fig-3)).*
 
 
 ## Pulsar Gating
-Now that know what's in the data and how folding works, let's try pulsar
+Now that we know what's in the data and how folding works, let's try pulsar
 gating/binning. Here we accumulate only the data that contain a pulse to boost S/N. For
 the correlator to be able to do so, it needs to "know" the TOAs of each pulse. This info
 is provided by the polyco file which can be generated with `tempo2` given a pulsar
 parameter file.
 ### Create polyco for gating.
-We generated the par file above for folding. We can reuse it here:
+We generated the par file above for folding. We can reuse it here to create a polyco that
+contains everything we need:
 
 ```bash
 # from inside the singularity container psrsoft.simg we run
@@ -476,6 +487,11 @@ mv polyco_new.dat b1933-full.polyco
 ```
 
 ### Prepare the ctrl file
+The control file for the gating is similar to the one for coherent dedispersion in the
+sense that it needs the 'pulsar' section. Here we now change the output back to 'regular'
+output format (i.e. not 'filterbank') and be turn on pulsar binning. In addition, since we
+are not correlating in proper sense, we also add in where to find the data from Urumqi and
+Onsala:
 
 ```yaml
 {
@@ -559,9 +575,10 @@ containing the "offpulse" data, i.e. that which is outside the interval. We can 
 
 <a name="fig-6">**Figure 6**</a> - *Pulse "profiles" on the Ef-Ur and Ef-O8
 baselines. The pulse period (~358.7ms) is broken up into 50 time bins (~7.2ms each) based on the
-polynomial coefficients from `tempo2`. Each "set" of data (10s/358.7ms=28 chunks) is
-correlated individually. The bin that contains the pulse clearly sticks out. In a way,
-this is a "folded" pulsar profile.*
+polynomial coefficients in 'b1933-full.polyco' as generated with `tempo2`. Each "set" of
+data (10 seconds of data / 358.7ms pulse period = 28 chunks per bin) is
+correlated individually and eventually summed up. The bin that contains the pulse clearly sticks out. In a way,
+this is a "folded" pulsar profile at very crude time resolution.*
 
 We clearly detected the pulse in one of the bins. We can now refine the pulse interval to
 really get an "on-gate" -- in our case we'll go directly into binning to resolve the pulse profile:
