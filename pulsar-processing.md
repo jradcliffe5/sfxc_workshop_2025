@@ -101,9 +101,9 @@ prepare_vex.py pr359a.vex pr359a.vix
 
 This utility is shipped with SFXC. The generated vix file contains the correct sections
 but the `CLOCKS` will all be zero. To get the clock delays right one would now perform
-clock searching as shown in the [correlation tutorial--link needed](do we hav a
+clock searching as shown in the [correlation tutorial--**link needed**](do we hav a
 link?). Here we have already fixed the clocks for the stations relevant for this tutorial:
-Ef, Ur, O8 in the provided vis file.
+Ef, Ur, O8 in the provided vix file.
 
 > **Caution**: In case the LO-frequency is above the sky frequency, the frequency order in
 > the subbands will be reversed. prepare_vex.py does not currently fix this; i.e. this
@@ -240,7 +240,7 @@ waterfaller.py --show-ts --show-spec -T 1.25 -t 1.2 --killchans 0-16,31,46-47,62
 > `echo $DISPLAY`
 > Once you're in the image, you need to set `$DISPLAY` to whatever the outcome is of the
 > above by running
-> `export DISPLAY=<output from above`
+> `export DISPLAY=<output from above>`
 
 
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_NoDedisp_waterfaller.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
@@ -283,9 +283,18 @@ dispersion smearing: we chose quite a crude frequency resolution leading to some
 dispersive delay being present **within** a channel.*
 
 ### Create full polarisation filterbank, fold and plot it
+Here we have chosen a fairly bright pulsar for which we can see individual pulses in the
+Effelsberg data. If we were to run the above correlations on the Urumqi or Onsala data, we
+would not see individual pulses -- try it out! However, if we were to fold the Ur or O8
+data, we would very much see the pulsar in the "folded" data, i.e. data where we chop the
+data into chunks of the same length as the pulse period and add up the chunks. This will
+beat the noise down and have the signal appear. In many pulsar science applications,
+people are interested in that very folded profile, moreover in the polarisation
+characteristic. So let's create a full polarisation folded profile of a pulsar.
+
 ```yaml
 {
-    "number_channels": 128,            # <-- note we use more channels now
+    "number_channels": 128,            # <-- note we use more channels now to better compensate for residual smearing
     "fft_size_correlation": 128,
     "cross_polarize": true,            # <---- full Polarisation
     "integr_time": 1.024,
@@ -297,37 +306,83 @@ dispersive delay being present **within** a channel.*
 }
 # ---- everything else stays the same
 ```
-- run correlator
+- run the correlator
+
 ```bash
 mpirun -n 12 --oversubscribe sfxc pr359a_ef_no0001_b1933_10s_fullPol.ctrl pr359a.vix
 ```
-- convert with cor2filterbank but set correct flags (`-p F`)
+- convert the output with cor2filterbank but set the correct flags (`-p F`)
+
 ```bash
 cor2filterbank.py pr359a.vix pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef pr359a_ef_no0001_b1933_60s_fullPol.cor_Ef.fil -p F
 ```
 - create a "par" file (contains pulsar parameters like period, period derivative,
 dispersion measure) with `psrcat`:
+
 ```bash
+# inside psrsoft.simg
 psrcat -e B1933+16 > B1933+16.par
 ```
 - run dspsr on the full polarisation filterbank file with the par-file that we just created:
+
 ```bash
-dspsr -E B1933+16.par -L 1 -A -k effelsberg -d4 pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil
--O pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil
+dspsr -E B1933+16.par -L 1 -A -k effelsberg -d4 \
+  pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil \
+  -O pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil
 #### Flags set here are:
-# -E <par file> : par file to use
-# -L <seconds>  : number of seconds per "sub-integration"
-# -A            : create a single output file (otherwise there will be one per
-"sub-integration" of 1s length
+# -E <par file>    : par file to use
+# -L <seconds>     : number of seconds per "sub-integration"
+# -A               : create a single output file (otherwise there will be one per "sub-integration" of 1s length
 # -d <pol-product> : what polarisation product to create; the 4 means full pol
+# -O               : output file base_name; .ar will be appended automatically
 ```
 - flag the bad channels interactively (press 'h' to get instructions on the terminal)
+
 ```bash
+# in psrsoft.simg
 psrzap pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil.ar
+
+# Two overlapping pgplot windows will op up: one with three panels 
+# showing:
+#   - the time series
+#   - one showing pulse phase vs. frequncy, and 
+#   - one showing pulse phase vs. time
+# The second window is where you can flag sections in both time and frequency
+#
+# When you press 'h', the help should show the below
+pzrzap interactive commands
+
+Mouse:
+  Left-click selects the start of a range
+    then left-click again to zoom, or right-click (or 'X') to zap.
+  Right-click (or 'X') zaps current cursor location.
+  Middle-click (or 'D') updates the diagnostic plots.
+Keyboard:
+  h  Show this help
+  f  Use frequency select mode
+  t  Use time select mode
+  b  Use time/freq select mode
+  d  Update diagnostic plots
+  v  Switch plot between variance and mean
+  l  Toggle logscale
+  m  Toggle method
+  p  Switch to next polarization
+  B  Toggle variable baseline removal
+  u  Undo last zap command
+  r  Reset zoom and update dynamic spectrum
+  s  Save zapped version as (filename).zap
+  P  Print equivalent paz command
+  w  Generate PSRSH script
+  Q  Save file then exit
+  q  Exit program
+
+
 ```
+
 - When you're done flagging, write out the flagged file and exit via 'Q' (new file will
   have suffix `zap` instead of `ar`.
 - Now let's plot the folded full polarisation profile (should look like [Figure 4](#fig-4).
+
 ```bash
 psrplot -D /XWIN pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil.zap \
         -j tscrunch,dedisperse,fscrunch \   # summing up in time and frequency
@@ -335,6 +390,7 @@ psrplot -D /XWIN pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil.zap \
         -c 'x:unit=ms' \                    # set the unit of the x-axis to 'ms'
         -c 'x:bin=650:900'                  # zoom in on phase bins 250-350
 ```
+
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_fullPolProfile-zoom.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
 <a name="fig-4">**Figure 4**</a> - *Full polarisation profile of B1933+16, zoomed in on
