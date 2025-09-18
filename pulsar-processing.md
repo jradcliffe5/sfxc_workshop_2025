@@ -217,6 +217,7 @@ For the below we will work in the singularity image that contains all of the pul
 software tools that we need. It can be retrieved from [here -- fix link](link
 to workshop image).
 Enter the image like so to run things interactively
+
 ```bash
 singularity shell -e /path/to/psrsoft.simg
 ```
@@ -263,6 +264,7 @@ waterfaller.py --show-ts --show-spec -T 1.25 -t 1.2 --killchans 0-16,31,46-47,62
 
 <a name="fig-2">**Figure 2**</a> - *Same as [Figure 1](#fig-1) but with incoherent
 dedispersion applied.*
+
 And we can even zoom in on one pulse -- see [Figure 3](#fig-3). What you will see is that
 things do not align perfectly in frequency. This is caused by residual dispersion
 smearing; residual in the sense that not all the dispersion has been taken out, in
