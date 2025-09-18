@@ -337,7 +337,8 @@ Armed with this knowledge, together with `jplotter`'s data set agnostic data sel
 jcli> bl auto
 
 # for each subband/spectral window ('*'), select only the p(arallel) polarizations
-# (the 'fq' command is for selecting the 'frequencies', or "channels")
+# the 'fq' command allows selecting subband(s) out of the f(requency) g(roups) (=frequency setups, configurations)
+# see e.g. also the r(ange) fq ("r fq" command)
 jcli> fq */p
 
 # and regenerate the pl(ot)
