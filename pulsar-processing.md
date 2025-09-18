@@ -429,7 +429,7 @@ dispersion smearing also **within** a channel.
 ```
 
 - we require a so-called polyco file which contains info about the pulsar; most important
-here the DM: 
+here the DM and the rotation frequency: 
 
 ```bash
 cat b1933.polyco
