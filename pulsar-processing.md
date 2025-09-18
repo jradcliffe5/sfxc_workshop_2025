@@ -436,8 +436,8 @@ cat b1933.polyco
 # name     date        UTC        MJD                         DM          DopplerShift  fit_rms
 1935+1616  31-Aug-25   93000.00   60918.39583333330           158.521055  0.496         -8.844
 
-#   reference phase     rotation period  observatory  data_span  n_coefficients  observing_frequency
-   3488444629.211404    2.787546496219   coe          300        3               1400.000                
+#   reference phase     rotation frequency  observatory  data_span  n_coefficients  observing_frequency
+   3488444629.211404    2.787546496219      coe          300        3               1400.000                
 #  Coefficent-1            Coefficient-2            Coefficient-3  
   0.00000000000000000e-10 -0.00000000000000000e-02 -0.00000000000000000e-08
 
