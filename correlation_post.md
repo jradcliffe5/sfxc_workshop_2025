@@ -332,13 +332,14 @@ jcli> pl
 As for the plethora if data points plotted, it helps realising that the _weight_ on a cross-baseline "XY" is computed from the weights of the individual antennae forming the baseline. Those weights are taken from the antennae's auto-correlation spectra, the '0-baseline' "XX" and "YY". In fact, that extends to the cross-polarization products too: the RL/LR weights are formed by combining the baseline input's individual "X/R", "X/L", "Y/R", "Y/L" polarization weights.
 
 Armed with this knowledge, together with `jplotter`'s data set agnostic data selection mechanisms allows plotting only the _relevant_ weights:
+
 ```python
 # only select the auto baselines
 jcli> bl auto
 
 # for each subband/spectral window ('*'), select only the p(arallel) polarizations
 # the 'fq' command allows selecting subband(s) out of the f(requency) g(roups) (=frequency setups, configurations)
-# see e.g. also the r(ange) fq ("r fq" command)
+# see "help fq" for an explanation
 jcli> fq */p
 
 # and regenerate the pl(ot)
@@ -358,6 +359,8 @@ jcli> ptsz 1.2
 # and (pl)ot again
 jcli> pl
 ```
+
+<br><br>
 
 ## Auto-correlation spectra: i.e. amplitude versus frequency, a.k.a. "bandpass"
 It is very insightful to inspect the amplitude of the complex spectra versus frequency response of the individual antennas. This is also called the "bandpass". It shows (local) RFI signals, polarization- or subband related issues, or e.g. receiver gain fall off when observing near the edge of the receiver's usable frequency range.
@@ -449,6 +452,8 @@ jcli> nxy 1 8 fixed
 Even with the layout, the order of the data is still indeterministic: it is plotted in the order in which it is found in the MeasurementSet. The **sort** command allows the panels to be sorted on the labels for **p**(olarization), **s**(u)**b**(band), **ch**(annel), **b**(ase)**l**(ine), **s**(ou)**rc**(e), **time**, if they appear in the _panel title_
 
 Please refer to [the colourful PDF](https://github.com/haavee/jiveplot/blob/master/doc/jplotter-cookbook-draft-v2.pdf), sections <span class="pdf_chapter">"5. What's on screen"</span> and <span class="pdf_chapter">"6. Oh my label!"</span> (both on p.5), and <span class="pdf_chapter">"10. Tinkering with the layout, ... etc."</span> (p.10)
+
+<br><br>
 
 ## Phase across the band
 Another diagnostic to look at is phase of the complex cross-correlation spectra as function of frequency. If there is a 'fringe' between two stations, this shows as a well-behaved/well-defined phase-versus-frequency relation. Sometimes it can highlight issues in the equipment - e.g. the phase between different pieces of hardware not being connected. This can be calibrated out (as long as it's stable), but sometimes it is a sign that some piece of equipment is synchronized differently than others. 
