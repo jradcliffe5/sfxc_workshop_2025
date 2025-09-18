@@ -118,14 +118,13 @@ As a first step we'll create a 10s-filterbank as outlined below:
 ```yaml
 {
     "number_channels": 8,           # number of channels per subband 
-    "cross_polarize": false,
+    "cross_polarize": false,        # only correlate LL and RR
     "integr_time": 1.024,           # in seconds needs to be an integer multiple of: 
     "sub_integr_time": 256.0,       # sub_integr_time (in us); cannot be less than the time equivalent of (depends on the sampling rate of course):
     "fft_size_correlation": 128,    # number of samples per FFT; 
     "start": "2025y244d17h31m10s",
     "stop": "2025y244d17h31m20s",
     "filterbank": true,             # generate output that can be converted to filterbank
-    "pulsar_binning": false,
     "output_file": "file:///path/to/pr359a_ef_no0001_b1933_10s.cor",
     "delay_directory": "file:///path/to/delay-tables/",
     "data_sources": {
@@ -169,8 +168,9 @@ mpirun -n 22 sfxc pr359a_ef_no0001_b1933.ctrl pr359a.vix
 mpirun -n 22 singularity run /path/to/sfxc-coherent.simg sfxc pr359a_ef_no0001_b1933.ctrl pr359a.vix
 ```
 
-> **TIPP**: In case the above gives you an error about not enough cores resent, you may need to add
-> --use-hwthread-cpus or, alternatively, --oversubscribe 
+> **TIPP**: In case the above gives you an error about not enough cores present, you may
+> need to add `--oversubscribe`. On a machine where you have enough cores and still get an
+> error about not enough cores, try adding `--use-hwthread-cpus`.
 
 The output file will be at `/path/to/pr359a_ef_no0001_b1933_10s.cor_Ef` -- note the suffix
  `Ef` since this is for station Effelsberg. Now we'll convert this to filterbank format as
@@ -280,66 +280,13 @@ applied. The pulse does not appear "straight" in the dynamic spectrum because of
 dispersion smearing: we chose quite a crude frequency resolution leading to some
 dispersive delay being present **within** a channel.*
 
-### Generate coherently dedispersed filterbank with SFXC
-Of course we can try and compensate for the residual smearing by increasing the number of
-frequency channels in the fitlerbanks. However, this will come at the cost of time
-resolution which in the case of a millisecond pulsar (or and FRB) will disable us look for
-fine structure. Therefore we can use coherent dedispersion which removes any residual
-dispersion smearing also **within** a channel.
-- prep the control file:
-
-```yaml
-{
-    "number_channels": 8,
-    "cross_polarize": false,
-    "integr_time": 1.024,
-    "sub_integr_time": 256.0,
-    "fft_size_correlation": 128,
-    "start": "2025y244d17h31m10s",
-    "stop": "2025y244d17h31m20s",
-    "output_file": "file:///data1/franz/pr359a/sfxc/pr359a_ef_no0001_b1933_10s_coher+incoher.cor",
-    "filterbank": true,
-     "pulsars": {
-        "B1933+16_D": {
-            "polyco_file": "file:///data1/franz/pr359a/sfxc/b1933.polyco",
-            "no_intra_channel_dedispersion": false,
-            "coherent_dedispersion": true
-        }
-    },
-    "pulsar_binning": false,
-### everything else stays the same
-```
-
-- we require a so-called polyco file which contains info about the pulsar; most important
-here the DM: 
-
-```bash
-cat b1933.polyco
-1935+1616  31-Aug-25   93000.00   60918.39583333330           158.521055  0.496 -8.844
-   3488444629.211404    2.787546496219  coe  300   3  1400.000                
-  0.00000000000000000e-10 -0.00000000000000000e-02 -0.00000000000000000e-08
-
-```
-- run correlator
-- convert
-- plot again with waterfaller.py
-
-```bash
-waterfaller.py --show-ts --show-spec -T 1.25 -t 0.2 --full_info --colour-map viridis --killchans 0-18,30-32,44-47,57-63 --vmin -1 --vmax 1 pr359a_ef_no0001_b1933_10s_coher+incoher.cor_Ef.fil
-```
-
-<img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_singlePulse_coherentlyDedispersed.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
-
-<a name="fig-4">**Figure 4**</a> - *Single burst coherently dedispersed. Substructure
-becomes evident now.*
-
 ### Create full polarisation filterbank, fold and plot it
 ```yaml
 {
     "number_channels": 128,            # <-- note we use more channels now
     "fft_size_correlation": 128,
     "cross_polarize": true,            # <---- full Polarisation
-    "integr_time": 2.048,
+    "integr_time": 1.024,
     "sub_integr_time": 256.0,
     "start": "2025y244d17h31m10s",
     "stop": "2025y244d17h31m20s",
@@ -350,7 +297,7 @@ becomes evident now.*
 ```
 - run correlator
 ```bash
-mpirun -n 10 sfxc pr359a_ef_no0001_b1933_10s_fullPol.ctrl pr359a.vix
+mpirun -n 12 --oversubscribe sfxc pr359a_ef_no0001_b1933_10s_fullPol.ctrl pr359a.vix
 ```
 - convert with cor2filterbank but set correct flags (`-p F`)
 ```bash
@@ -378,7 +325,7 @@ psrzap pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil.ar
 ```
 - When you're done flagging, write out the flagged file and exit via 'Q' (new file will
   have suffix `zap` instead of `ar`.
-- Now let's plot the folded full polarisation profile (should look like [Figure 5](#fig-5).
+- Now let's plot the folded full polarisation profile (should look like [Figure 4](#fig-4).
 ```bash
 psrplot -D /XWIN pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil.zap \
         -j tscrunch,dedisperse,fscrunch \   # summing up in time and frequency
@@ -388,11 +335,64 @@ psrplot -D /XWIN pr359a_ef_no0001_b1933_10s_fullPol.cor_Ef.fil.zap \
 ```
 <img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_fullPolProfile-zoom.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
-<a name="fig-5">**Figure 5**</a> - *Full polarisation profile of B1933+16, zoomed in on
+<a name="fig-4">**Figure 4**</a> - *Full polarisation profile of B1933+16, zoomed in on
 the pulse profile. The top panel shows the polarisation position angle swing while in the
 bottom panel the red and blue lines show the linear and circular polarisation intensity,
-respectively. The while line is the total intensity.*
-applied.*
+respectively. The white line is the total intensity.*
+
+
+### Generate coherently dedispersed filterbank with SFXC
+Of course we can try and compensate for the residual smearing by increasing the number of
+frequency channels in the fitlerbanks. However, this will come at the cost of time
+resolution which in the case of a millisecond pulsar (or and FRB) will disable us look for
+fine structure. Therefore we can use coherent dedispersion which removes any residual
+dispersion smearing also **within** a channel.
+- prep the control file:
+
+```yaml
+{
+    "number_channels": 8,
+    "cross_polarize": false,
+    "integr_time": 1.024,
+    "sub_integr_time": 256.0,
+    "fft_size_correlation": 128,
+    "start": "2025y244d17h31m10s",
+    "stop": "2025y244d17h31m20s",
+    "output_file": "file:///data1/franz/pr359a/sfxc/pr359a_ef_no0001_b1933_10s_coher+incoher.cor",
+    "filterbank": true,
+    "pulsars": {
+        "B1933+16_D": {
+            "polyco_file": "file:///data1/franz/pr359a/sfxc/b1933.polyco",
+            "no_intra_channel_dedispersion": false,     # if set to true, the dispersion delay between subbands (IFs) will not be corrected for
+            "coherent_dedispersion": true
+        }
+    },
+### everything else stays the same
+```
+
+- we require a so-called polyco file which contains info about the pulsar; most important
+here the DM: 
+
+```bash
+cat b1933.polyco
+1935+1616  31-Aug-25   93000.00   60918.39583333330           158.521055  0.496 -8.844
+   3488444629.211404    2.787546496219  coe  300   3  1400.000                
+  0.00000000000000000e-10 -0.00000000000000000e-02 -0.00000000000000000e-08
+
+```
+- run correlator
+- convert
+- plot again with waterfaller.py
+
+```bash
+waterfaller.py --show-ts --show-spec -T 1.25 -t 0.2 --full_info --colour-map viridis --killchans 0-18,30-32,44-47,57-63 --vmin -1 --vmax 1 pr359a_ef_no0001_b1933_10s_coher+incoher.cor_Ef.fil
+```
+
+<img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_singlePulse_coherentlyDedispersed.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
+
+<a name="fig-5">**Figure 5**</a> - *Single burst coherently dedispersed. Substructure
+becomes evident now.*
+
 
 ## Pulsar Gating
 Now that know what's in the data and how folding works, let's try pulsar
@@ -426,22 +426,19 @@ mv polyco_new.dat b1933-full.polyco
     "start": "2025y244d17h31m10s",
     "stop": "2025y244d17h31m20s",
     "output_file": "file:///path/to/pr359a_ef-ur-o8_no0001_b1933_10s_fullPhase.cor",
-    "filterbank": false,
+    "filterbank": false,       # <-- for gating we need "regular" output files
+    "pulsar_binning": true,    # <-- NEW PARAMETER: we turn on pulsar binning
     "pulsars": {
         "B1933+16_D": {
             "polyco_file": "file:///path/to/b1933-full.polyco",
-            "no_intra_channel_dedispersion": false,
-            "coherent_dedispersion": false,
-            "nbins": 50,
+            "coherent_dedispersion": false,   # we go for incoherent dedispersion to speed up the correlation; 
+            "nbins": 50,  # the number of phase-bins across the pulse period
             "interval": [
               0,          # we do the full phase range at first and refine later
               1
             ]
         }
     },
-    "pulsar_binning": true,
-    "normalize": false,
-    "window_function": "NONE",
     "delay_directory": "file:///path/to/",
     "data_sources": {
         "Ef": [
@@ -478,6 +475,8 @@ mv polyco_new.dat b1933-full.polyco
         "CH16"
     ],
     "exper_name": "pr359a",
+    "normalize": false,
+    "window_function": "NONE",
     "message_level": 1
 }
 ```
@@ -515,10 +514,10 @@ I.e., in the control file we'll have the following
 ```yaml
     "output_file": "file:///path/to/pr359a_ef-ur-o8_no0001_b1933_10s.cor", # change output name
     "filterbank": false,
+    "pulsar_binning": true,    
     "pulsars": {
         "B1933+16_D": {
             "polyco_file": "file:///path/to/b1933-full.polyco",
-            "no_intra_channel_dedispersion": false,
             "coherent_dedispersion": false,
             "nbins": 50,
             "interval": [
