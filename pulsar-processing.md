@@ -105,12 +105,6 @@ clock searching as shown in the [correlation tutorial--**link needed**](do we ha
 link?). Here we have already fixed the clocks for the stations relevant for this tutorial:
 Ef, Ur, O8 in the provided vix file.
 
-> **Caution**: In case the LO-frequency is above the sky frequency, the frequency order in
-> the subbands will be reversed. prepare_vex.py does not currently fix this; i.e. this
-> to be done manually.
-
-- **add expert notes on vdif-splitting for freq-flip**
-
 ### Prepare the ctrl file
 
 As a first step we'll create a 10s-filterbank as outlined below:
