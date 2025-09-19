@@ -62,6 +62,7 @@ This section explains how the workflow at [JIVE](https://jive.eu) addresses thes
       5. [displaying the **ACTUAL FRINGE**](#displaying-the-actual-fringe)
     - Useful snippets hidden between the diagnostic plots
       - [navigating the plots](#navigating-the-plots)
+      - [if the dots are too small](#hint-if-the-dots-are-too-small-try-this)
       - [averaging in time](#averaging-in-time)
       - [scalar or vector averaging?](#averaging-scalar-or-vector)
       - [organizing the plots](#organizing-the-plots)
@@ -346,7 +347,8 @@ jcli> fq */p
 jcli> pl
 ```
 
-Hint: if the dots are too small, try this:
+### Hint: if the dots are too small, try this:
+
 ```python
 # the default 'point' symbol does not scale with point size
 # PGPLOT symbol #17 does
@@ -359,6 +361,9 @@ jcli> ptsz 1.2
 # and (pl)ot again
 jcli> pl
 ```
+
+Refer to [PGPLOT symbols](./figures/pgplot-symbols.png) for an overview of the available PGPLOT symbols.
+
 
 <br><br>
 
