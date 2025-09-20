@@ -46,8 +46,8 @@ onload = function(){
 7. [Advanced: zoom bands](#zoom-band)
 
 ### Resources
-[Control file reference](Control_file_parameters.md)
-[VEX standard](https://vlbi.org/vlbi-standards/vex/)
+- [Control file reference](Control_file_parameters.md)
+- [VEX standard](https://vlbi.org/vlbi-standards/vex/)
 
 ## Introduction
 
@@ -58,7 +58,9 @@ In this tutorial we will go through all the steps required to correlate a simple
 - do the final correlation
 
 We will also inspect the correlator output using tool from the SFXC distribution.  Converting this data to
-FITS for use with AIPS or CASA will be subject of a later tutorial
+FITS for use with AIPS or CASA will be subject of a later tutorial.
+
+In the final section of this tutorial we will show how to create zoom bands in SFXC.
 
 ## Optional: Install SFXC
 
@@ -860,7 +862,7 @@ def sess224.L1024;
 enddef; 
 ```
 
-The `$FREQ` section, with a 4 MHz single channel centred around 1640 MHz
+The `$FREQ` section, with a 4 MHz single channel centred around 1632 MHz
 ```
 $FREQ;
 *    
@@ -873,7 +875,7 @@ enddef;
 ```
 
 The channel frequency 1629.99 was chosen because it is exactly 3.5 MHz from the band edge.
-SFXC uses an FFT to cut out the 4 MHz zoom bands out of the original 32 MHz bands. This means that
+SFXC uses an FFT to cut the 4 MHz zoom band out of the original 32 MHz bands. This means that
 the channel frequency needs to start exactly at an FFT point. This will be true as long as the FFT
 is at least 64 points long in this case.
 
@@ -941,7 +943,7 @@ produce_html_plotpage.py n24l2.zoom.vix n24l2_zoom.ctrl
 
 Below is the auto-correlation plot for Ef using our 4 MHz zoom-band, next to the original 32 MHz band. Showing the RFI line around 1632 MHz.
 
-<img src="figures/sfxc-tutorial/"Ef-auto-zoom.png alt="drawing" style="width: 95%;height: auto;" class="center"/>
+<img src="figures/sfxc-tutorial/Ef-auto-zoom.png" alt="drawing" style="width: 95%;height: auto;" class="center"/>
 
 <a name="fig-3">**Figure 3**</a> - *Zoom band around RFI line*
 
