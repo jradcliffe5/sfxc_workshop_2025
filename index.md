@@ -54,6 +54,7 @@ The timetable can be found on the [timetables page](timetable.md). The slides fo
 ## Tutorials
 
 - [Correlation](correlation.md)
+- [Basic SFXC tutorial](sfxc-basic-tutorial.md)
 - [Post-correlation processing](correlation_post.md)
 - [Pulsar processing](pulsar-processing.md)
 - [FRB processing](frb-processing.md)
