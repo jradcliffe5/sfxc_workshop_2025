@@ -210,6 +210,8 @@ Now that we have a basic vex file we need to create a control file needed to run
 contain all the correlation parameters such as integration time, number of spectral channels,
 locations of data files, etc.
 
+A complete documentation of the control file can be found [here](Control_file_parameters.md)
+
 In the SFXC distribution there is a script called `generate_job.py` that can be used to create a control file,
 it has a large number of options:
 
