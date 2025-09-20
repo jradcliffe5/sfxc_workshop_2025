@@ -43,6 +43,11 @@ onload = function(){
 5. [Create control file](#prepare-ctrl)
 6. [Run correlation](#run-sfxc)
 7. [Clock search](#clock-search)
+7. [Advanced: zoom bands](#zoom-band)
+
+### Resources
+[Control file reference](Control_file_parameters.md)
+[VEX standard](https://vlbi.org/vlbi-standards/vex/)
 
 ## Introduction
 
@@ -773,7 +778,7 @@ there was some missing data for De.
 
 A final diagnostic would be to create an html plot page.
 ```bash
-produce_html_plotpage.py -r Ef n24l2.clk.vix n24l2_no0004.ctrl
+produce_html_plotpage.py n24l2.clk.vix n24l2_no0004.ctrl
 ```
 Note that when running this on your own hardware, the script requires `gnuplot` and the `gnuplotlib` python package.
 
@@ -792,10 +797,153 @@ Viewing the index.html contained in these directories in a web browser shows
 
 <a name="fig-2">**Figure 2**</a> - *FTP fringe plot page for scan No0004*
 
-
-
 Running this script on a scan that is expected to to have
-a strong detection is a good way to find issues with the observation.
+a strong detection is a good way to check for issues with in observation.
+
+## Advanced: Zoom bands
+
+Our example experiment is a boring continuum observation, but at Effelsberg (Ef) there is a strong RFI line aroun 1632 MHz. Lets pretend this is an interesting spectral line
+rather than RFI and create a zoom band around this frequency. 
+
+To create a zoom band we add a dummy station to the VEX file, lets call this station Qq. First we make a
+copy of our original vex file
+```bash
+cp n24l2.clk.vix n24l2.zoom.vix 
+```
+
+Our new dummy station will need an `$IF`, `$BBC`, `$FREQ` section, where the `$FREQ` section contains a single channel
+centred around our fake spectral line. 
+
+Note that we don't create an entry in the $STATION section for the dummy station because then the dummy station would appear
+in the correlator output. Whereas now there will be no reference to the dummy station in the output data at all.
+
+We can simply reuse the `$IF`, and `$BBC` sections for one of the existing stations, lets use the sections from Ef. 
+We will only have to create a new `$FREQ` section, which we'll call `FREQ-Qq`. This results in the following `$MODE` block:
+```
+$MODE;
+*
+def sess224.L1024;
+    ref $THREADS = THREADS.sess224.L1024.Jb:Jb:Tr;
+    ref $THREADS = THREADS.sess224.L1024.Wb:Wb;
+    ref $THREADS = THREADS.sess224.L1024.Ef:Ef;
+    ref $THREADS = THREADS.sess224.L1024.Mc:Mc:O8:Hh;
+    ref $THREADS = THREADS.sess224.L1024.Nt:Nt;
+    ref $THREADS = THREADS.sess224.L1024.Ir:Ir;
+    ref $THREADS = THREADS.sess224.L1024.Cm:Cm:Da:Kn:Pi:De;
+     ref $PROCEDURES = Mode_01;
+     ref $FREQ = 1626.49MHz8x32MHz:Jb:Wb:Ef:Mc:Nt:O8:Tr:Hh:Ir;
+     ref $FREQ = 1626.49MHz2x64MHz:Cm:Da:Kn:Pi:De;
+     ref $FREQ = FREQ-Qq:Qq;
+     ref $IF = LO@2272MHzDPolNoTone:Jb;
+     ref $IF = LO@1247MHzDPolNoTone:Wb;
+     ref $IF = LO@1510MHzDPolNoTone:Ef:Qq;
+     ref $IF = LO@1295MHzDPolNoTone:Mc;
+     ref $IF = LO@1279MHzDPolNoTone:Nt;
+     ref $IF = LO@730MHzDPolNoTone:O8;
+     ref $IF = LO@2300MHzDPolNoTone:Tr;
+     ref $IF = LO@1510MHzDPolNoTone#02:Hh;
+     ref $IF = LO@1350MHzDPolNoTone:Ir;
+     ref $IF = LO@2272MHzDPolNoTone#02:Cm:Da:Kn:Pi:De;
+     ref $BBC = 8BBCs#02:Jb:Wb:Tr;
+     ref $BBC = 8BBCs:Ef:Qq;
+     ref $BBC = 8BBCs#03:Mc:O8:Hh;
+     ref $BBC = 8BBCs#04:Nt;
+     ref $BBC = 8BBCs#05:Ir;
+     ref $BBC = 2BBCs:Cm:Da:Kn:Pi:De;
+     ref $TRACKS = VDIF.8Ch2bit1to1:Jb:Wb:Ef:Mc:Nt:O8:Tr:Hh:Ir;
+     ref $TRACKS = VDIF.2Ch2bit1to1:Cm:Da:Kn:Pi:De;
+*    ref $HEAD_POS = DiskVoid <= obsolete definition
+     ref $ROLL = NoRoll:Jb:Wb:Ef:Mc:Nt:O8:Tr:Hh:Ir:Cm:Da:Kn:Pi:De;
+*    ref $PASS_ORDER = DiskVoid <= obsolete definition
+     ref $PHASE_CAL_DETECT = NoDetect:Jb:Wb:Ef:Mc:Nt:O8:Tr:Hh:Ir;
+     ref $PHASE_CAL_DETECT = NoDetect#02:Cm:Da:Kn:Pi:De;
+enddef; 
+```
+
+The `$FREQ` section, with a 4 MHz single channel centred around 1640 MHz
+```
+$FREQ;
+*    
+def FREQ-Qq;
+* mode =  1    stations =Jb:Wb:Ef:Mc:Nt:O8:Tr:Hh:Ir
+     sample_rate =    8.000 Ms/sec;  * (2bits/sample)
+     chan_def = :  1629.99 MHz : U :  4.00 MHz : &CH01 : &BBC01 : &NoCal; *Rcp
+     chan_def = :  1629.99 MHz : U :  4.00 MHz : &CH02 : &BBC09 : &NoCal; *Lcp
+enddef;
+```
+
+The channel frequency 1629.99 was chosen because it is exactly 3.5 MHz from the band edge.
+SFXC uses an FFT to cut out the 4 MHz zoom bands out of the original 32 MHz bands. This means that
+the channel frequency needs to start exactly at an FFT point. This will be true as long as the FFT
+is at least 64 points long in this case.
+
+Now we've prepared the VEX file we need to create a control file, as a starting point we make a copy
+of our previous control file.
+```bash
+cp n24l2_no0004.ctrl n24l2_zoom.ctrl
+```
+
+In this control file we set the `setup_station` to `Qq`, and select the two channels we just defined. We also
+change the name of the output file to `n24l2_zoom.cor`.
+
+```yaml
+{
+    "setup_station": "Qq",
+    "data_sources": {
+        "Cm": [
+            "file:///data/n24l2/files/n24l2_cm_no0004.vdif",
+            "file:///data/n24l2/files/n24l2_cm_no0005.vdif"
+        ],
+        "De": [
+            "file:///data/n24l2/files/n24l2_de_no0004.vdif",
+            "file:///data/n24l2/files/n24l2_de_no0005.vdif"
+        ],
+        "Ef": [
+            "file:///data/n24l2/files/n24l2_ef_no0004",
+            "file:///data/n24l2/files/n24l2_ef_no0005"
+        ],
+        "Hh": [
+            "file:///data/n24l2/files/n24l2_hh_no0004",
+            "file:///data/n24l2/files/n24l2_hh_no0005"
+        ]
+    },
+    "start": "2024y144d12h41m47s",
+    "stop": "2024y144d12h47m13s",
+    "stations": [
+        "Cm",
+        "De",
+        "Ef",
+        "Hh"
+    ],
+    "channels": [
+        "CH01",
+        "CH02"    
+    ],
+    "number_channels": 64,
+    "integr_time": 2.0,
+    "exper_name": "N24L2",
+    "output_file": "file:///home/workshop22/data/n24l2/n24l2_zoom.cor",
+    "delay_directory": "file:///home/workshop22/data/n24l2/delays",
+    "cross_polarize": true,
+    "message_level": 1
+}
+```
+
+Lets run the correlation
+```bash
+srun --mpi pmix -n 28 /opt/sfxc/bin/sfxc n24l2_zoom.ctrl n24l2.zoom.vix 2>&1 | tee n24l2_zoom.log
+```
+
+The associated html plot page will show detections to Ef for all stations, and also detections on most of the weaker baselines
+```bash
+produce_html_plotpage.py n24l2.zoom.vix n24l2_zoom.ctrl
+```
+
+Below is the auto-correlation plot for Ef using our 4 MHz zoom-band, next to the original 32 MHz band. Showing the RFI line around 1632 MHz.
+
+<img src="figures/sfxc-tutorial/"Ef-auto-zoom.png alt="drawing" style="width: 95%;height: auto;" class="center"/>
+
+<a name="fig-3">**Figure 3**</a> - *Zoom band around RFI line*
 
 
 ---
