@@ -154,7 +154,7 @@ how to correlate:
 # Copy n24l2.vix to your working directory
 gen_all_delay_files.py n24l2.vix N24L2_No0005.ctrl
 salloc -n16
-mpirun sfxc N24L2_No0005.ctrl n24l2.vix
+mpirun `which sfxc` N24L2_No0005.ctrl n24l2.vix
 exit
 ```
 
