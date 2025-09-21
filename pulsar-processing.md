@@ -83,7 +83,7 @@ _Add links and instructions for obtaining the relevant datasets here._
 ## Singularity Images
 _Need to find where to upload singularity containers that container pulsar software_
 
-## Producing filterbank format output + run PSR tools
+## Producing filterbank format output + run PSR tools {#filterbank-psr-tools}
 Let's generate a filterbank file from the
 baseband data of one of the stations in our observations. We chose to use the data from
 Effelsberg as it is the most sensitive dish in the array.
@@ -613,7 +613,9 @@ fitsidi files that can then loaded into your favourite data reduction and calibr
 ## References
 <a name="ref_deller09">1.</a> Deller, A. T., “Precision VLBI astrometry: Instrumentation,
 algorithms and pulsar parallax determination”, *PhD Thesis*, (2011). ADS: [2009PhDT.......195D](https://ui.adsabs.harvard.edu/abs/2009PhDT.......195D){:target="_blank"}  
-<a name="ref_keimpema15">3.</a> Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, *Experimental Astronomy*, 39(2), 259–279 (2015). DOI: [10.1007/s10686-015-9462-z](https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract){:target="_blank"}
+
+<a name="ref_keimpema15">2.</a> Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, *Experimental Astronomy*, 39(2), 259–279 (2015). DOI: [10.1007/s10686-015-9462-z](https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract){:target="_blank"}
+
 <a name="ref_pen14">3.</a> Pen, U.-L., et al., “50 picoarcsec astrometry of pulsar emission”, *MNRAS*, 440, L36-L40 (2014). DOI: [10.1093/mnrasl/slu010](https://ui.adsabs.harvard.edu/abs/2014MNRAS.440L..36P){:target="_blank"}
 
 ---
