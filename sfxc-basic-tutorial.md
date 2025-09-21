@@ -42,7 +42,7 @@ onload = function(){
 4. [Create vex file](#prepare-vex)
 5. [Create control file](#prepare-ctrl)
 6. [Run correlation](#run-sfxc)
-7. [Clock search](#clock-search)
+7. [Clock searching](#clock-searching)
 7. [Advanced: zoom bands](#zoom-band)
 
 ### Resources
