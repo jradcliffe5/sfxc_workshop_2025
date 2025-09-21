@@ -74,8 +74,8 @@ of data when the pulsar is "on". We will generate gated output files and also ta
 at pulsar binning -- this is when we do not use only one on-off gate but instead place
 several bins across the pulse profile. This can either be used to boost the S/N of
 correlated pulsar data even further by weighting the data according to the brightness of
-the pulsar per bin (**references**) or one can, e.g., perform phase-resolved pulsar
-scintillometry (**reference to Ue-Li**).
+the pulsar per bin ([Deller 2009](#ref_deller09), [Keimpema et al. 2015](#ref_keimpema15)) or one can, e.g., perform phase-resolved pulsar
+scintillometry ([Pen et al. 2014](#ref_pen14)).
 
 ## Data download
 _Add links and instructions for obtaining the relevant datasets here._
@@ -611,11 +611,11 @@ At this point one would refine the interval even more to have only "on-bins". As
 regular observations, the following steps are then to run `tconvert` and `j2ms2` to create
 fitsidi files that can then loaded into your favourite data reduction and calibration tool.
 
-
-## Current & future developments
-
-## Resources
-### Technical papers/memos on wide-field correlation
+## References
+<a name="ref_deller09">1.</a> Deller, A. T., “Precision VLBI astrometry: Instrumentation,
+algorithms and pulsar parallax determination”, *PhD Thesis*, (2011). ADS: [2009PhDT.......195D](https://ui.adsabs.harvard.edu/abs/2009PhDT.......195D){:target="_blank"}  
+<a name="ref_keimpema15">3.</a> Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, *Experimental Astronomy*, 39(2), 259–279 (2015). DOI: [10.1007/s10686-015-9462-z](https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract){:target="_blank"}
+<a name="ref_pen14">3.</a> Pen, U.-L., et al., “50 picoarcsec astrometry of pulsar emission”, *MNRAS*, 440, L36-L40 (2014). DOI: [10.1093/mnrasl/slu010](https://ui.adsabs.harvard.edu/abs/2014MNRAS.440L..36P){:target="_blank"}
 
 ---
 _Content built by Franz Kirsten._ <i><span id="lastModified"></span></i>
