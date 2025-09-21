@@ -101,8 +101,7 @@ prepare_vex.py pr359a.vex pr359a.vix
 
 This utility is shipped with SFXC. The generated vix file contains the correct sections
 but the `CLOCKS` will all be zero. To get the clock delays right one would now perform
-clock searching as shown in the [correlation tutorial--**link needed**](do we hav a
-link?). Here we have already fixed the clocks for the stations relevant for this tutorial:
+[clock searching](sfxc-basic-tutorial.md#clock-search).  Here we have already fixed the clocks for the stations relevant for this tutorial:
 Ef, Ur, O8 in the provided vix file.
 
 ### Prepare the ctrl file
