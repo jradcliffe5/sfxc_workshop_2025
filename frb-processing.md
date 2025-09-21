@@ -33,25 +33,14 @@ onload = function(){
 [Return to the homepage](index.md)
 # SFXC workshop 2025 • FRB Processing
 
-
-
 ## On this page
 1. [Introduction](#introduction)
-2. [Data download](#data-download)
-3. [Singularity Images](#singularity-images)
-4. [PRECISE processing](#precise-processing)
-5. [Semi-automated pulse processing](#semi-automated-pulse-processing)
-6. [Single dish FRB workflow](#single-dish-processing)
+2. [PRECISE processing](#precise-processing)
+3. [Semi-automated pulse processing](#semi-automated-pulse-processing)
 
 ## Introduction
 FRB processing is almost like pulsar processing -- but you only have a single pulse to
-work with.
-
-## Data download
-_Add links and instructions for obtaining the relevant datasets here._
-
-## Singularity Images
-_Need to find where to upload singularity containers that container pulsar software_
+work with. 
 
 ## PRECISE processing
 PRECISE stands for "Pinpointing REpeating ChIme Sources with the Evn". 
@@ -89,7 +78,7 @@ PRECISE stands for "Pinpointing REpeating ChIme Sources with the Evn".
 
 ## Single dish FRB workflow
 
-_Content built by XX._ <i><span id="lastModified"></span></i>
+_Content built by Franz Kirsten._ <i><span id="lastModified"></span></i>
 
 _Built with ♥ — Markdown + HTML + CSS + Prism.js + a bit of AI + Jack Radcliffe (2025)_
 
