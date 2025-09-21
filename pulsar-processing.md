@@ -39,7 +39,7 @@ onload = function(){
 1. [Introduction](#introduction)
 2. [Data download](#data-download)
 3. [Singularity Images](#singularity-images)
-4. [Producing filterbank format output + run PSR tools](#filterbank-psr-tools)
+4. [Producing filterbank format output + run PSR tools](#producing-filterbank-format-output--run-PSR-tools)
 5. [Pulsar Gating](#pulsar-gating)
 
 ## Introduction
@@ -83,7 +83,7 @@ _Add links and instructions for obtaining the relevant datasets here._
 ## Singularity Images
 _Need to find where to upload singularity containers that container pulsar software_
 
-## Producing filterbank format output + run PSR tools {#filterbank-psr-tools}
+## Producing filterbank format output + run PSR tools
 Let's generate a filterbank file from the
 baseband data of one of the stations in our observations. We chose to use the data from
 Effelsberg as it is the most sensitive dish in the array.
