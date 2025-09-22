@@ -118,8 +118,8 @@ A possible *data_sources* to correlate these two datastreams is:
            "DS2": ["file:///media/data/file_ds2.00001", "file:///media/data/file_ds2.00002"]}
 }
 ```
-So in the example without $DATASTREAMS we simply specify a single list of inputs for each station, but
-in the case $DATASTREAMS are used then for each station we specify a dict where each entry corresponds to a list of inputs
+So in the example without \$DATASTREAMS we simply specify a single list of inputs for each station, but
+in the case \$DATASTREAMS are used then for each station we specify a dict where each entry corresponds to a list of inputs
 belonging to a particular datastream.
 
 The above examples show how to correlate from files, in this case the absulute path is simply prependended by *file://*
