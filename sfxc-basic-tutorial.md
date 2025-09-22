@@ -210,10 +210,10 @@ def theEOP;
     ut1-utc = -0.0213353 sec : -0.0213183 sec : -0.0211052 sec;
 enddef;
 ```
-One last change to the VEX file is needed, SFXC uses the $DAS section to determine the data format.
-But unfortunately, SFXC doesn't recognise the $DAS for station Ef.
+One last change to the VEX file is needed, SFXC uses the `$DAS` section to determine the data format.
+But unfortunately, SFXC doesn't recognise the `$DAS` for station Ef.
 
-We need to change the $DAS for Cm from
+We need to change the `$DAS` for Cm from
 ```
 def 2NONE<;
      record_transport_type = Mark5C;
