@@ -210,6 +210,32 @@ def theEOP;
     ut1-utc = -0.0213353 sec : -0.0213183 sec : -0.0211052 sec;
 enddef;
 ```
+One last change to the VEX file is needed, SFXC uses the $DAS section to determine the data format.
+But unfortunately, SFXC doesn't recognise the $DAS for station Ef.
+
+We need to change the $DAS for Cm from
+```
+def 2NONE<;
+     record_transport_type = Mark5C;
+     electronics_rack_type = none;
+     number_drives = 2;
+     headstack = 1 :            : 0 ;
+     headstack = 2 :            : 1 ;
+     tape_motion = adaptive : 0 min: 0 min: 10 sec;
+enddef;
+```
+to
+```
+def 2NONE<;
+     record_transport_type = Mark5C;
+     electronics_rack_type = WIDAR;
+     number_drives = 2;
+     headstack = 1 :            : 0 ;
+     headstack = 2 :            : 1 ;
+     tape_motion = adaptive : 0 min: 0 min: 10 sec;
+enddef;
+```
+So that SFXC recognises that Cm uses VDIF.
 
 ## Create control file
 
