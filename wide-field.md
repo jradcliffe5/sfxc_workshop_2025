@@ -438,7 +438,7 @@ source = J0854+2006; source = J0854_off;
 >wq
 >ED
 >
->sed -i.bak -E 's/^[[:space:]]*source[[:space:]]*=[[:space:]]*J0854\+2006;[[:space:]]*$/source = J0854+2006; source = J0854_off;/' >24l2.vix
+>sed -i.bak -E 's/^[[:space:]]*source[[:space:]]*=[[:space:]]*J0854\+2006;[[:space:]]*$/source = J0854+2006; source = J0854_off;/' >n24l2.vix
 >```
 
 Note that there is no limit to the number of sources that you can specify here, and it is just a matter of defining the coordinates in the `$SOURCE` section and then adding the source name in the relevant scans (`$SCHED` section).  
@@ -492,7 +492,7 @@ If IDI files exceed 2 GB, they may be split into ~1.9 GB chunks (as on the E
 
 Finally, with the data correlated and post-processed, we can now calibrate these data to illustrate the phase shifting technique employed. To do this, copy your IDI files into the calibration folder and then change directory into that folder. This is just to ensure that we start the calibration process with a clean slate. With multiple phase centre observing, the data-sets are corrupted by the majority of the same calibration effects, therefore you only need to calibrate a single phase centre to calibrate them all. Only direction-dependent effects such as primary beam corrections require different corrections per phase centre.
 
-In this tutorial, we are just going to fringefit these data to reveal the source location and are omitting other calibration steps such as flux scaling, amplitude corrections etc. If you wish to learn how to reduce the data, please refer to the JIVE VLBI school 2025.
+In this tutorial, we are just going to fringefit these data to reveal the source location and are omitting other calibration steps such as flux scaling, amplitude corrections etc. If you wish to learn how to reduce the data, please refer to the [JIVE VLBI school 2025](https://indico.astron.nl/event/390/).
 
 Firstly, we will convert the two IDI files into a CASA-compatible measurement set,
 
@@ -549,7 +549,7 @@ These images will be extremely ugly as we are only using a few seconds of data. 
 
 **Figure F2** - Cleaned images of both phase centres. The restoring beam is circular for visualisation purposed with the peak pixel identified by the red arrow.
 
->***Cheat script:***
+>***Cheat script:*** Run the `n24l2_calibration.py` using CASA i.e., `casa -c n24l2_calibration.py`
 
 ## G. Current & future developments
 - Containerised software
