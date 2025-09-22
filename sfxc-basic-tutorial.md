@@ -46,7 +46,7 @@ onload = function(){
 7. [Advanced: zoom bands](#zoom-band)
 
 ### Resources
-- [Control file reference](Control_file_parameters.md)
+- [Control file reference](control-file-parameters.md)
 - [VEX standard](https://vlbi.org/vlbi-standards/vex/)
 
 ## Introduction
