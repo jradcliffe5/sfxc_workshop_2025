@@ -68,7 +68,7 @@ This section explains how the workflow at [JIVE](https://jive.eu) addresses thes
       - [organizing the plots](#organizing-the-plots)
 7. (optional) [Export to FITS-IDI](#export-to-fits-idi)
 
-<br><br>
+<br/><br/>
 
 # Introduction/background
 At JIVE it was decided long ago (~1997, that was in the previous millenium) to use the [AIPS++/CASA MeasurementSet v2](https://casacore.github.io/casacore-notes/229.pdf) format ("MS", "MSv2" hereafter) as internal data format.
@@ -86,7 +86,7 @@ All other post-correlation workflow tools, which operate on the MeasurementSet d
 
 As archival data product, which ends up in the [EVN Archive](https://archive.jive.eu/) and gets distributed to the scientists, the well-documented [FITS-IDI](https://fits.gsfc.nasa.gov/registry/fitsidi.html) format ("FITS-IDI") was chosen.
 
-<br><br>
+<br/><br/>
 
 # Canonical post-correlation workflow
 
@@ -102,7 +102,7 @@ The typical post-correlation workflow at JIVE can be summarized as follows:
 - (optional) add calibration tables
 - (optional) [export to FITS-IDI](#export-to-fits-idi)
 
-<br><br>
+<br/><br/>
 
 # Setup your environment
 
@@ -120,7 +120,7 @@ j2ms2: Version 1.0.6 git:master@95009aa
 ```
 
 If not installed, the tools can be compiled from the following git repositories and following the build instructions therein. They're all CMake-ified projects.
-- the [casacore](https://github.com/casacore/casacore) suite of C++ libraries for radio astronomy data processing<br>
+- the [casacore](https://github.com/casacore/casacore) suite of C++ libraries for radio astronomy data processing<br/>
 > NOTE: may be installable throuh the system's package manager (`apt-get`, `yum`, ...), YMMV:
 > ```bash
 > $> sudo {apt-get|yum|...} install casacore-dev
@@ -163,7 +163,7 @@ $> pip3 install jiveplot
 
 The package is published on the Python Package Index (PyPI) [here](https://pypi.org/project/jiveplot/)
 
-<br><br>
+<br/><br/>
 
 # Gather data
 
@@ -197,7 +197,7 @@ If the VEX-file isn't named like the directory it is in, a simple [symbolic link
 $> ln -s some_file_name.vix EXPERIMENT.vix
 ```
 
-<br><br>
+<br/><br/>
 
 # Translate to MeasurementSet
 
@@ -241,7 +241,7 @@ As the [`j2ms2`](https://code.jive.eu/verkout/jive-casa/src/branch/master/j2ms2.
 $> j2ms2 eo:setup_ref_station=Y [options] *.cor
 ```
 
-<br><br>
+<br/><br/>
 
 # Data inspection using `jiveplot`
 
@@ -309,7 +309,7 @@ jcli> pwd
 /path/to/folder
 ```
 
-<br><br>
+<br/><br/>
 
 ## Weights
 One of the simplest diagnostics to check is checking the _weights_ that the correlator has assigned to each _complex spectrum_. The weight is a floating point number $0 \leq \text{weight} \leq 1$, where $\text{weight} = 0$ implies no valid samples at all went into the resulting spectrum, and $\text{weight} = 1$ meaning _perfect data_ - not a sample was lost computing that spectrum.
@@ -365,7 +365,7 @@ jcli> pl
 Refer to [PGPLOT symbols](./figures/pgplot-symbols.png) for an overview of the available PGPLOT symbols.
 
 
-<br><br>
+<br/><br/>
 
 ## Auto-correlation spectra: i.e. amplitude versus frequency, a.k.a. "bandpass"
 It is very insightful to inspect the amplitude of the complex spectra versus frequency response of the individual antennas. This is also called the "bandpass". It shows (local) RFI signals, polarization- or subband related issues, or e.g. receiver gain fall off when observing near the edge of the receiver's usable frequency range.
@@ -391,7 +391,7 @@ Now _this_ produces a lot of plots! That is because each integration is plotted 
 - it takes a lot of time
 - we're dealing with systems that are based on _noise_. A single short integration therefore does not contain a lot of "signal" i.e. not a a lot of information content
 
-<br>
+<br/>
 
 ### Averaging (in time)
 For this type of data it makes sense to **av**(erage) in **t**(ime) (**avt** command) to address both issues: we get less data points and higher signal-to-noise.
@@ -422,7 +422,7 @@ Understanding the differences (and power) of the options please refer to, in dec
 > ...
 > ```
 
-<br>
+<br/>
 
 ### Averaging: scalar or vector?
 Each spectral point in the data is a complex number, i.e. having an _amplitude_ and a _phase_ - or differently said: it's _vector-like_.
@@ -434,7 +434,7 @@ $$ \text{Vector average of Quantity} = \text{Quantity(} \sum_i^n \text{data[i]} 
 
 where $\text{Quantity(...}$ is a function returning a _real_-valued property of the data point $\text{data[i]}$, e.g. it's _phase_, _amplitude_, _real_ or _imaginary_ part, and $\sum_i^n \text{data[i]}$ is the _complex_ summation.
 
-<br>
+<br/>
 
 ## Organizing the plots
 
@@ -458,7 +458,7 @@ Even with the layout, the order of the data is still indeterministic: it is plot
 
 Please refer to [the colourful PDF](https://github.com/haavee/jiveplot/blob/master/doc/jplotter-cookbook-draft-v2.pdf), sections <span class="pdf_chapter">"5. What's on screen"</span> and <span class="pdf_chapter">"6. Oh my label!"</span> (both on p.5), and <span class="pdf_chapter">"10. Tinkering with the layout, ... etc."</span> (p.10)
 
-<br><br>
+<br/><br/>
 
 ## Phase across the band
 Another diagnostic to look at is phase of the complex cross-correlation spectra as function of frequency. If there is a 'fringe' between two stations, this shows as a well-behaved/well-defined phase-versus-frequency relation. Sometimes it can highlight issues in the equipment - e.g. the phase between different pieces of hardware not being connected. This can be calibrated out (as long as it's stable), but sometimes it is a sign that some piece of equipment is synchronized differently than others. 
@@ -506,7 +506,7 @@ jcli> pl
 > 
 > This has both advantages and disadvantages. For now `jplotter` leans towards it having slightly more advantages than disadvantages, but motivated GitHub issues are welcome!
 
-<br>
+<br/>
 
 ## Amplitude + Phase versus time
 
@@ -558,7 +558,7 @@ jcli> pl
 
 See also **help y** (and **help x**) for explantion and more options.
 
-<br><br>
+<br/><br/>
 
 ## Displaying the **ACTUAL FRINGE**!
 
@@ -574,7 +574,7 @@ $> cd /path/to/EXPERIMENT
 $> j2ms2 -d time -o EXPERIMENT-lag.ms *.cor
 ...
 ```
-<br>
+<br/>
 
 To display **THE FRINGE**, it's basically a time-averaged **amp**(litude versus )**chan**(el) plot on the cross-baselines for a useful time range.
 Select a scan, or part of a (calibrator) scan, using the mechanism(s) illustrated above.
@@ -608,7 +608,7 @@ jcli> avt scalar
 jcli> pl
 ```
 
-<br><br>
+<br/><br/>
 
 # Export to FITS-IDI
 
@@ -617,7 +617,7 @@ The `jive-casa` toolbox comes with two programs:
 - `j2ms2` for correlator output $\rightarrow$ MeasurementSet format
 - `tConvert` for MeasurementSet $\rightarrow$ FITS-IDI format
 
-If the correlated data cannot usefully be processed using [`CASA`](https://casa.nra.edu/), or other tools that operate on MeasurmentSet, or inspected using [`jiveplot`](#data-inspection-using-jiveplot), then maybe exporting to FITS-IDI format is a last resort.
+If the correlated data cannot usefully be processed using [`CASA`](https://casa.nrao.edu/), or other tools that operate on MeasurmentSet, or inspected using [`jiveplot`](#data-inspection-using-jiveplot), then maybe exporting to FITS-IDI format is a last resort.
 
 The basic use should be literally as simple as this, provide the input MS name and a desired FITS-IDI output file name:
 ```bash
@@ -626,4 +626,32 @@ $> tConvert <input-ms> <output-fits-file>
 
 Unless the `<input-ms>` was created in a bizarre way - e.g. mixing data from different experiments, or from different correlator setups - the process should Just Work&trade;. The key issue to be aware of is that the MeasurementSet format allows much more than what can be represented in FITS-IDI format. `tConvert` does all kinds of checks on `<input-ms>` to verify that in principle the translation can be done.
 
-See the full [`tConvert`](https://code.jive.eu/verkout/jive-casa/tConvert.md) documentation for all intricate details and slightly more advanced use cases that `tConvert` supports.
+See the full [`tConvert`](https://code.jive.eu/verkout/jive-casa/src/branch/master/tConvert.md) documentation for all intricate details and slightly more advanced use cases that `tConvert` supports.
+
+---
+_Content built by Marjolein Verkouter._ <i><span id="lastModified"></span></i>
+
+_Built with ♥ — Markdown + HTML + CSS + Prism.js + a bit of AI + Jack Radcliffe (2025)_
+
+<!-- Custom Script: funcs.js -->
+<script>
+    const copy = (el) => {
+      const pre = document.querySelector(el);
+      if (!pre) return;
+      const code = pre.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector(`[data-copy="${el}"]`);
+        if (!btn) return;
+        const old = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => (btn.textContent = old), 1500);
+      });
+    };
+    document.addEventListener('click', (e) => {
+      const t = e.target;
+      if (t.matches('.copy-btn')) {
+        const target = t.getAttribute('data-copy');
+        copy(target);
+      }
+    });
+</script>
