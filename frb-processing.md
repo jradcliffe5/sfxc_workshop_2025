@@ -36,47 +36,94 @@ onload = function(){
 ## On this page
 1. [Introduction](#introduction)
 2. [PRECISE processing](#precise-processing)
-3. [Semi-automated pulse processing](#semi-automated-pulse-processing)
 
 ## Introduction
-FRB processing is almost like pulsar processing -- but you only have a single pulse to
-work with. 
+FRBs -- Fast Radio Bursts -- are millisecond-duration, extremely luminous flashes that
+have as of yet only been found at radio frequencies ($\sim100\,\mathrm{MHz}- \sim
+9\,\mathrm{GHz}$). There exist two classes: FRBs that burst repeated and those that have
+only ever been seen once. The exact emission mechanisms or the progenitor source are as of yet
+unknown, as well as it is unclear if repeaters and apparent non-repeaters share a common
+origin. For a recent review check out [**Petroff et al. 2021??**](#ref_petroff??) and also
+take a look [**Franz' presentation**](link to indico I guess).
+
+One aspect that can help us understand FRBs better is the region they are generated
+in. To that end we don't only need to know their host galaxy but also the characteristics
+of their local environment -- e.g. do they reside in a star forming or not; can they be
+assiciated with a persistent radio radio source or not? VLBI is the only technique that
+provides sufficient angular resolution to pinpoint FRBs to a location within a host
+galaxy. In conjunction with high resolution optical observations, the emission region can
+be characterised.
+
+FRB processing is almost like [pulsar processing](pulsar-processing.md) -- but you only
+have a single pulse to work with at a time. Thus, in terms of SFXC-processing it's a matter of
+coherently dedispersing the data and defining an appropriate on-gate. Check out Aard's
+presentation on Semi-automated pulse processing for more details. 
+
+Before the data can be correlated, we need to find the bursts in data first, of
+course. This was the subject of Franz' live demo, the content of which is briefly
+described below.
 
 ## PRECISE processing
-PRECISE stands for "Pinpointing REpeating ChIme Sources with the Evn". 
+### Burst finding
+After an observation, the data from Eff are transmitted to a dedicated processing server
+at Onsala Space Observatory. We built a pipeline that 
+- converts the raw baseband data to filterbank format
+- searches those filterbanks for bursts
+- classifies the bursts candidates as either RFI or astrophysical in origin
+- sends the astrophysical candidates to a dedicated Slack channel for further inspection
 
-### Observing mode
-- we are an EVN-Lite project
-- stations join on a best-effort basis
-- weekly runs of 10 hours each -- times defined by Eff availability
-- ...
+The pipeline itself can be found in [this git
+repo](https://github.com/pharaofranz/frb-baseband). It depends on the following packages:
+- [jive5ab](https://github.com/jive-vlbi/jive5ab) and `digifil` (part of
+  [DSPSR](https://dspsr.sourceforge.net/)) for the conversion of VDIF/Mark5B data to
+  filterbank format
+- [Heimdall](https://sourceforge.net/p/heimdall-astro/wiki/Home/) for the burst searching
+- [FETCH](https://github.com/devanshkv/fetch) as the burst candidate classifier
 
-### Data processing
-- after an observation, the data from Eff are transmitted to a dedicated processing server
-  at OSO
-- the data are processed with `jive5ab`, `digifil` (part of `DSPSR`), `Heimdall` and
-  `FETCH`.
-  - `jive5ab` unpacks the VDIF data and splits them into individual files per IF that contain
-    both pols 
-  - `digifil` converts the split VDIF files into 'detected' filterbanks; i.e. Stokes I
-    (can also create full polarisation filterbanks with I, Q, U, V)
-  - `Heimdall` runs on a GPU and searches the filterbanks for bursts
-  - `FETCH` is an ML-classifier that 'inspects' the candidates found by Heimdall and
-    classifies them as either terrestrial or celestial
-- supposedly real candidates are sent to Dropbox and links to files are sent to a Slack
-  channel where they can be inspected further
-- in case of a detection we contact the EVN/JIVE and request correlation
+### Correlation
+Once we found a burst in a particular observation, the data from all participating
+stations are transferred to JIVE for correlation. Besides the regular fringe finding and
+clock searching, gates are set around the bursts to boost S/N -- see Aard's talk on single
+pulse processing. We typically have three
+correlator passes:
+1. One at high time and frequency resolution aimed at finding the crude burst location in
+   the field of view via delay mapping. The correlation is performed at the pointing center.
+2. In the second run we use the first, crude localisation as the new phase center and
+   correlate all gated bursts at this location. This
+   run will provide the data for burst localisation.
+3. The third run uses the entire track on the source and uses the same phase center as the
+   second run. The aim here is to obtain a deep image to assess whether or not the FRB is
+   colocated with a persistent radio source.
 
-### Correlation procedure
-- what are our separate correlation passes
+### Calibration & Imaging
+Calibration itself is the same for FRB observations as it is for any other continuum VLBI
+experiments. We correct for the ionosphere, the bandpass, electronic delays and run a
+regular fringe fit. In principle, we would only need to run the fringe fitting on the
+phase calibrator scans that were taken before and after the target scan that contains the
+FRB. However, for the deep image we of course need to calibrate the entire experiment
+which also helps at finding issues that might have affected the entire run.
 
-### Single pulse analysis
-- maybe talk about some fine structure, coherent dedispersion and such? Bolometer branch?
+As a FRB signal only lasts of order a millisecond, the UV-coverage per burst in the second
+correlator run is very sparse. RFI and residual gain errors can easily shift power from one side
+lobe to another, making localisation of a single burst difficult and potentially ambiguous
+on the side lobe level. In case multiple bursts were detected in one experiment (or
+across several experiments), the UV-plane can be filled a little more by combining the
+visibilities and effectively using earth rotation synthesis. In all cases, unless many
+bright bursts were detected yielding one unambiguous "peak" in the dirty maps, it is
+advisable to rather fit the cross pattern in a dirty image with a 2D-Gaussian than running
+CLEAN in the regular fashion. 
 
+<img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_singlePulse_coherentlyDedispersed.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
-## Semi-automated pulse processing
+<a name="fig-1">**Figure 1**</a> - *Dirty maps of individual bursts from FRB
+20240114A. Gold ellipses indicate the $2\sigma-\mathrm{ellipse}$ of the 2D Gaussian fit to
+the fringe pattern; white ellipses indicate the best fit $2\sigma-\mathrm{localisation
+region}$. From [Bhardwaj et al. 2025](#ref_bhardwaj25).*
 
-## Single dish FRB workflow
+## References
+<a name="ref_bhardwaj25">1.</a> Bhardwaj, M., “A Hyperactive FRB Pinpointed in an SMC-Like
+Satellite Host Galaxy”, *arXiv*, arXiv:2506.11915 (2025). DOI: [10.48550/arXiv.2506.11915](https://ui.adsabs.harvard.edu/abs/2025arXiv250611915B){:target="_blank"}  
+
 
 _Content built by Franz Kirsten._ <i><span id="lastModified"></span></i>
 

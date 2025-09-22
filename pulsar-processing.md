@@ -38,9 +38,8 @@ onload = function(){
 ## On this page
 1. [Introduction](#introduction)
 2. [Data download](#data-download)
-3. [Singularity Images](#singularity-images)
-4. [Producing filterbank format output + run PSR tools](#producing-filterbank-format-output--run-PSR-tools)
-5. [Pulsar Gating](#pulsar-gating)
+3. [Producing filterbank format output + run PSR tools](#producing-filterbank-format-output--run-PSR-tools)
+4. [Pulsar Gating](#pulsar-gating)
 
 ## Introduction
 Pulsar processing is special in the sense that 
@@ -78,10 +77,29 @@ the pulsar per bin ([Deller 2009](#ref_deller09), [Keimpema et al. 2015](#ref_ke
 scintillometry ([Pen et al. 2014](#ref_pen14)).
 
 ## Data download
-_Add links and instructions for obtaining the relevant datasets here._
+In this tutorial we'll use data from a recent pulsar observations. Ideally, you'll create
+a new directory somewhere and download all files there. The files we'll download are as
+follows:
+```text
+aux-config.tar          : contains a few control files, vex files and polycos
+pr359a_ef+o8+ur_10s.tar : (~9GB) the raw baseband data from Ef, Ur, O8; 10s each
+psrsoft.simg            : (~6GB) singularity image containing the pulsar tools we need
+sfxc-coherent.simg      : (~400MB) SFXC that supports coherent dedispersion
+```
+So let's download the data, unpack them and prep them a bit:
+```bash
+mkdir /path/to/your/dir
+cd !$
+files='aux-config.tar pr359a_ef+o8+ur_10s.tar psrsoft.simg sfxc-coherent.simg'
+for f in $files;do wget https://archive.jive.nl/sfxc-workshop/pr359a/$f;done
+tar xf aux-config.tar && rm -rf aux-config.tar 
+tar xf pr359a_ef+o8+ur_10s.tar && rm -rf pr359a_ef+o8+ur_10s.tar
 
-## Singularity Images
-_Need to find where to upload singularity containers that container pulsar software_
+# there are a few places in the control file where we need to know in which
+# directory things are -- let's fix that
+this_dir=`pwd`
+sed -i -e "s,/<<path/to>>,${this_dir},g" *ctrl
+```
 
 ## Producing filterbank format output + run PSR tools
 Let's generate a filterbank file from the
@@ -96,7 +114,9 @@ info required by the correlator. E.g., it's missing the `CLOCKS` section as well
 section. This can be fixed by running 
 
 ```bash
-prepare_vex.py pr359a.vex pr359a.vix
+# if you do run the below, please note that I delieberately messed up the suffix of the 
+# output file to avoid the actual vix file form being overwritten.
+prepare_vex.py pr359a.vex pr359a.vixx
 ```
 
 This utility is shipped with SFXC. The generated vix file contains the correct sections
@@ -207,8 +227,7 @@ Options:
 
 ### Take a look at what's in the filterbank
 For the below we will work in the singularity image that contains all of the pulsar
-software tools that we need. It can be retrieved from [here -- fix link](link
-to workshop image).
+software tools that we need. It can be retrieved from [here](https://archive.jive.nl/sfxc-workshop/pr359a/psrsoft.simg).
 Enter the image like so to run things interactively
 
 ```bash
@@ -435,7 +454,7 @@ cat b1933.polyco
   0.00000000000000000e-10 -0.00000000000000000e-02 -0.00000000000000000e-08
 
 ```
-- run the correlator
+- run the correlator (**with coherent dedispersion turned on, you'll need a fair bit of memory**)
 
 ```bash
 mpirun -n 22 --oversubscribe sfxc pr359a_ef_no0001_b1933_10s_coher+incoher.ctrl pr359a.vix
