@@ -91,7 +91,7 @@ So let's download the data, unpack them and prep them a bit:
 mkdir /path/to/your/dir
 cd !$
 files='aux-config.tar pr359a_ef+o8+ur_10s.tar psrsoft.simg sfxc-coherent.simg'
-for f in $fs;do wget https://archive.jive.nl/sfxc-workshop/pr359a/$f;done
+for f in $files;do wget https://archive.jive.nl/sfxc-workshop/pr359a/$f;done
 tar xf aux-config.tar && rm -rf aux-config.tar 
 tar xf pr359a_ef+o8+ur_10s.tar && rm -rf pr359a_ef+o8+ur_10s.tar
 
