@@ -429,8 +429,10 @@ Each spectral point in the data is a complex number, i.e. having an _amplitude_ 
 When a number of spectral points are to be averaged - be it in time or frequency (or both) - it depends on the quantity ('amplitude' or 'phase') that needs to be extracted if the complex _vectors_ first need to be averaged ('vector averaging'), or if the quantity can be averaged ('scalar'). 
 
 The mathematical difference can be expressed as:
-$$ \text{Scalar average of Quantity} = \frac{\sum_i^n \text{Quantity(data[i])}}{n}$$
-$$ \text{Vector average of Quantity} = \text{Quantity(} \sum_i^n \text{data[i]} \text{)}$$
+
+$ \text{Scalar average of Quantity} = \frac{\sum_i^n \text{Quantity(data[i])}}{n}$
+
+$ \text{Vector average of Quantity} = \text{Quantity(} \sum_i^n \text{data[i]} \text{)}$
 
 where $\text{Quantity(...}$ is a function returning a _real_-valued property of the data point $\text{data[i]}$, e.g. it's _phase_, _amplitude_, _real_ or _imaginary_ part, and $\sum_i^n \text{data[i]}$ is the _complex_ summation.
 
