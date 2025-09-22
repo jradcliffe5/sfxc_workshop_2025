@@ -113,7 +113,7 @@ bright bursts were detected yielding one unambiguous "peak" in the dirty maps, i
 advisable to rather fit the cross pattern in a dirty image with a 2D-Gaussian than running
 CLEAN in the regular fashion. 
 
-<img src="figures/pulsar-processing/pr359a_ef_no0001_b1933_singlePulse_coherentlyDedispersed.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
+<img src="figures/frb-processing/fig1-bhardwaj2025.png" alt="drawing" style="width: 60%;height: auto;" class="center"/>
 
 <a name="fig-1">**Figure 1**</a> - *Dirty maps of individual bursts from FRB
 20240114A. Gold ellipses indicate the $2\sigma-\mathrm{ellipse}$ of the 2D Gaussian fit to
