@@ -63,6 +63,7 @@ The timetable can be found on the [timetables page](timetable.md). The slides fo
 - [Installing SFXC](installing-sfxc-locally.md)
 - [Running SFXC](running-sfxc-locally.md)
 - [Basic SFXC tutorial](sfxc-basic-tutorial.md)
+- [MPI and Slurm](mpi.md)
 - [Post-correlation processing](correlation_post.md)
 - [Pulsar processing](pulsar-processing.md)
 - [FRB processing](frb-processing.md)

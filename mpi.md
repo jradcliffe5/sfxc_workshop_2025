@@ -31,7 +31,7 @@ onload = function(){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 
 [Return to the homepage](index.md)
-# SFXC workshop 2025 • Geodesy
+# SFXC workshop 2025 • MPI & Slurm
 
 
 
