@@ -60,8 +60,8 @@ The timetable can be found on the [timetables page](timetable.md). The slides fo
 
 ## Tutorials
 
-- [Installing SFXC](installing_sfxc_locally.md)
-- [Running SFXC](running_sfxc_locally.md)
+- [Installing SFXC](installing-sfxc-locally.md)
+- [Running SFXC](running-sfxc-locally.md)
 - [Basic SFXC tutorial](sfxc-basic-tutorial.md)
 - [Post-correlation processing](correlation_post.md)
 - [Pulsar processing](pulsar-processing.md)
@@ -70,7 +70,7 @@ The timetable can be found on the [timetables page](timetable.md). The slides fo
 - [Geodesy](geodesy.md)
 
 ## Appendices
-- [Control file parameters](control_file_parameters.md)
+- [Control file parameters](control-file-parameters.md)
 
 ---
 
