@@ -51,6 +51,13 @@ This site serves as the central hub for **tutorial content** and **step-by-step 
 
 The timetable can be found on the [timetables page](timetable.md). The slides for the theory sessions are available on this page, while the hands-on sessions are listed below.
 
+## Lectures
+- [(VLBI) Correlation 101]() - Bob Campbell (JIVE)
+- [Correlation preparation]() - Aard Keimpema (JIVE), Mark Kettenis (JIVE)
+- [Setting up the correlator]() - Aard Keimpema (JIVE), Mark Kettenis (JIVE)
+- [Pulsar processing]() - Aard Keimpema (JIVE), Franz Kirsten (Onsala)
+- [ADD MORE HERE]() - Some person
+
 ## Tutorials
 
 - [Correlation](correlation.md)
