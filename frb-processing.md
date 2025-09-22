@@ -121,7 +121,10 @@ the fringe pattern; white ellipses indicate the best fit $2\sigma-\mathrm{locali
 region}$. From [Bhardwaj et al. 2025](#ref_bhardwaj25).*
 
 ## References
-<a name="ref_bhardwaj25">1.</a> Bhardwaj, M., “A Hyperactive FRB Pinpointed in an SMC-Like
+<a name="ref_petroff22">1.</a> Petroff, E. et al., “Fast radio bursts at the dawn of the
+2020s”, *Astronomy and Astrophysics Review*, 30 (1), 2 (2022). DOI: [10.1007/s00159-022-00139-w](https://ui.adsabs.harvard.edu/abs/2022A&ARv..30....2P){:target="_blank"}  
+
+<a name="ref_bhardwaj25">2.</a> Bhardwaj, M. et al., “A Hyperactive FRB Pinpointed in an SMC-Like
 Satellite Host Galaxy”, *arXiv*, arXiv:2506.11915 (2025). DOI: [10.48550/arXiv.2506.11915](https://ui.adsabs.harvard.edu/abs/2025arXiv250611915B){:target="_blank"}  
 
 
