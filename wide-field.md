@@ -590,7 +590,17 @@ Conversion generally uses helper software from the **jive-casa** repository: <ht
 <a name="ref_campbell19">4.</a> Campbell, B., “Field of View Calculations for SFXC”, EVN JIVE documentation, revised 3 January 2019. Retrieved from the [EVN website](https://www.evlbi.org/sites/default/files/users/Gina/fovSFXC.pdf){:target="_blank"}. DOI: not available.  
 <a name="ref_wrobel95">5.</a> Wrobel, J. M., “VLBI Observing Strategies”, *Very Long Baseline Interferometry and the VLBA*, ASP Conf. Ser., 82, 411 (1995). DOI: [1995ASPC...82..411W](https://ui.adsabs.harvard.edu/abs/1995ASPC...82..411W/abstract){:target="_blank"}
 
-### Technical papers/memos on wide-field correlation
+### Science papers using wide-field correlation
+<a name="ref_middelberg13">6.</a> Middelberg, E., et al., “Mosaiced wide-field VLBI observations of the Lockman Hole/XMM”, *A&A*, 551, A97 (2013). DOI: [10.1051/0004-6361/201220374](https://ui.adsabs.harvard.edu/abs/2013A&A...551A..97M/abstract){:target="_blank"}  
+<a name="ref_middelberg10">7.</a> Middelberg, E., et al., “Wide-field VLBA observations of the Chandra Deep Field South”, *A&A*, 526, A74 (2011). DOI: [10.1051/0004-6361/201015406](https://ui.adsabs.harvard.edu/abs/2010A&A...526A..74M/abstract){:target="_blank"}  
+<a name="ref_deller14">8.</a> Deller, A. T., & Middelberg, E., “mJIVE-20: A Survey for Compact mJy Radio Objects with the Very Long Baseline Array”, *AJ*, 147, 14 (2014). DOI: [10.1088/0004-6256/147/1/14](https://ui.adsabs.harvard.edu/abs/2014AJ....147...14D/abstract){:target="_blank"}  
+<a name="ref_herrera17">9.</a> Herrera Ruiz, N., et al., “The faint radio sky: VLBA observations of the COSMOS field”, *A&A*, 607, A132 (2017). DOI: [10.1051/0004-6361/201731163](https://ui.adsabs.harvard.edu/abs/2017A&A...607A.132H/abstract){:target="_blank"}  
+<a name="ref_radcliffe18">10.</a> Radcliffe, J. F., et al., “An ultra-deep multi-phase centre VLBI survey of GOODS-N: Observations and data reduction”, *A&A*, 619, A48 (2018). DOI: [2018A&A...619A..48R](https://ui.adsabs.harvard.edu/abs/2018A&A...619A..48R/abstract){:target="_blank"}   
+<a name="ref_radcliffe21">11.</a> Radcliffe, J. F., et al., “Nowhere to hide: Radio-faint AGN in the GOODS-N field”, *A&A*, 649, A27 (2021). DOI: [10.1051/0004-6361/202038591](https://ui.adsabs.harvard.edu/abs/2021A&A...649A..27R/abstract){:target="_blank"}  
+<a name="ref_fenech10">12.</a> Fenech, D., et al., “Wide-field global VLBI and MERLIN combined monitoring of supernova remnants in M82”, *MNRAS*, 408(1), 607–621 (2010). DOI: [10.1111/j.1365-2966.2010.17144.x](https://ui.adsabs.harvard.edu/abs/2010MNRAS.408..607F/abstract){:target="_blank"}  
+<a name="ref_morgan13">13.</a> Morgan, J. S., et al., “Wide-field VLBI Observations of M31: A Unique Probe of the Ionized Interstellar Medium of a Nearby Galaxy”, *ApJ*, 768(1), 12 (2013). DOI: [10.1088/0004-637X/768/1/12](https://ui.adsabs.harvard.edu/abs/2013ApJ...768...12M/abstract){:target="_blank"}  
+<a name="ref_chi13">14.</a> Chi, S., et al., “Deep, wide-field, global VLBI observations of the Hubble Deep Field North (HDF-N) and flanking fields (HFF)”, *A&A*, 550, A68 (2013). DOI: [10.1051/0004-6361/201220783](https://ui.adsabs.harvard.edu/abs/2013A&A...550A..68C/abstract){:target="_blank"}  
+<a name="ref_spingola19">15.</a> Spingola, C., et al., “A novel search for gravitationally lensed radio sources in wide-field VLBI imaging from the mJIVE-20 survey”, *MNRAS*, 483(2), 2125–2153 (2019). DOI: [10.1093/mnras/sty3189](https://ui.adsabs.harvard.edu/abs/2019MNRAS.483.2125S/abstract){:target="_blank"}  
 
 ---
 _Content built by Jack Radcliffe._ <i><span id="lastModified"></span></i>
