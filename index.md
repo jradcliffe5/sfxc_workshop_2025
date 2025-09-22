@@ -49,7 +49,7 @@ This site serves as the central hub for **tutorial content** and **step-by-step 
 
 ## Timetable
 
-The timetable can be found on the [timetables page](timetable.md). The slides for the theory sessions are available on this page, while the hands-on sessions are listed below.
+The timetable can be found on the [timetables page](timetable.md). Links to the lecture slides and tutorials can be found below.
 
 ## Lectures
 - [(VLBI) Correlation 101]() - Bob Campbell (JIVE)
@@ -75,7 +75,7 @@ The timetable can be found on the [timetables page](timetable.md). The slides fo
 
 ---
 
-_Content built by XX._ <i><span id="lastModified"></span></i>
+_Content built by all._ <i><span id="lastModified"></span></i>
 
 _Built with ♥ — Markdown + HTML + CSS + Prism.js + a bit of AI + Jack Radcliffe (2025)_
 
