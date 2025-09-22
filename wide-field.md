@@ -583,14 +583,14 @@ Conversion generally uses helper software from the **jive-casa** repository: <ht
 
 
 ## H. Resources
-### Technical papers/memos on wide-field correlation
+### Some technical papers/memos on wide-field correlation
 <a name="ref_deller11">1.</a> Deller, A. T., et al., “DiFX-2: A More Flexible, Efficient, Robust, and Powerful Software Correlator”, *PASP*, 123(901), 275 (2011). DOI: [10.1086/658907](https://ui.adsabs.harvard.edu/abs/2011PASP..123..275D/abstract){:target="_blank"}  
 <a name="ref_morgan11">2.</a> Morgan, J. S., et al., “VLBI imaging throughout the primary beam using accurate UV shifting”, *A&A*, 526, A140 (2011). DOI: [10.1051/0004-6361/201015138](https://ui.adsabs.harvard.edu/abs/2011A%26A...526A.140M/abstract){:target="_blank"}  
 <a name="ref_keimpema15">3.</a> Keimpema, A., et al., “The SFXC software correlator for very long baseline interferometry: algorithms and implementation”, *Experimental Astronomy*, 39(2), 259–279 (2015). DOI: [10.1007/s10686-015-9462-z](https://ui.adsabs.harvard.edu/abs/2015ExA....39..259K/abstract){:target="_blank"}
 <a name="ref_campbell19">4.</a> Campbell, B., “Field of View Calculations for SFXC”, EVN JIVE documentation, revised 3 January 2019. Retrieved from the [EVN website](https://www.evlbi.org/sites/default/files/users/Gina/fovSFXC.pdf){:target="_blank"}. DOI: not available.  
 <a name="ref_wrobel95">5.</a> Wrobel, J. M., “VLBI Observing Strategies”, *Very Long Baseline Interferometry and the VLBA*, ASP Conf. Ser., 82, 411 (1995). DOI: [1995ASPC...82..411W](https://ui.adsabs.harvard.edu/abs/1995ASPC...82..411W/abstract){:target="_blank"}
 
-### Science papers using wide-field correlation
+### A selection of science papers using wide-field correlation
 <a name="ref_middelberg13">6.</a> Middelberg, E., et al., “Mosaiced wide-field VLBI observations of the Lockman Hole/XMM”, *A&A*, 551, A97 (2013). DOI: [10.1051/0004-6361/201220374](https://ui.adsabs.harvard.edu/abs/2013A&A...551A..97M/abstract){:target="_blank"}  
 <a name="ref_middelberg10">7.</a> Middelberg, E., et al., “Wide-field VLBA observations of the Chandra Deep Field South”, *A&A*, 526, A74 (2011). DOI: [10.1051/0004-6361/201015406](https://ui.adsabs.harvard.edu/abs/2010A&A...526A..74M/abstract){:target="_blank"}  
 <a name="ref_deller14">8.</a> Deller, A. T., & Middelberg, E., “mJIVE-20: A Survey for Compact mJy Radio Objects with the Very Long Baseline Array”, *AJ*, 147, 14 (2014). DOI: [10.1088/0004-6256/147/1/14](https://ui.adsabs.harvard.edu/abs/2014AJ....147...14D/abstract){:target="_blank"}  

@@ -47,15 +47,15 @@ onload = function(){
 ## Monday, 22 September 2025
 
 ### Theory 1 — 09:00–10:30
-- **09:00–09:45** — **(VLBI) Correlation 101** — *Bob Campbell (JIVE)*  
+- **09:00–09:45** — **(VLBI) Correlation 101** [link to slides]() — *Bob Campbell (JIVE)* 
   _Introduction to correlation and correlator basics, history._
-- **09:45–10:30** — **Correlation preparation** — *Aard Keimpema (JIVE), Mark Kettenis (JIVE)*  
+- **09:45–10:30** — **Correlation preparation** [link to slides]() — *Aard Keimpema (JIVE), Mark Kettenis (JIVE)*  
   _Knowing what (meta)data is needed for correlation, where to get it and how to store/format it._
 
 **10:30–11:00** — Coffee
 
 ### Hybrid session 1 / Theory 2 — 11:00–12:30
-- **11:00–12:30** — **Setting up the correlator** — *Aard Keimpema (JIVE), Mark Kettenis (JIVE)*  
+- **11:00–12:30** — **Setting up the correlator** [link to slides]() — *Aard Keimpema (JIVE), Mark Kettenis (JIVE)*  
   _After an introduction to setting up a cluster for running the SFXC distributed correlator, participants will set up and verify the operation of their correlation environment._
 
 **12:30–13:30** — Lunch
@@ -75,7 +75,7 @@ onload = function(){
 ## Tuesday, 23 September 2025
 
 ### Hybrid 3: Pulsar processing — 09:00–10:30
-- **09:00–09:30** — **Pulsar processing** — *Aard Keimpema (JIVE), Franz Kirsten (Onsala)*  
+- **09:00–09:30** — **Pulsar processing** [link to slides]() — *Aard Keimpema (JIVE), Franz Kirsten (Onsala)*  
   _Introduction._
 - **09:30–10:00** — **Pulsar gating** — *Franz Kirsten (Onsala)*  
   _Handling a FITS file with pulses in._
