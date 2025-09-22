@@ -325,7 +325,7 @@ We can now add the data sources, this is just the absolute paths of the files pr
             "file:///data/n24l2/files/n24l2_hh_no0005"
         ]
     },
-    "start": "2024y144d12h41m41s",
+    "start": "2024y144d12h41m47s",
     "stop": "2024y144d12h47m10s",
     "stations": [
         "Cm",
