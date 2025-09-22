@@ -280,8 +280,8 @@ This results in the following control file
     "number_channels": 1024,
     "integr_time": 2.0,
     "exper_name": "N24L2",
-    "output_file": "file:///home/workshop22/data/n24l2-test/n24l2_no0004.cor",
-    "delay_directory": "file:///home/workshop22/data/n24l2-test/delays",
+    "output_file": "file:///home/<workshopID>/data/n24l2-test/n24l2_no0004.cor",
+    "delay_directory": "file:///home/<workshopID>/data/n24l2-test/delays",
     "cross_polarize": true,
     "message_level": 1
 }
@@ -346,8 +346,8 @@ We can now add the data sources, this is just the absolute paths of the files pr
     "number_channels": 1024,
     "integr_time": 2,
     "exper_name": "N24L2",
-    "output_file": "file:///home/workshop22/data/n24l2/n24l2_no0004.cor",
-    "delay_directory": "file:///home/workshop22/data/n24l2/delays",
+    "output_file": "file:///home/<workshopID>/data/n24l2/n24l2_no0004.cor",
+    "delay_directory": "file:///home/<workshopID>/data/n24l2/delays",
     "cross_polarize": true,
     "message_level": 1
 }
@@ -417,11 +417,11 @@ export CALC_DIR=/opt/sfxc/calc
 
 Also note that in the control file we created in the previous section we defined a location where SFXC will look for delay files
 ```yaml
-    "delay_directory": "file:///home/workshop22/data/n24l2/delays",
+    "delay_directory": "file:///home/<workshopID>/data/n24l2/delays",
 ```
 Before running the correlator we need to ensure this directory exists
 ```bash
-mkdir -p /home/workshop22/data/n24l2/delays
+mkdir -p /home/<workshopID>/data/n24l2/delays
 ```
 We can now decide if we let SFXC create the delay files or if we do this manually.
 While SFXC will create delay files if these don't exists already, it is quite slow because does the delay generation is done in a single thread.
@@ -789,8 +789,8 @@ bandpasses, fringe SNR, sampler statistics, etc. The pages are located in direct
 
 Because the output is html you need to copy it to your local machine in order to view it
 ```bash
-scp -r workshop22@sfxc-e0.sfxc.jive.nl:/home/workshop22/data/n24l2/No0004 .
-scp -r workshop22@sfxc-e0.sfxc.jive.nl:/home/workshop22/data/n24l2/No0005 .
+scp -r <workshopID>@sfxc-e0.sfxc.jive.nl:/home/<workshopID>/data/n24l2/No0004 .
+scp -r <workshopID>@sfxc-e0.sfxc.jive.nl:/home/<workshopID>/data/n24l2/No0005 .
 ```
 
 Viewing the index.html contained in these directories in a web browser shows
@@ -924,8 +924,8 @@ change the name of the output file to `n24l2_zoom.cor`.
     "number_channels": 64,
     "integr_time": 2.0,
     "exper_name": "N24L2",
-    "output_file": "file:///home/workshop22/data/n24l2/n24l2_zoom.cor",
-    "delay_directory": "file:///home/workshop22/data/n24l2/delays",
+    "output_file": "file:///home/<workshopID>/data/n24l2/n24l2_zoom.cor",
+    "delay_directory": "file:///home/<workshopID>/data/n24l2/delays",
     "cross_polarize": true,
     "message_level": 1
 }
