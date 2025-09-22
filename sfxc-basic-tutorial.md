@@ -219,11 +219,11 @@ locations of data files, etc.
 
 A complete documentation of the control file can be found [here](Control_file_parameters.md)
 
-In the SFXC distribution there is a script called `generate_job.py` that can be used to create a control file,
+In the SFXC distribution there is a script called `generate_jobs.py` that can be used to create a control file,
 it has a large number of options:
 
 ``` bash
-generate_jobs -h
+generate_jobs.py -h
 ```
 
 The data files for n24l2 on the cluster are (located in `/data/n24l2/files/`)
