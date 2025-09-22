@@ -123,7 +123,8 @@ range of the snippets of data provided for the tutorials. The program
 the timestamp of the first frame of `vdif` data:
 
 
-```$ vdif_print_headers -n1 Data/n24l2_cm_no0004.vdif
+```
+$ vdif_print_headers -n1 Data/n24l2_cm_no0004.vdif
 
 , pos = 0, nbytes = 0, frames = 0
 2024y144d12h41m41.000s ,frame_nr = 3118, thread_id = 0, nchan = 1, invalid = 0, legacy = 0, station = Cm, bps-1 = 1, data_size = 8032
