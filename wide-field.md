@@ -392,7 +392,7 @@ Finally we need to ensure that multi-phase centre correlation is enabled:
 
 >***Cheat script:***
 >```bash 
->jq '.multi_phase_center = (.multi_phase_center // true) | .sub_integr_time = (.sub_integr_time // 13056) | .fft_size_correlation = (.>fft_size_correlation // 16384)' n24l2.ctrl > n24l2.ctrl.tmp && mv n24l2.ctrl.tmp n24l2.ctrl
+>jq '.multi_phase_center = (.multi_phase_center // true) | .sub_integr_time = (.sub_integr_time // 13056) | .fft_size_correlation = (.fft_size_correlation // 16384)' n24l2.ctrl > n24l2.ctrl.tmp && mv n24l2.ctrl.tmp n24l2.ctrl
 >```
 
 ### C3. Edit the vix file
