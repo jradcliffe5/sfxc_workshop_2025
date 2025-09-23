@@ -86,7 +86,11 @@ pr359a_ef+o8+ur_10s.tar : (~9GB) the raw baseband data from Ef, Ur, O8; 10s each
 psrsoft.simg            : (~6GB) singularity image containing the pulsar tools we need
 sfxc-coherent.simg      : (~400MB) SFXC that supports coherent dedispersion
 ```
-So let's download the data, unpack them and prep them a bit:
+On the JIVE cluster your will find those data at `/data/pr359a`. Ideally copy everything
+in there to a new directory of your choosing and untar the tarballs.
+
+In caes you'd like to run things on your local laptop, proceed as follows:
+
 ```bash
 mkdir /path/to/your/dir
 cd !$
@@ -177,8 +181,12 @@ As a first step we'll create a 10s-filterbank as outlined below:
 
 ```bash
 mpirun -n 22 sfxc pr359a_ef_no0001_b1933.ctrl pr359a.vix
+
 # if using the singularity image:
 mpirun -n 22 singularity run /path/to/sfxc-coherent.simg sfxc pr359a_ef_no0001_b1933.ctrl pr359a.vix
+
+# or in the cluster using the image
+srun --mpi pmix -n 2 singularity run /path/to/sfxc-coherent.simg sfxc pr359a_ef_no0001_b1933.ctrl pr359a.vix
 ```
 
 > **TIPP**: In case the above gives you an error about not enough cores present, you may
