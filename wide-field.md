@@ -139,7 +139,7 @@ mkdir raw_data
 cd raw_data
 ```
 
-**If you are on the JIVE cluster** -- symlink the raw data to this directory using `ln -s /data/n24l2/files/*no0005*`
+**If you are on the JIVE cluster** -- symlink the raw data to this directory using `ln -sf /data/n24l2/files/*no0005* .`
 
 **Otherwise** download just the No0005 scan using:
 ```bash
