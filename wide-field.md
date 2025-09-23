@@ -137,8 +137,13 @@ wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*vix"
 mkdir N24L2_delays
 mkdir raw_data
 cd raw_data
+```
+
+**If you are on the JIVE cluster** -- symlink the raw data to this directory using `ln -s /data/n24l2/files/*no0005*`
+
+**Otherwise** download just the No0005 scan using:
+```bash
 wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*no0005*"
-cd ..
 ```
 
 >**Cheat script** If you wish to skip/run a selection of steps, you can run the `run_correlation_post_process.bash` script. Note that you will need to edit the `### -- INPUTS -- ###` section to make it work.

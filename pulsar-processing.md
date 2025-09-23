@@ -189,7 +189,7 @@ mpirun -n 22 singularity run /path/to/sfxc-coherent.simg sfxc pr359a_ef_no0001_b
 srun --mpi pmix -n 2 singularity run /path/to/sfxc-coherent.simg sfxc pr359a_ef_no0001_b1933.ctrl pr359a.vix
 ```
 
-> **TIPP**: In case the above gives you an error about not enough cores present, you may
+> **TIP**: In case the above gives you an error about not enough cores present, you may
 > need to add `--oversubscribe`. On a machine where you have enough cores and still get an
 > error about not enough cores, try adding `--use-hwthread-cpus`.
 
