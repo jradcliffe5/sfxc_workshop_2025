@@ -133,6 +133,7 @@ cd n24l2_mpcc
 wget https://www.jb.man.ac.uk/~radcliff/sfxc_workshop/n24l2.ctrl
 wget https://www.jb.man.ac.uk/~radcliff/sfxc_workshop/run_correlation_post_process.bash
 wget https://www.jb.man.ac.uk/~radcliff/sfxc_workshop/n24l2_calibration.py
+wget https://www.jb.man.ac.uk/~radcliff/sfxc_workshop/flag_weights.py
 wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*vix"
 mkdir N24L2_delays
 mkdir raw_data
