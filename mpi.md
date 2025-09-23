@@ -31,7 +31,7 @@ onload = function(){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 
 [Return to the homepage](index.md)
-# SFXC workshop 2025 • Geodesy
+# SFXC workshop 2025 • MPI & Slurm
 
 
 
@@ -46,7 +46,7 @@ onload = function(){
 
 SFXC uses the Message Passing Interface (MPI) to distribute the
 correlation over multiple machines.  This tutorial will help you to
-get familliar with how SFXC uses MPI and how you can use SFXC on a
+get familiar with how SFXC uses MPI and how you can use SFXC on a
 system that uses the SLURM workload manager.  There are several MPI
 implementations, but the most popular one is OpenMPI.  That is the
 implementation we will use for this tutorial.  If your cluster uses a

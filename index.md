@@ -49,7 +49,7 @@ This site serves as the central hub for **tutorial content** and **step-by-step 
 
 ## Timetable
 
-The timetable can be found on the [timetables page](timetable.md). The slides for the theory sessions are available on this page, while the hands-on sessions are listed below.
+The timetable can be found on the [timetables page](timetable.md). Links to the lecture slides and tutorials can be found below.
 
 ## Lectures
 - [(VLBI) Correlation 101]() - Bob Campbell (JIVE)
@@ -60,9 +60,10 @@ The timetable can be found on the [timetables page](timetable.md). The slides fo
 
 ## Tutorials
 
-- [Installing SFXC](installing_sfxc_locally.md)
-- [Running SFXC](running_sfxc_locally.md)
+- [Installing SFXC](installing-sfxc-locally.md)
+- [Running SFXC](running-sfxc-locally.md)
 - [Basic SFXC tutorial](sfxc-basic-tutorial.md)
+- [MPI and Slurm](mpi.md)
 - [Post-correlation processing](correlation_post.md)
 - [Pulsar processing](pulsar-processing.md)
 - [FRB processing](frb-processing.md)
@@ -70,11 +71,11 @@ The timetable can be found on the [timetables page](timetable.md). The slides fo
 - [Geodesy](geodesy.md)
 
 ## Appendices
-- [Control file parameters](control_file_parameters.md)
+- [Control file parameters](control-file-parameters.md)
 
 ---
 
-_Content built by XX._ <i><span id="lastModified"></span></i>
+_Content built by all._ <i><span id="lastModified"></span></i>
 
 _Built with ♥ — Markdown + HTML + CSS + Prism.js + a bit of AI + Jack Radcliffe (2025)_
 

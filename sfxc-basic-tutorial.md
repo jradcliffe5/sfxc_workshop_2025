@@ -46,7 +46,7 @@ onload = function(){
 7. [Advanced: zoom bands](#zoom-band)
 
 ### Resources
-- [Control file reference](Control_file_parameters.md)
+- [Control file reference](control-file-parameters.md)
 - [VEX standard](https://vlbi.org/vlbi-standards/vex/)
 
 ## Introduction
@@ -210,6 +210,32 @@ def theEOP;
     ut1-utc = -0.0213353 sec : -0.0213183 sec : -0.0211052 sec;
 enddef;
 ```
+One last change to the VEX file is needed, SFXC uses the `$DAS` section to determine the data format.
+But unfortunately, SFXC doesn't recognise the `$DAS` for station Ef.
+
+We need to change the `$DAS` for Cm from
+```
+def 2NONE<;
+     record_transport_type = Mark5C;
+     electronics_rack_type = none;
+     number_drives = 2;
+     headstack = 1 :            : 0 ;
+     headstack = 2 :            : 1 ;
+     tape_motion = adaptive : 0 min: 0 min: 10 sec;
+enddef;
+```
+to
+```
+def 2NONE<;
+     record_transport_type = Mark5C;
+     electronics_rack_type = WIDAR;
+     number_drives = 2;
+     headstack = 1 :            : 0 ;
+     headstack = 2 :            : 1 ;
+     tape_motion = adaptive : 0 min: 0 min: 10 sec;
+enddef;
+```
+So that SFXC recognises that Cm uses VDIF.
 
 ## Create control file
 
@@ -217,13 +243,13 @@ Now that we have a basic vex file we need to create a control file needed to run
 contain all the correlation parameters such as integration time, number of spectral channels,
 locations of data files, etc.
 
-A complete documentation of the control file can be found [here](Control_file_parameters.md)
+A complete documentation of the control file can be found [here](control-file-parameters.md)
 
-In the SFXC distribution there is a script called `generate_job.py` that can be used to create a control file,
+In the SFXC distribution there is a script called `generate_jobs.py` that can be used to create a control file,
 it has a large number of options:
 
 ``` bash
-generate_jobs -h
+generate_jobs.py -h
 ```
 
 The data files for n24l2 on the cluster are (located in `/data/n24l2/files/`)
@@ -280,8 +306,8 @@ This results in the following control file
     "number_channels": 1024,
     "integr_time": 2.0,
     "exper_name": "N24L2",
-    "output_file": "file:///home/workshop22/data/n24l2-test/n24l2_no0004.cor",
-    "delay_directory": "file:///home/workshop22/data/n24l2-test/delays",
+    "output_file": "file:///home/<workshopID>/data/n24l2-test/n24l2_no0004.cor",
+    "delay_directory": "file:///home/<workshopID>/data/n24l2-test/delays",
     "cross_polarize": true,
     "message_level": 1
 }
@@ -325,7 +351,7 @@ We can now add the data sources, this is just the absolute paths of the files pr
             "file:///data/n24l2/files/n24l2_hh_no0005"
         ]
     },
-    "start": "2024y144d12h41m41s",
+    "start": "2024y144d12h41m47s",
     "stop": "2024y144d12h47m10s",
     "stations": [
         "Cm",
@@ -346,8 +372,8 @@ We can now add the data sources, this is just the absolute paths of the files pr
     "number_channels": 1024,
     "integr_time": 2,
     "exper_name": "N24L2",
-    "output_file": "file:///home/workshop22/data/n24l2/n24l2_no0004.cor",
-    "delay_directory": "file:///home/workshop22/data/n24l2/delays",
+    "output_file": "file:///home/<workshopID>/data/n24l2/n24l2_no0004.cor",
+    "delay_directory": "file:///home/<workshopID>/data/n24l2/delays",
     "cross_polarize": true,
     "message_level": 1
 }
@@ -417,11 +443,11 @@ export CALC_DIR=/opt/sfxc/calc
 
 Also note that in the control file we created in the previous section we defined a location where SFXC will look for delay files
 ```yaml
-    "delay_directory": "file:///home/workshop22/data/n24l2/delays",
+    "delay_directory": "file:///home/<workshopID>/data/n24l2/delays",
 ```
 Before running the correlator we need to ensure this directory exists
 ```bash
-mkdir -p /home/workshop22/data/n24l2/delays
+mkdir -p /home/<workshopID>/data/n24l2/delays
 ```
 We can now decide if we let SFXC create the delay files or if we do this manually.
 While SFXC will create delay files if these don't exists already, it is quite slow because does the delay generation is done in a single thread.
@@ -789,8 +815,8 @@ bandpasses, fringe SNR, sampler statistics, etc. The pages are located in direct
 
 Because the output is html you need to copy it to your local machine in order to view it
 ```bash
-scp -r workshop22@sfxc-e0.sfxc.jive.nl:/home/workshop22/data/n24l2/No0004 .
-scp -r workshop22@sfxc-e0.sfxc.jive.nl:/home/workshop22/data/n24l2/No0005 .
+scp -r <workshopID>@sfxc-e0.sfxc.jive.nl:/home/<workshopID>/data/n24l2/No0004 .
+scp -r <workshopID>@sfxc-e0.sfxc.jive.nl:/home/<workshopID>/data/n24l2/No0005 .
 ```
 
 Viewing the index.html contained in these directories in a web browser shows
@@ -924,8 +950,8 @@ change the name of the output file to `n24l2_zoom.cor`.
     "number_channels": 64,
     "integr_time": 2.0,
     "exper_name": "N24L2",
-    "output_file": "file:///home/workshop22/data/n24l2/n24l2_zoom.cor",
-    "delay_directory": "file:///home/workshop22/data/n24l2/delays",
+    "output_file": "file:///home/<workshopID>/data/n24l2/n24l2_zoom.cor",
+    "delay_directory": "file:///home/<workshopID>/data/n24l2/delays",
     "cross_polarize": true,
     "message_level": 1
 }
