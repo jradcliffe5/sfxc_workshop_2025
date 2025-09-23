@@ -89,7 +89,6 @@ Instead of correlating the whole beam at full resolution, **software correlators
 
 <a name="fig-a2">**Figure A2**</a> - *Diagram illustrating the wide-field correlation process when using the multiple phase centre observing technique, including the field-of-views defined by smearing after internal wide-field correlation, along with the shift and averaging steps involved.*
 
-
 ## B. Project preparation and data download
 
 To prepare for the practical part of this tutorial, we need to ensure that you have the software and utilities available to execute all parts of the tutorial.
@@ -141,6 +140,8 @@ cd raw_data
 wget -t45 -l1 -r -nd https://archive.jive.nl/sfxc-workshop/n24l2/ -A "n24l2*no0005*"
 cd ..
 ```
+
+>**Cheat script** If you wish to skip/run a selection of steps, you can run the `run_correlation_post_process.bash` script. Note that you will need to edit the `### -- INPUTS -- ###` section to make it work.
 
 ## C. Correlator preparation
 ### C1. Calculate wide-field correlation parameters
