@@ -86,8 +86,10 @@ pr359a_ef+o8+ur_10s.tar : (~9GB) the raw baseband data from Ef, Ur, O8; 10s each
 psrsoft.simg            : (~6GB) singularity image containing the pulsar tools we need
 sfxc-coherent.simg      : (~400MB) SFXC that supports coherent dedispersion
 ```
-On the JIVE cluster your will find those data at `/data/pr359a`. Ideally copy everything
-in there to a new directory of your choosing and untar the tarballs.
+On the JIVE cluster your will find those data at `/data/pr359a`. Ideally leave that
+baseband data and the images where they are but copy `aux-config.tar` to your directory of
+choosing and untar it there. Modify the paths in the ctrl files to point at where the data
+are and set the output and delay directories to your directory of choosing.
 
 In caes you'd like to run things on your local laptop, proceed as follows:
 
