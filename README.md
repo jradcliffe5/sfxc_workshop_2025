@@ -1,0 +1,2 @@
+## Important
+This repository is now defunct and the content for the SFXC workshop 2025 can be found at [https://jive-vlbi.github.io/sfxc_workshop_2025/](https://jive-vlbi.github.io/sfxc_workshop_2025/)
